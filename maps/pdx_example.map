@@ -1,0 +1,8 @@
+xStart=0
+yStart=0
+xTarget=1
+yTarget=2
+pOutBuffer=12
+MapHeight=4
+MapWidth=3
+pMap= 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1
