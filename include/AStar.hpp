@@ -123,7 +123,7 @@ private :
 	// ToDo : 2018-09-11 ipsch: rework heuristics
 	// should belong to map
 	Heuristic_2d_discrete heuristic_;
-	BinaryHeap<NodeType> open_list_;   /**< Priority queue containing all Nodes that need processing */
+	o_data_structures::BinaryHeap<NodeType> open_list_;   /**< Priority queue containing all Nodes that need processing */
 	//HeapArray<float, sNode*> open_list_;   /**< Priority queue containing all Nodes that need processing */
 
 	RedBlackTree<unsigned int, sNode*>

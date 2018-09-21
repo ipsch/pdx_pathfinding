@@ -197,8 +197,9 @@ namespace PriorityQueue
 	};
 
 	template <class T>
-	HeapArray<T>::HeapArray() : HeapArray<T>(0, false),
-		nData_(0), nMinLayers_(0), nLayers_(0), ppData_(0L),
+	HeapArray<T>::HeapArray() :
+		nLayers_(0), nData_(0), ppData_(0L),
+		nMinLayers_(0),
 		force_never_decrease_(false)
 		//ToDo: 2018-09-21 ipsch: nullpointer object
 	{ }
