@@ -106,7 +106,7 @@ int AStar::ExpandNode(sNode *predecessor)
 
 
 		unsigned int search_index;
-		bool search_success = open_list_.Find(search_index,
+		bool search_success = open_list_.find(search_index,
 				[&successor_id] (ReferencingNode<sNode> &N) {return N.data_->id_==successor_id;});
 
         if (search_success)
@@ -129,9 +129,9 @@ int AStar::ExpandNode(sNode *predecessor)
 		// ChangeKey referencing Node new item
 		// old referencing node get's deleted, but old item isn't
 		if (search_success)
-            open_list_.ChangeKey(search_index, r_successor);
+            open_list_.change_key(search_index, r_successor);
         else
-        	open_list_.Insert(r_successor);
+        	open_list_.insert(r_successor);
 	}
     return 0;
 }
@@ -201,13 +201,13 @@ int AStar::FindPath(const int &iS, const int &jS, const int &iT, const int &jT)
 
 
 	map_.set_heuristic(target_node_id);
-	open_list_.Insert(ReferencingNode<sNode>(p_start_node->fvalue_,p_start_node));
+	open_list_.insert(ReferencingNode<sNode>(p_start_node->fvalue_,p_start_node));
 
 
     do
     {
     	sNode *p_current_node = open_list_.A_[0].data_;
-    	open_list_.Remove(0);
+    	open_list_.remove(0);
 
         // check if target reached
         if ( p_current_node->id_ == target_node_id )
