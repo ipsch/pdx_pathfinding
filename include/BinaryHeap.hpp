@@ -31,13 +31,14 @@
 namespace o_data_structures
 {
 
+	template <class ... Args> class BinaryHeap;
 
 	/**
 	 * \class BinaryHeap
 	 * \brief BinaryHeap is an implementation of a complete binary minimum search tree
 	 *
 	 * \details
-	 * It stores data elements (called items or nodes) of the type (dType)
+	 * It stores data elements (called items or nodes) of the type (KeyType)
 	 * in a dynamic array (BinaryHeap::A_).
 	 * (Note: we use item and node synonymously: Item shall stress the point
 	 * of storing data while node stresses the point how items relate to each other)
@@ -69,9 +70,9 @@ namespace o_data_structures
 	 *
 	 * This implies that the data is partially sorted with the smallest element being always at the top.
 	 * The user/caller doesn't need to manage data to keep the heap structure;
-	 * Instead the methods int Insert(dType newkey), dType Remove(const unsigned int &i),
-	 * int IncreaseKey(int i, dType newkey), int DecreaseKey(int i, dType newkey)
-	 * int ChangeKey(int i, dType newkey), void Build()
+	 * Instead the methods int Insert(KeyType newkey), KeyType Remove(const unsigned int &i),
+	 * int IncreaseKey(int i, KeyType newkey), int DecreaseKey(int i, KeyType newkey)
+	 * int ChangeKey(int i, KeyType newkey), void Build()
 	 * manage data manipulation on their own.
 	 *
 	 * This class was written with the intention to give some flexibility regarding the stored items.
@@ -93,19 +94,19 @@ namespace o_data_structures
 	 *
 	 *
 	 */
-	template <typename dType>
-	class BinaryHeap
+	template <typename KeyType>
+	class BinaryHeap<KeyType>
 	{
 	public :
 		BinaryHeap(const unsigned int &nDegree=0);
 		~BinaryHeap();
 
-		int Insert(const dType &newkey);
-		dType Remove(const unsigned int &i);
+		int Insert(const KeyType &newkey);
+		KeyType Remove(const unsigned int &i);
 
-		int IncreaseKey(int i, dType new_key);
-		int DecreaseKey(int i, dType new_key);
-		int ChangeKey(int i, const dType &new_key);
+		int IncreaseKey(int i, KeyType new_key);
+		int DecreaseKey(int i, KeyType new_key);
+		int ChangeKey(int i, const KeyType &new_key);
 		void Build();
 
 		bool IsEmpty(void) const {return n_items_==0;}
@@ -116,15 +117,15 @@ namespace o_data_structures
 		template<typename Func>
 		bool Find(unsigned int &iter, Func IsEqual) const;
 		template<typename Func>
-		bool Find(const dType key,
-				Func IsEqual = [] (const dType &N, const dType &key) {return N==key;}) const;
+		bool Find(const KeyType key,
+				Func IsEqual = [] (const KeyType &N, const KeyType &key) {return N==key;}) const;
 		template<typename Func>
-		bool Find(const dType key, unsigned int &iter,
-				Func IsEqual = [] (const dType &N, const dType &key) {return N==key;}) const;
+		bool Find(const KeyType key, unsigned int &iter,
+				Func IsEqual = [] (const KeyType &N, const KeyType &key) {return N==key;}) const;
 
 		// ToDo : 2019-09-11 ipsch: BinaryHeap member should be private
 		// but there are a few accesses that rely on public rights
-		dType *A_;                         ///< Array where heap elements get stored in (literally "The Tree")
+		KeyType *A_;                         ///< Array where heap elements get stored in (literally "The Tree")
 		unsigned int max_items_;           ///< Current size of the heap (maximum number of storable elements)
 		unsigned int rank_;                ///< Current number of layers/levels associated with max_items_
 		unsigned int n_items_;             ///< Number of data nodes currently stored in BinarayHeap::A_
@@ -161,11 +162,23 @@ namespace o_data_structures
 	};
 
 
+	template <typename KeyType, typename DataType>
+	class BinaryHeap<KeyType,DataType> : BinaryHeap<KeyType>
+	{
 
 
 
-	template <typename dType>
-	BinaryHeap<dType>::BinaryHeap(const unsigned int &nDegree) : rank_(nDegree), n_items_(0)
+	};
+
+
+
+
+	////////////////////////////////////////////////////////////
+	/// MEMBER FUNCTION IMPLEMENTATION /////////////////////////
+	////////////////////////////////////////////////////////////
+
+	template <typename KeyType>
+	BinaryHeap<KeyType>::BinaryHeap(const unsigned int &nDegree) : rank_(nDegree), n_items_(0)
 	/**
 	 * \brief Constructor
 	 * \param[in] nDegree number of layers pre-constructed at initialization
@@ -175,12 +188,12 @@ namespace o_data_structures
 	 */
 	{
 		max_items_ = (unsigned int) (pow(2.,rank_+1)-1);;
-		A_ = new dType[(unsigned int) pow(2.,rank_+1)];
+		A_ = new KeyType[(unsigned int) pow(2.,rank_+1)];
 	}
 
 
-	template <typename dType>
-	BinaryHeap<dType>::~BinaryHeap()
+	template <typename KeyType>
+	BinaryHeap<KeyType>::~BinaryHeap()
 	/**
 	 * \brief Destructor
 	 */
@@ -191,8 +204,8 @@ namespace o_data_structures
 
 
 
-	template <typename dType>
-	int BinaryHeap<dType>::Insert(const dType &item)
+	template <typename KeyType>
+	int BinaryHeap<KeyType>::Insert(const KeyType &item)
 	/**
 	 *  \brief Adds an item to the heap
 	 *  \details Insert() automatically handles reallocation of the heaps memory if
@@ -217,8 +230,8 @@ namespace o_data_structures
 	}
 
 
-	template <typename dType>
-	dType BinaryHeap<dType>::Remove(const unsigned int &i)
+	template <typename KeyType>
+	KeyType BinaryHeap<KeyType>::Remove(const unsigned int &i)
 	/**
 	 *  \brief Removes an item from the heap
 	 *  \details Remove() automatically handles reallocation of the heaps memory if
@@ -238,7 +251,7 @@ namespace o_data_structures
 			throw std::runtime_error("Remove: index i out of bound\n");
 		}
 
-		dType RemovedItem = A_[i];
+		KeyType RemovedItem = A_[i];
 		int lastIdx = n_items_-1;
 		Swap(i,lastIdx);
 		--n_items_;
@@ -262,13 +275,13 @@ namespace o_data_structures
 	}
 
 
-	template <typename dType>
-	int BinaryHeap<dType>::IncreaseKey(int i, dType new_key)
+	template <typename KeyType>
+	int BinaryHeap<KeyType>::IncreaseKey(int i, KeyType new_key)
 	/**
 	 * \brief decreases the key of the node at index i to newKey
 	 *
 	 * \details
-	 * Note: If using some class for dType Change key will use operator= offer
+	 * Note: If using some class for KeyType Change key will use operator= offer
 	 * the class to overwirte item at index with newKey
 	 *
 	 * \param[in] i Index of the item that will be change
@@ -291,13 +304,13 @@ namespace o_data_structures
 	}
 
 
-	template <typename dType>
-	int BinaryHeap<dType>::DecreaseKey(int i, dType new_key)
+	template <typename KeyType>
+	int BinaryHeap<KeyType>::DecreaseKey(int i, KeyType new_key)
 	/**
 	 * \brief decreases the key of the node at index i to newKey
 	 *
 	 * \details
-	 * Note: If using some class for dType Change key will use operator= offer
+	 * Note: If using some class for KeyType Change key will use operator= offer
 	 * the class to overwirte item at index with newKey
 	 *
 	 * \param[in] i Index of the item that will be change
@@ -322,13 +335,13 @@ namespace o_data_structures
 
 
 
-	template <typename dType>
-	int BinaryHeap<dType>::ChangeKey(int i, const dType &newKey)
+	template <typename KeyType>
+	int BinaryHeap<KeyType>::ChangeKey(int i, const KeyType &newKey)
 	/**
 	 * \brief changes the key of the node at index i to newKey
 	 *
 	 * \details
-	 * Note: If using some class for dType Change key will use operator= offer
+	 * Note: If using some class for KeyType Change key will use operator= offer
 	 * the class to overwirte item at index with newKey
 	 *
 	 * \param[in] i Index of the item that will be change
@@ -358,8 +371,8 @@ namespace o_data_structures
 
 
 
-	template <typename dType>
-	void BinaryHeap<dType>::Build()
+	template <typename KeyType>
+	void BinaryHeap<KeyType>::Build()
 	/**
 	 * \brief restores heap conditions for all elements buttom up
 	 * \details Applies SiftDown for all elements in BinaryHeap::A_
@@ -376,18 +389,18 @@ namespace o_data_structures
 
 
 
-	template<typename dType>
+	template<typename KeyType>
 	template<typename Func>
-	bool BinaryHeap<dType>::Find(const dType item, Func IsEqual) const
+	bool BinaryHeap<KeyType>::Find(const KeyType item, Func IsEqual) const
 	/**
 	 * \brief Searches the heap for an item (use this if item is a literal or float and its position in heap isn't of interest)
 	 *
 	 * \details
-	 * This search function is intended to be used if dType is either
+	 * This search function is intended to be used if KeyType is either
 	 * a literals or float. In This case the vale of item is identical to its key.
 	 * IsEqual is by default:
 	 *
-	 * Func = [] (const dType &N, const dType &key) {return N==key;}
+	 * Func = [] (const KeyType &N, const KeyType &key) {return N==key;}
 	 *
 	 * And shouldn't be overridden.
 	 *
@@ -398,13 +411,13 @@ namespace o_data_structures
 	 *
 	 * \sa
 	 * - if the position of item within BinaryHeap is needed to read, remove or modify item the
-	 *   method bool BinaryHeap<dType>::Find(const dType key, unsigned int &iter, Func IsEqual) const
+	 *   method bool BinaryHeap<KeyType>::Find(const KeyType key, unsigned int &iter, Func IsEqual) const
 	 *   should be used.
 	 * - if item is a class or object with more than one field and operator== isn't defined for this
 	 *   class or the search should be applied to an other field than operator== is designed for
 	 *   the one of the following two methods should be used
-	 *   - bool BinaryHeap<dType>::Find(Func IsEqual) const
-	 *   - bool BinaryHeap<dType>::Find(unsigned int &iter, Func IsEqual) const
+	 *   - bool BinaryHeap<KeyType>::Find(Func IsEqual) const
+	 *   - bool BinaryHeap<KeyType>::Find(unsigned int &iter, Func IsEqual) const
 	 */
 	{
 		for(unsigned int i=0; i<n_items_; ++i)
@@ -414,19 +427,19 @@ namespace o_data_structures
 	}
 
 
-	template<typename dType>
+	template<typename KeyType>
 	template<typename Func>
-	bool BinaryHeap<dType>::Find(const dType item, unsigned int &iter, Func IsEqual) const
+	bool BinaryHeap<KeyType>::Find(const KeyType item, unsigned int &iter, Func IsEqual) const
 	/**
 	 * \brief Searches the heap for an item (use this if item is a literal or float and its position in heap is of interest)
 	 *
 	 * \details
-	 * This search function is intended to be used if dType is either
+	 * This search function is intended to be used if KeyType is either
 	 * a literals or float and the position of item on the heap is of interest.
 	 * In This case the vale of item is identical to its key.
 	 * IsEqual is by default:
 	 *
-	 * Func = [] (const dType &N, const dType &key) {return N==key;}
+	 * Func = [] (const KeyType &N, const KeyType &key) {return N==key;}
 	 *
 	 * And shouldn't be overridden.
 	 *
@@ -438,13 +451,13 @@ namespace o_data_structures
 	 *
 	 * \sa
 	 * - if the position of item on the heap isn't the
-	 *   method bool BinaryHeap<dType>::Find(const dType item, Func IsEqual) const
+	 *   method bool BinaryHeap<KeyType>::Find(const KeyType item, Func IsEqual) const
 	 *   should be used.
 	 * - if item is a class or object with more than one field and operator== isn't defined for this
 	 *   class or the search should be applied to an other field than operator== is designed for
 	 *   the one of the following two methods should be used
-	 *   - bool BinaryHeap<dType>::Find(Func IsEqual) const
-	 *   - bool BinaryHeap<dType>::Find(unsigned int &iter, Func IsEqual) const
+	 *   - bool BinaryHeap<KeyType>::Find(Func IsEqual) const
+	 *   - bool BinaryHeap<KeyType>::Find(unsigned int &iter, Func IsEqual) const
 	 */
 	{
 		for(unsigned int i=0; i<n_items_; ++i)
@@ -457,19 +470,19 @@ namespace o_data_structures
 	}
 
 
-	template<typename dType>
+	template<typename KeyType>
 	template<typename Func>
-	bool BinaryHeap<dType>::Find(Func IsEqual) const
+	bool BinaryHeap<KeyType>::Find(Func IsEqual) const
 	/**
 	 * \brief Searches the heap for an item (use this if item has multiple fields but no operator== or operator== isn't designed for the field you want to search for; and items position on the heap isn't of interest)
 	 *
 	 * \details
-	 * This search function is intended to be used if dType is
+	 * This search function is intended to be used if KeyType is
 	 * an object with multiple field but no operator== is defined or operator==
 	 * doesn't compare fields you actually want to compare
 	 *
 	 * This function is basically the same as
-	 * bool BinaryHeap<dType>::Find(const dType item, Func IsEqual) const
+	 * bool BinaryHeap<KeyType>::Find(const KeyType item, Func IsEqual) const
 	 * but it gets rid of the item parameter, since it's assumed that
 	 * a valid closure for comparison is supplied via Func.
 	 * Func has no default value and must be supplied.
@@ -497,12 +510,12 @@ namespace o_data_structures
 	 *
 	 * \sa
 	 * - Use one of the alternative search functions
-	 *   - bool BinaryHeap<dType>::Find(const dType item, unsigned int &iter, Func IsEqual) const
-	 *   - bool BinaryHeap<dType>::Find(const dType item, Func IsEqual) const
+	 *   - bool BinaryHeap<KeyType>::Find(const KeyType item, unsigned int &iter, Func IsEqual) const
+	 *   - bool BinaryHeap<KeyType>::Find(const KeyType item, Func IsEqual) const
 	 *   if item is literal or float
 	 *
 	 * - If items position on the heap is of interest, but apart from that prerequisite are the same use:
-	 * bool BinaryHeap<dType>::Find(unsigned int &iter, Func IsEqual) const
+	 * bool BinaryHeap<KeyType>::Find(unsigned int &iter, Func IsEqual) const
 	 */
 	{
 		for(unsigned int i=0; i<n_items_; ++i)
@@ -512,19 +525,19 @@ namespace o_data_structures
 	}
 
 
-	template<typename dType>
+	template<typename KeyType>
 	template<typename Func>
-	bool BinaryHeap<dType>::Find(unsigned int &iter, Func IsEqual) const
+	bool BinaryHeap<KeyType>::Find(unsigned int &iter, Func IsEqual) const
 	/**
 	 * \brief Searches the heap for an item (use this if item has multiple fields but no operator== or operator== isn't designed for the field you want to search for; and items position on the heap is of interest)
 	 *
 	 * \details
-	 * This search function is intended to be used if dType is
+	 * This search function is intended to be used if KeyType is
 	 * an object with multiple field but no operator== is defined or operator==
 	 * doesn't compare fields you actually want to compare
 	 *
 	 * This function is basically the same as
-	 * bool BinaryHeap<dType>::Find(const dType item, unsigned int &iter, Func IsEqual) const
+	 * bool BinaryHeap<KeyType>::Find(const KeyType item, unsigned int &iter, Func IsEqual) const
 	 * but it gets rid of the item parameter, since it's assumed that
 	 * a valid closure for comparison is supplied via Func.
 	 * Func has no default value and must be supplied.
@@ -556,14 +569,14 @@ namespace o_data_structures
 	 *
 	 * \sa
 	 * - Alternatice seach functions if item is literal or float
-	 *   - bool BinaryHeap<dType>::Find(const dType item, unsigned int &iter, Func IsEqual) const
-	 *   - bool BinaryHeap<dType>::Find(const dType item, Func IsEqual) const
+	 *   - bool BinaryHeap<KeyType>::Find(const KeyType item, unsigned int &iter, Func IsEqual) const
+	 *   - bool BinaryHeap<KeyType>::Find(const KeyType item, Func IsEqual) const
 	 *
 	 * - if item is a class or object with more than one field and operator== isn't defined for this
 	 *   class or the search should be applied to an other field than operator== is designed for
 	 *   the one of the following two methods should be used
-	 *   - bool BinaryHeap<dType>::Find(Func IsEqual) const
-	 *   - bool BinaryHeap<dType>::Find(unsigned int &iter, Func IsEqual) const
+	 *   - bool BinaryHeap<KeyType>::Find(Func IsEqual) const
+	 *   - bool BinaryHeap<KeyType>::Find(unsigned int &iter, Func IsEqual) const
 	 */
 	{
 		for(unsigned int i=0; i<n_items_; ++i)
@@ -578,8 +591,8 @@ namespace o_data_structures
 
 
 
-	template <typename dType>
-	bool BinaryHeap<dType>::IsMinHeap(const unsigned int &i)
+	template <typename KeyType>
+	bool BinaryHeap<KeyType>::IsMinHeap(const unsigned int &i)
 	/**
 	 * \details Checks if the sub-branch beginning at node i is a MinHeap.
 	 * Meaning: For every node in the sub-tree its key must be
@@ -603,8 +616,8 @@ namespace o_data_structures
 	}
 
 
-	template <typename dType>
-	void BinaryHeap<dType>::Swap (const unsigned int &a, const unsigned int &b)
+	template <typename KeyType>
+	void BinaryHeap<KeyType>::Swap (const unsigned int &a, const unsigned int &b)
 	/**
 	 * \brief swaps two elements a and b with each other
 	 * \details swap utilizes the very last element in BinaryHeap::A_ for temporary storage
@@ -619,8 +632,8 @@ namespace o_data_structures
 	}
 
 
-	template <typename dType>
-	int BinaryHeap<dType>::Resize(const unsigned int &new_max_items)
+	template <typename KeyType>
+	int BinaryHeap<KeyType>::Resize(const unsigned int &new_max_items)
 	/**
 	 * \brief reallocates memory for the heap (array BinaryHeap::A_) depending
 	 * on size new_maxItems
@@ -636,7 +649,7 @@ namespace o_data_structures
 		{
 			++rank_;
 			max_items_ = (unsigned int) pow(2.,rank_+1)-1;
-			dType *tmp = new dType[(unsigned int) pow(2.,rank_+1)];
+			KeyType *tmp = new KeyType[(unsigned int) pow(2.,rank_+1)];
 			for(unsigned int j=0; j<n_items_; ++j)
 			{
 				tmp[j] = A_[j];
@@ -656,7 +669,7 @@ namespace o_data_structures
 		{
 			--rank_;
 			max_items_ = (unsigned int) pow(2.,rank_+1)-1;
-			dType *tmp = new dType[(unsigned int) pow(2.,rank_+1)];
+			KeyType *tmp = new KeyType[(unsigned int) pow(2.,rank_+1)];
 			for(unsigned int j=0; j<n_items_; ++j)
 				tmp[j] = A_[j];
 			delete[] A_;
@@ -668,8 +681,8 @@ namespace o_data_structures
 	}
 
 
-	template <typename dType>
-	int BinaryHeap<dType>::SiftDown(int index)
+	template <typename KeyType>
+	int BinaryHeap<KeyType>::SiftDown(int index)
 	/**
 	 * \brief (aka heapify) Moves a node at index downwards within the tree by swapping with its child nodes until equilibrium is reached
 	 * \details Right child has priority if left and right are equal
@@ -699,8 +712,8 @@ namespace o_data_structures
 	}
 
 
-	template <typename dType>
-	int BinaryHeap<dType>::SiftUp(unsigned int index)
+	template <typename KeyType>
+	int BinaryHeap<KeyType>::SiftUp(unsigned int index)
 	/**
 	 * \brief Moves a node at index up within the tree by swapping with its parent node until equilibrium is reached
 	 *
