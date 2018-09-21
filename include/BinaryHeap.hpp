@@ -23,7 +23,6 @@
  */
 #pragma once
 
-#include <cmath>                       // needed for std::floor(..)
 #include <stdexcept>                   // exception handling
 #include "oMath.hpp"
 
@@ -66,6 +65,50 @@ namespace o_data_structures
 
 
 
+	/**
+	 * \brief a Node that provides two fields (first a key and second a reference to an instance of an Object)
+	 *
+	 * \details
+	 * This class can be used in a tree structure or search algorithm if the Objects referenced by ReferencingNode
+	 * shouldn't be moved in memory (for example if they are addressed by some pointer or are very big)
+	 *
+	 * the defined operators >,<, >=, <= and == operate on the field key_ and leave reference_ untouched
+	 */
+	template <typename KeyType, typename DataType>
+	class BinaryHeapNode
+	{
+	public :
+		explicit BinaryHeapNode() :
+				key_(0), data_(0L) { }
+		explicit BinaryHeapNode(const KeyType &key, DataType data) :
+				key_(key), data_(data) { }               ///< Contructor
+		/* explicit */ BinaryHeapNode(const BinaryHeapNode &rhs) :
+				key_(rhs.key_), data_(rhs.data_) { }     ///< Copy Contructor
+
+		KeyType key_;                               ///< the key (used as order relation)
+		DataType *data_;                                        ///< reference to some Object
+
+		bool operator>(const BinaryHeapNode &rhs) const {
+			return key_>rhs.key_;}                 ///< operating on key_
+		bool operator<(const BinaryHeapNode &rhs) const {
+			return key_<rhs.key_;}                 ///< operating on key_
+		bool operator>=(const BinaryHeapNode &rhs) const {
+			return key_>=rhs.key_;}                ///< operating on key_
+		bool operator<=(const BinaryHeapNode &rhs) const {
+			return key_<=rhs.key_;}                ///< operating on key_
+		bool operator==(const BinaryHeapNode &rhs) const {
+			return key_==rhs.key_;}                ///< operating on key_
+
+		/**
+		 * \brief copies fields of ReferencingNode
+		 */
+		BinaryHeapNode &operator=(const BinaryHeapNode &rhs)
+		{
+			key_ = rhs.key_;
+			data_ = rhs.data_;
+			return *this;
+		}
+	};
 
 
 	template <class ... Args> class BinaryHeap;
@@ -179,8 +222,12 @@ namespace o_data_structures
 
 
 	template <typename KeyType, typename DataType>
-	class BinaryHeap<KeyType,DataType> : BinaryHeap<KeyType>
-	{ };
+	class BinaryHeap<KeyType,DataType> : BinaryHeap<BinaryHeapNode<KeyType,DataType>>
+	{
+
+
+
+	};
 
 
 
