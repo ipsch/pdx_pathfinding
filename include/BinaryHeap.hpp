@@ -200,8 +200,8 @@ namespace o_data_structures
 	template <typename KeyType>
 	BinaryHeap<KeyType>::BinaryHeap(const unsigned int &nDegree) : rank_(nDegree), n_items_(0)
 	{
-		max_items_ = (unsigned int) (pow(2.,rank_+1)-1);;
-		A_ = new KeyType[(unsigned int) pow(2.,rank_+1)];
+		max_items_ = o_math::oPow2(rank_+1)-1;
+		A_ = new KeyType[o_math::oPow2(rank_+1)];
 	}
 
 
@@ -668,8 +668,8 @@ namespace o_data_structures
 		if ( new_max_items > max_items_ )
 		{
 			++rank_;
-			max_items_ = (unsigned int) pow(2.,rank_+1)-1;
-			KeyType *tmp = new KeyType[(unsigned int) pow(2.,rank_+1)];
+			max_items_ = o_math::oPow2(rank_+1)-1;
+			KeyType *tmp = new KeyType[o_math::oPow2(rank_+1)];
 			for(unsigned int j=0; j<n_items_; ++j)
 			{
 				tmp[j] = A_[j];
@@ -685,11 +685,11 @@ namespace o_data_structures
 			return;
 
 		// decrease allocated memory if at least two levels are empty
-		if ( new_max_items <= (unsigned int) pow(2.,rank_-1)-1 )
+		if ( new_max_items <= o_math::oPow2(rank_-1)-1 )
 		{
 			--rank_;
-			max_items_ = (unsigned int) pow(2.,rank_+1)-1;
-			KeyType *tmp = new KeyType[(unsigned int) pow(2.,rank_+1)];
+			max_items_ = o_math::oPow2(rank_+1)-1;
+			KeyType *tmp = new KeyType[o_math::oPow2(rank_+1)];
 			for(unsigned int j=0; j<n_items_; ++j)
 				tmp[j] = A_[j];
 			delete[] A_;

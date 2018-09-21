@@ -1,6 +1,6 @@
 #include "oMath.hpp"
 
-namespace oMath
+namespace o_math
 {
 
 	unsigned int oPow2(unsigned int e)

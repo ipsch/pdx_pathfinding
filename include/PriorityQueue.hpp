@@ -212,7 +212,7 @@ namespace PriorityQueue
 			force_never_decrease_(force_never_decrease)
 	{
 		if(nMinLayers)
-			resize(oMath::oPow2(nMinLayers)-1);
+			resize(o_math::oPow2(nMinLayers)-1);
 	}
 
 
@@ -276,8 +276,8 @@ namespace PriorityQueue
 
 
 
-		unsigned int n_common_layers = oMath::min<unsigned int>(nLayers_, new_nLayers);
-		unsigned int n_excess_layers = oMath::max<unsigned int>(nLayers_, new_nLayers);
+		unsigned int n_common_layers = o_math::min<unsigned int>(nLayers_, new_nLayers);
+		unsigned int n_excess_layers = o_math::max<unsigned int>(nLayers_, new_nLayers);
 
 		T** temp_data = new T*[new_nLayers];
 		for(int i=0; i<new_nLayers; ++i)
@@ -292,7 +292,7 @@ namespace PriorityQueue
 		for(unsigned int layer = n_common_layers; layer < n_excess_layers; ++layer)
 		{
 			if(increase)
-				temp_data[layer] = new T[oMath::oPow2(layer)];
+				temp_data[layer] = new T[o_math::oPow2(layer)];
 			else
 				delete[] ppData_[layer];
 		}
