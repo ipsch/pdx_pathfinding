@@ -77,10 +77,12 @@ class Map
 {
 public :
 	explicit Map(const MapMetaObject &map) :
-		width_(map.nMapWidth_), height_(map.nMapHeight_), data_(map.pMap_)
+		width_(map.nMapWidth_), height_(map.nMapHeight_), data_(map.pMap_),
+		i0_(0), j0_(0), max_manhattan_(.0)
 	{ }
 	explicit Map(const int &width, const int &height, const unsigned char *data) :
-		width_(width), height_(height), data_(data) { }
+		width_(width), height_(height), data_(data),
+		i0_(0), j0_(0), max_manhattan_(.0) { }
 	//void Load(const std::string &path_and_file_name);
 
 	void set_heuristic(const int &i, const int &j);
@@ -105,7 +107,8 @@ public :
 	double heuristic(const int &i, const int &j) const;
 	double heuristic(const unsigned int &id) const;
 private :
-	explicit Map() : data_(0L), width_(0), height_(0) { }
+	explicit Map() : data_(0L), width_(0), height_(0),
+			i0_(0), j0_(0), max_manhattan_(.0){ }
 	static const unsigned char terrain_traversable_;
 	static const unsigned char terrain_blocked_;
 	// terrain encoding
