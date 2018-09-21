@@ -106,8 +106,11 @@ int AStar::ExpandNode(sNode *predecessor)
 
 
 		unsigned int search_index;
-		bool search_success = open_list_.find(search_index,
-				[&successor_id] (ReferencingNode<sNode> &N) {return N.data_->id_==successor_id;});
+		bool search_success = open_list_.find_(search_index,
+				[&successor_id] (o_data_structures::BinaryHeapNode<float, sNode*> &N) {return N.data_->id_==successor_id;});
+		//bool search_success = open_list_.find_(search_index,
+		//		[] (o_data_structures::BinaryHeapNode<float, sNode*> &N) {return false;});
+
 
         if (search_success)
         	if(path_cost >= open_list_.A_[search_index].data_->path_cost_ )
@@ -123,15 +126,15 @@ int AStar::ExpandNode(sNode *predecessor)
         p_successor->path_cost_ = path_cost;
         p_successor->fvalue_ = fvalue;
 
-		ReferencingNode<sNode> r_successor(p_successor->fvalue_,p_successor);
+		//ReferencingNode<sNode> r_successor(p_successor->fvalue_,p_successor);
 
 		// ToDO 2018-09-13 ipsch: mem-leak in AStar::Expand node
 		// ChangeKey referencing Node new item
 		// old referencing node get's deleted, but old item isn't
 		if (search_success)
-            open_list_.change_key(search_index, r_successor);
+            open_list_.change_key(search_index, fvalue);
         else
-        	open_list_.insert(r_successor);
+        	open_list_.insert(fvalue, p_successor);
 	}
     return 0;
 }
@@ -201,7 +204,7 @@ int AStar::FindPath(const int &iS, const int &jS, const int &iT, const int &jT)
 
 
 	map_.set_heuristic(target_node_id);
-	open_list_.insert(ReferencingNode<sNode>(p_start_node->fvalue_,p_start_node));
+	open_list_.insert(p_start_node->fvalue_,p_start_node);
 
 
     do
@@ -223,7 +226,7 @@ int AStar::FindPath(const int &iS, const int &jS, const int &iT, const int &jT)
 
         ExpandNode(p_current_node);
 
-    } while (open_list_.n_items_);
+    } while (open_list_.n_items_!=0);
 
     ClearLists();
     return path_length;

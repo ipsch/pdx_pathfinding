@@ -54,6 +54,7 @@
 
 using namespace PriorityQueue;
 
+
 int FindPath(const int nStartX, const int nStartY,
              const int nTargetX, const int nTargetY,
              const unsigned char* pMap, const int nMapWidth, const int nMapHeight,
@@ -115,7 +116,7 @@ public :
 	unsigned int nodes_expanded_;
 private :
 
-	typedef ReferencingNode<sNode> NodeType;
+
 	AStar();
 	void ClearLists();
 	int ExpandNode(sNode *predecessor);
@@ -123,8 +124,8 @@ private :
 	// ToDo : 2018-09-11 ipsch: rework heuristics
 	// should belong to map
 	Heuristic_2d_discrete heuristic_;
-	o_data_structures::BinaryHeap<NodeType> open_list_;   /**< Priority queue containing all Nodes that need processing */
-	//HeapArray<float, sNode*> open_list_;   /**< Priority queue containing all Nodes that need processing */
+
+	o_data_structures::BinaryHeap<float, sNode*> open_list_;   /**< Priority queue containing all Nodes that need processing */
 
 	RedBlackTree<unsigned int, sNode*>
 		closed_list_;                  /**< Binary search tree containing all visited nodes  */

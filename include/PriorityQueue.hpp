@@ -862,7 +862,6 @@ namespace PriorityQueue
 	void HeapArray<KeyType, DataType>::insert(const KeyType &key, const DataType &data)
 	{
 		HeapNode<KeyType, DataType> tmp(key, data);
-
 		HeapArray<HeapNode<KeyType, DataType>>::insert(tmp);
 		return;
 	}

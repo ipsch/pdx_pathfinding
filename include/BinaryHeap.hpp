@@ -24,6 +24,7 @@
 #pragma once
 
 #include <stdexcept>                   // exception handling
+#include <cmath>
 #include "oMath.hpp"
 
 
@@ -86,7 +87,7 @@ namespace o_data_structures
 				key_(rhs.key_), data_(rhs.data_) { }     ///< Copy Contructor
 
 		KeyType key_;                               ///< the key (used as order relation)
-		DataType *data_;                                        ///< reference to some Object
+		DataType data_;                                        ///< reference to some Object
 
 		bool operator>(const BinaryHeapNode &rhs) const {
 			return key_>rhs.key_;}                 ///< operating on key_
@@ -187,22 +188,19 @@ namespace o_data_structures
 
 		void increase_key(int i, KeyType new_key);
 		void decrease_key(int i, KeyType new_key);
-		void change_key(int i, const KeyType &new_key);
+		void change_key(unsigned int &i, const KeyType &new_key);
 		void build();
 
 		bool is_empty(void) const {return n_items_==0;}
 
+		// Func IsEqual = [] (const KeyType &N, const KeyType &key) {return N==key;}
+
 		// various find functions
 		template<typename Func>
-		bool find(Func IsEqual) const;
-		template<typename Func>
-		bool find(unsigned int &iter, Func IsEqual) const;
-		template<typename Func>
-		bool find(const KeyType key,
-				Func IsEqual = [] (const KeyType &N, const KeyType &key) {return N==key;}) const;
-		template<typename Func>
-		bool find(const KeyType key, unsigned int &iter,
-				Func IsEqual = [] (const KeyType &N, const KeyType &key) {return N==key;}) const;
+		bool find_(unsigned int &iter, Func IsEqual) const;
+		bool find(unsigned int &iter, const KeyType &key) const;
+		bool find(const KeyType &key) const;
+
 
 		// ToDo : 2019-09-11 ipsch: BinaryHeap member should be private
 		// but there are a few accesses that rely on public rights
@@ -211,7 +209,7 @@ namespace o_data_structures
 		unsigned int rank_;                ///< Current number of layers/levels associated with max_items_
 		unsigned int n_items_;             ///< Number of data nodes currently stored in BinarayHeap::A_
 
-	private :
+	protected :
 		// helper functions
 		bool is_minHeap(const unsigned int &i=0);
 		void swap(const unsigned int &a, const unsigned int &b);
@@ -222,8 +220,99 @@ namespace o_data_structures
 
 
 	template <typename KeyType, typename DataType>
-	class BinaryHeap<KeyType,DataType> : BinaryHeap<BinaryHeapNode<KeyType,DataType>>
+	class BinaryHeap<KeyType,DataType> : public BinaryHeap<BinaryHeapNode<KeyType,DataType>>
 	{
+	public :
+		void insert(const KeyType &newkey, const DataType &data)
+		{
+			BinaryHeapNode<KeyType, DataType> node(newkey, data);
+			BinaryHeap<BinaryHeapNode<KeyType, DataType>>::insert(node);
+		}
+
+
+
+
+
+		void change_key(unsigned int &i, const KeyType &newKey)
+		{
+	       #if defined(BINARYHEAP_CAUTIOUS)
+			if ( !is_minHeap() )
+				throw std::runtime_error("change_key: Heap Condition not met\n");
+	       #endif
+
+			if (newKey > this->A_[i].key_)
+			{
+	 			this->A_[i].key_ = newKey;
+				this->sift_down(i);
+			}
+			else if (newKey < this->A_[i].key_)
+			{
+				this->A_[i].key_ = newKey;
+				this->sift_up(i);
+			}
+			return;
+		}
+
+
+
+
+
+
+		/**
+		 * \brief decreases the key of the node at index i to newKey
+		 *
+		 * \details
+		 * Note: If using some class for KeyType Change key will use operator= offer
+		 * the class to overwirte item at index with newKey
+		 *
+		 * \param[in] i Index of the item that will be change
+		 * \param[in] newKey The new key or item to replace item at i
+		 * \return Error-code 0 on success; -1 otherwise
+		 */
+
+		void increase_key(int i, KeyType new_key)
+		{
+	       #if defined(BINARYHEAP_CAUTIOUS)
+			if (!is_minHeap())
+				throw std::runtime_error("increase_key: Heap Condition not met\n");
+			if (i>=n_items_)
+				throw std::runtime_error("pop: index i out of bound\n");
+			if (new_key <= A_[i])
+				throw runtime_error("increase_key: new_key too small\n");
+	       #endif
+			this->A_[i].key_ = new_key;
+			this->sift_down(i);
+			return;
+		}
+
+
+
+		/**
+		 * \brief decreases the key of the node at index i to newKey
+		 *
+		 * \details
+		 * Note: If using some class for KeyType Change key will use operator= offer
+		 * the class to overwirte item at index with newKey
+		 *
+		 * \param[in] i Index of the item that will be change
+		 * \param[in] newKey The new key or item to replace item at i
+		 * \return Error-code 0 on success; -1 otherwise
+		 */
+		void decrease_key(unsigned int &i, KeyType new_key)
+		{
+	       #if defined(BINARYHEAP_CAUTIOUS)
+			if (!is_minHeap())
+				throw std::runtime_error("decrease_key: Heap Condition not met\n");
+			if (i>=n_items_)
+				throw std::runtime_error("decrease_key: index i out of bound\n");
+			if (new_key >= A_[i])
+				throw runtime_error("decrease_key: new_key too big\n");
+	       #endif
+			this->A_[i].key_ = new_key;
+			this->sift_up(i);
+			return;
+		}
+
 
 
 
@@ -418,7 +507,7 @@ namespace o_data_structures
 	 * \return Error-code 0 on success; -1 otherwise
 	 */
 	template <typename KeyType>
-	void BinaryHeap<KeyType>::change_key(int i, const KeyType &newKey)
+	void BinaryHeap<KeyType>::change_key(unsigned int &i, const KeyType &newKey)
 	{
        #if defined(BINARYHEAP_CAUTIOUS)
 		if ( !is_minHeap() )
@@ -440,15 +529,14 @@ namespace o_data_structures
 
 
 
-
-	template <typename KeyType>
-	void BinaryHeap<KeyType>::build()
 	/**
 	 * \brief restores heap conditions for all elements buttom up
 	 * \details Applies SiftDown for all elements in BinaryHeap::A_
 	 *          beginning with the last element
 	 *
 	 */
+	template <typename KeyType>
+	void BinaryHeap<KeyType>::build()
 	{
 		if (n_items_==1)
 			return;
@@ -487,11 +575,13 @@ namespace o_data_structures
 	 */
 	template<typename KeyType>
 	template<typename Func>
-	bool BinaryHeap<KeyType>::find(const KeyType item, Func IsEqual) const
+	bool BinaryHeap<KeyType>::find_(unsigned int &iter, Func IsEqual) const
 	{
 		for(unsigned int i=0; i<n_items_; ++i)
-			if(IsEqual(A_[i],item))
+			if(IsEqual(A_[i]))
+			{
 				return true;
+			}
 		return false;
 	}
 
@@ -526,16 +616,9 @@ namespace o_data_structures
 	 *   - bool BinaryHeap<KeyType>::find(unsigned int &iter, Func IsEqual) const
 	 */
 	template<typename KeyType>
-	template<typename Func>
-	bool BinaryHeap<KeyType>::find(const KeyType item, unsigned int &iter, Func IsEqual) const
+	bool BinaryHeap<KeyType>::find(unsigned int &iter, const KeyType &key) const
 	{
-		for(unsigned int i=0; i<n_items_; ++i)
-			if(IsEqual(A_[i]),item)
-			{
-				iter = i;
-				return true;
-			}
-		return false;
+		return find_(iter, [&key] (const KeyType &X) {return X==key;});
 	}
 
 
@@ -584,76 +667,10 @@ namespace o_data_structures
 	 * bool BinaryHeap<KeyType>::find(unsigned int &iter, Func IsEqual) const
 	 */
 	template<typename KeyType>
-	template<typename Func>
-	bool BinaryHeap<KeyType>::find(Func IsEqual) const
+	bool BinaryHeap<KeyType>::find(const KeyType &key) const
 	{
-		for(unsigned int i=0; i<n_items_; ++i)
-			if(IsEqual(A_[i]))
-				return true;
-		return false;
-	}
-
-
-	/**
-	 * \brief Searches the heap for an item (use this if item has multiple fields but no operator== or operator== isn't designed for the field you want to search for; and items position on the heap is of interest)
-	 *
-	 * \details
-	 * This search function is intended to be used if KeyType is
-	 * an object with multiple field but no operator== is defined or operator==
-	 * doesn't compare fields you actually want to compare
-	 *
-	 * This function is basically the same as
-	 * bool BinaryHeap<KeyType>::find(const KeyType item, unsigned int &iter, Func IsEqual) const
-	 * but it gets rid of the item parameter, since it's assumed that
-	 * a valid closure for comparison is supplied via Func.
-	 * Func has no default value and must be supplied.
-	 *
-	 * An example how to use this function could look like this:
-	 * \code{.cpp}
-	 * 		struct foo
-	 * 		{
-	 * 			int x,y,z;
-	 * 		};
-	 *
-	 * 		BinaryHeap<foo> bar;
-	 * 		// ... inserting some items
-	 * 		int search_value=100;
-	 *  	bool search_success = bar.find([&search_value] (foo &item) {return item.y==search_value;});
-	 * \endcode
-	 *
-	 * This example illustrates how fields that should be searched can easily be
-	 * shwitch at the point of callin find(..)
-	 * As result of this example, all elements of BinaryHeap::A_ would have their
-	 * field y compared to search_value.
-	 *
-	 *
-	 * \param[in] item The item to search for
-	 * \param[out] iter the index of item on the heap is written iter on return
-	 * \param[in] Func Function-pointer or lambda-function to compare item to items in BinaryHeap::A_
-	 * \return Returns true if item was found in heap; returns false otherwise
-	 *
-	 * \sa
-	 * - Alternatice seach functions if item is literal or float
-	 *   - bool BinaryHeap<KeyType>::find(const KeyType item, unsigned int &iter, Func IsEqual) const
-	 *   - bool BinaryHeap<KeyType>::find(const KeyType item, Func IsEqual) const
-	 *
-	 * - if item is a class or object with more than one field and operator== isn't defined for this
-	 *   class or the search should be applied to an other field than operator== is designed for
-	 *   the one of the following two methods should be used
-	 *   - bool BinaryHeap<KeyType>::find(Func IsEqual) const
-	 *   - bool BinaryHeap<KeyType>::find(unsigned int &iter, Func IsEqual) const
-	 */
-	template<typename KeyType>
-	template<typename Func>
-	bool BinaryHeap<KeyType>::find(unsigned int &iter, Func IsEqual) const
-	{
-		for(unsigned int i=0; i<n_items_; ++i)
-			if(IsEqual(A_[i]))
-			{
-				iter = i;
-				return true;
-			}
-		return false;
+		unsigned int iter;
+		return find_(iter, [&key] (const KeyType &X) {return X==key;});
 	}
 
 
