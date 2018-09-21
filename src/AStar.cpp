@@ -113,8 +113,6 @@ int AStar::ExpandNode(sNode *predecessor)
         	if(path_cost >= open_list_.A_[search_index].data_->path_cost_ )
         		continue;
 
-        // ToDo : 2018-09-13 ipsch: limit expanding to maximum path length
-        // (which is equal to buffer length)
         float fvalue = map_.heuristic(successor_id) + (double) path_cost;//heuristic_(map_.GetIJ(successor_id));
 
 		//sNode successor;
