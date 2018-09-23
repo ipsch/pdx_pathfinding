@@ -208,7 +208,7 @@ int * pOutBuffer;
 
 
 
-void RandomizeCoordinates(int &x, int &y, Map &map)
+void RandomizeCoordinates(int &x, int &y, o_graph::Map &map)
 {
 	bool valid = false;
 	while(!valid)
@@ -223,7 +223,7 @@ void RandomizeCoordinates(int &x, int &y, Map &map)
 
 
 AnalysisRuntimeData Core(int nStartX, int nStartY, int nTargetX, int nTargetY,
-		const Map &map, std::string map_name)
+		const o_graph::Map &map, std::string map_name)
 {
 	int path_length;
 	unsigned int nodes_expanded;
@@ -254,7 +254,7 @@ AnalysisRuntimeData Core(int nStartX, int nStartY, int nTargetX, int nTargetY,
 }
 
 
-AnalysisRuntime RunNTimes(unsigned int nRuns, Map &map, std::string map_name)
+AnalysisRuntime RunNTimes(unsigned int nRuns, o_graph::Map &map, std::string map_name)
 {
 
 	std::string file_analysis;
@@ -281,8 +281,8 @@ AnalysisRuntime RunNTimes(unsigned int nRuns, Map &map, std::string map_name)
 
 void SingleMapOnce(const std::string &file_name, int xStart, int yStart, int xTarget, int yTarget)
 {
-	MapMetaObject GameMap = LoadMap(file_name);
-	Map map(GameMap);
+	o_graph::MapMetaObject GameMap = o_graph::LoadMap(file_name);
+	o_graph::Map map(GameMap);
 
 	std::cout << "map name: " << file_name << "\n";
 	std::cout << "size: ";
@@ -305,8 +305,8 @@ void SingleMapOnce(const std::string &file_name, int xStart, int yStart, int xTa
 
 void SingleMapNTimes(const std::string &file_name, int runs_per_map = 1)
 {
-	MapMetaObject GameMap = LoadMap(file_name);
-	Map map(GameMap);
+	o_graph::MapMetaObject GameMap = o_graph::LoadMap(file_name);
+	o_graph::Map map(GameMap);
 
 	std::cout << "map name: " << file_name << "\n";
 	std::cout << "size: ";

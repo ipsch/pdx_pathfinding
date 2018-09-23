@@ -46,7 +46,7 @@ int FindPath(const int nStartX, const int nStartY,
  */
 {
 
-	Map map(nMapWidth,nMapHeight,pMap);
+	o_graph::Map map(nMapWidth,nMapHeight,pMap);
 	AStar Pathfinder(map,pOutBuffer,nOutBufferSize);
 	return Pathfinder.FindPath(nStartX, nStartY, nTargetX, nTargetY);
 }
@@ -59,7 +59,7 @@ int FindPath(const int nStartX, const int nStartY,
              int* pOutBuffer, const int nOutBufferSize, unsigned int &nodes_expanded)
 {
 	int return_value;
-	Map map(nMapWidth,nMapHeight,pMap);
+	o_graph::Map map(nMapWidth,nMapHeight,pMap);
 	AStar Pathfinder(map,pOutBuffer,nOutBufferSize);
 	return_value = Pathfinder.FindPath(nStartX, nStartY, nTargetX, nTargetY);
 	nodes_expanded = Pathfinder.nodes_expanded_;
@@ -74,7 +74,7 @@ int FindPath(const int nStartX, const int nStartY,
 //{ }
 
 
-AStar::AStar(Map &map, int *p_buffer, int size_buffer) :
+AStar::AStar(o_graph::Map &map, int *p_buffer, int size_buffer) :
 		map_(map), p_output_buffer_(p_buffer), output_buffer_size_(size_buffer), nodes_expanded_(0)
 /**\brief Constructor
  * \param[in] map Reference to the game map represented by an instance of class Map

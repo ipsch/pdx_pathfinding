@@ -47,7 +47,7 @@
 
 // ToDo : 2018-09-11 ipsch: rework heuristics
 // metrics should belont to heuristics also to maps
-#include "metrics_helpers.hpp"
+
 #include "sNode.hpp"				// A data-struct to encapsulate information about single grid node
 #include "Map.hpp"                  // A class to representation the game map
 #include "PriorityQueue.hpp"
@@ -73,23 +73,7 @@ int FindPath(const int nStartX, const int nStartY,
 
 
 
-class Heuristic_2d_discrete
-{
-private :
-	int x0_;
-	int y0_;
-public :
-	void Set(const coordinate &target)
-	{
-		x0_=target.x;
-		y0_=target.y;
-		return;
-	}
-	int operator()(const coordinate &position) const
-	{
-		return DiscreteMeasure(position.x-x0_, position.y-y0_);
-	}
-};
+
 
 
 
@@ -111,7 +95,7 @@ class AStar
  */
 {
 public :
-	explicit AStar(Map &map, int *p_buffer, int size_buffer);
+	explicit AStar(o_graph::Map &map, int *p_buffer, int size_buffer);
 	int FindPath(const int &iS, const int &jS, const int &iT, const int &jT);
 	unsigned int nodes_expanded_;
 private :
@@ -123,13 +107,13 @@ private :
 	int BacktrackPath(sNode *node_on_path);
 	// ToDo : 2018-09-11 ipsch: rework heuristics
 	// should belong to map
-	Heuristic_2d_discrete heuristic_;
+	o_graph::Heuristic_2d_discrete heuristic_;
 
 	o_data_structures::BinaryHeap<float, sNode*> open_list_;   /**< Priority queue containing all Nodes that need processing */
 
 	RedBlackTree<unsigned int, sNode*>
 		closed_list_;                  /**< Binary search tree containing all visited nodes  */
-	Map &map_;                         /**< Reference to the game map (provided by caller) */
+	o_graph::Map &map_;                         /**< Reference to the game map (provided by caller) */
 	int* p_output_buffer_;             /**< pointer to buffer where the shortest path is written to if found by AStar::FindPath(..)
 	                                    *  \details - ownership of memory is handled by caller */
 	int output_buffer_size_; 	       /**< size of the Buffer \ref p_output_buffer_ */
