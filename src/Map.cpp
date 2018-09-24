@@ -9,6 +9,33 @@ namespace o_graph
 	const unsigned char Map::terrain_blocked_ = 0;
 
 
+	Map::Map() : data_(0L), width_(0), height_(0),
+			i0_(0), j0_(0), max_manhattan_(.0)
+	{
+		// noting to do here
+	}
+
+
+	Map::Map(const MapMetaObject &map) :
+			width_(map.nMapWidth_), height_(map.nMapHeight_), data_(map.pMap_),
+			i0_(0), j0_(0), max_manhattan_(.0)
+	{
+		// noting to do here
+	}
+
+
+	Map::Map(const int &width, const int &height, const unsigned char *data) :
+		width_(width), height_(height), data_(data),
+		i0_(0), j0_(0), max_manhattan_(.0)
+	{
+		// noting to do here
+	}
+
+
+
+
+
+
 	coordinate Map::GetIJ(const int &index) const
 	{
 		int j = index / width_;
@@ -17,6 +44,28 @@ namespace o_graph
 	}
 
 
+	void Map::get_neighbours(
+			std::vector<unsigned int> &node_list,
+			const sNode * node) const
+	{
+
+		unsigned int id = node->id_;
+		coordinate pos = GetIJ(node->id_);
+
+		if( (pos.x+1<width_) && (data_[id+1]==terrain_traversable_))
+			node_list.push_back(id+1);
+
+		if( (pos.x-1>=0) && (data_[id-1]==terrain_traversable_))
+			node_list.push_back(id-1);
+
+		if( (pos.y+1<height_) && (data_[id+width_]==terrain_traversable_) )
+			node_list.push_back(id+width_);
+
+		if( (pos.y-1>=0) && (data_[id-width_]==terrain_traversable_))
+			node_list.push_back(id-width_);
+
+		return;
+	}
 
 
 	// ToDO 2018-09-11 ipsch: Rework GetNeighbourList(..)
@@ -57,7 +106,6 @@ namespace o_graph
 		double dx = (double) (i-i0_);
 		double dy = (double) (j-j0_);
 		double manhattan = fabs(dx) + fabs(dy);
-
 		return manhattan + (manhattan/max_manhattan_);
 	}
 
@@ -157,8 +205,6 @@ namespace o_graph
 			if(line.find("MapHeight")!=std::string::npos)
 				height = std::stoi(FindAndReplaceAll(line,"MapHeight=",""),&sz);
 
-
-
 		} while( (!(line.find("MapData")!=std::string::npos))
 				&& MapStream.good());
 
@@ -166,7 +212,6 @@ namespace o_graph
 			delete[] data;
 		unsigned int size = width*height;
 		data = new unsigned char[size]();
-
 
 		unsigned int iter=0;
 		do // handle map bulk data
@@ -190,15 +235,7 @@ namespace o_graph
 				++iter;
 
 			}
-
-
 		} while(MapStream.good()); // END READING FROM FILE
-
-
-
-
-
-
 		MapStream.close();
 		return 0;
 	}

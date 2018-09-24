@@ -3,23 +3,21 @@
 
 
 
-#include <iostream>
-#include <vector>
-#include <string>
-#include <fstream>
-#include <string>
-#include <sstream>
-#include <iomanip>
-#include <cmath>
 
+
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+
+#include <cmath>
+#include <vector>
+#include <iomanip>
 
 #include <stdexcept>
 
 
-
-#include <fstream>
-#include <ostream>
-
+#include "sNode.hpp"
 #include "oString.hpp"
 #include "metrics_helpers.hpp"
 
@@ -27,7 +25,43 @@ namespace o_graph
 {
 
 
+	class GraphNode
+	{
+	public :
+		GraphNode() : id_(0), fvalue_(0), path_cost_(0), p_predecessor_(0L) { }
+		//sNode(const unsigned int &id) : id_(id), fvalue_(0), path_cost_(0), p_predecessor_(0L)
+		//{
+		//	std::cout << "alloc: " << this << "\t " << id_ << std::endl;
+		//}
+		//~sNode()
+		//{
+		//	std::cout << "free: " << this << "\t " << id_ << std::endl;
+		//}
+		unsigned int id_;
+		float fvalue_;
+		int path_cost_;
+		GraphNode *p_predecessor_;
 
+		bool operator>(const GraphNode &rhs) const {
+			return this->fvalue_>rhs.fvalue_;}
+		bool operator<(const GraphNode &rhs) const {
+			return this->fvalue_<rhs.fvalue_;}
+		bool operator>=(const GraphNode &rhs) const {
+			return this->fvalue_>=rhs.fvalue_;}
+		bool operator<=(const GraphNode &rhs) const {
+			return this->fvalue_<=rhs.fvalue_;}
+		bool operator==(const GraphNode &rhs) const {
+			return this->fvalue_==rhs.fvalue_;}
+
+		GraphNode &operator=(const GraphNode &rhs)
+		{
+			id_ = rhs.id_;
+			fvalue_ = rhs.fvalue_;
+			path_cost_ = rhs.path_cost_;
+			p_predecessor_ = rhs.p_predecessor_;
+			return *this;
+		}
+	};
 
 
 
@@ -47,12 +81,6 @@ namespace o_graph
 
 	/**
 	 * \brief A struct that consists of the most essential information about the game map
-	 *
-	 *
-	 *
-	 *
-	 *
-	 *
 	 */
 	struct MapMetaObject
 	{
@@ -90,13 +118,8 @@ namespace o_graph
 	class Map
 	{
 	public :
-		explicit Map(const MapMetaObject &map) :
-			width_(map.nMapWidth_), height_(map.nMapHeight_), data_(map.pMap_),
-			i0_(0), j0_(0), max_manhattan_(.0)
-		{ }
-		explicit Map(const int &width, const int &height, const unsigned char *data) :
-			width_(width), height_(height), data_(data),
-			i0_(0), j0_(0), max_manhattan_(.0) { }
+		explicit Map(const MapMetaObject &map);
+		explicit Map(const int &width, const int &height, const unsigned char *data);
 		//void Load(const std::string &path_and_file_name);
 
 		void set_heuristic(const int &i, const int &j);
@@ -109,7 +132,8 @@ namespace o_graph
 		const int height_;
 
 		coordinate GetIJ(const int &index) const;
-		int GetIndex(const int &i, const int &j) {return i + j*width_;}
+		int GetIndex(const int &i, const int &j) const {return i + j*width_;}
+		void get_neighbours(std::vector<unsigned int> &node_list, const sNode * node) const;
 		void GetNeighbourList(std::vector<unsigned int> &node_list, const unsigned int &predecessor);
 		unsigned char operator()(const int &i, const int &j) const
 			{return data_[i + j*width_];}
@@ -120,12 +144,11 @@ namespace o_graph
 
 		double heuristic(const int &i, const int &j) const;
 		double heuristic(const unsigned int &id) const;
-	private :
-		explicit Map() : data_(0L), width_(0), height_(0),
-				i0_(0), j0_(0), max_manhattan_(.0){ }
+
+	protected :
+		explicit Map();
 		static const unsigned char terrain_traversable_;
 		static const unsigned char terrain_blocked_;
-		// terrain encoding
 
 
 	};

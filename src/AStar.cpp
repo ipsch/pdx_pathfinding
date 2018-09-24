@@ -94,7 +94,7 @@ int AStar::ExpandNode(sNode *predecessor)
  */
 {
 	std::vector<unsigned int> list_of_successor_ids;
-	map_.GetNeighbourList(list_of_successor_ids, predecessor->id_);
+	map_.get_neighbours(list_of_successor_ids, predecessor);
 
 	for(auto successor_id : list_of_successor_ids)
 	{
