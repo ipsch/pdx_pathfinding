@@ -33,7 +33,12 @@ namespace o_graph
 
 
 
-
+	inline void Map::get_ij(const int &index, int &i, int &j) const
+	{
+		j = index / width_;
+		i = index - j*width_;
+		return;
+	}
 
 
 	coordinate Map::GetIJ(const int &index) const
@@ -44,16 +49,17 @@ namespace o_graph
 	}
 
 
-	void Map::get_neighbours(
-			std::vector<unsigned int> &node_list,
-			const sNode * node)
+	void Map::get_neighbours(const sNode * node)
 	{
 
 		unsigned int prev_id = 0 - 1;
 		if ( node->p_predecessor_ != 0L )
 			prev_id = node->p_predecessor_->id_;
 
+
 		unsigned int id = node->id_;
+		//int i,j;
+		//get_ij(id,i,j);
 		coordinate pos = GetIJ(node->id_);
 
 		if( (pos.x+1<width_) && (data_[id+1]==terrain_traversable_)
@@ -76,22 +82,6 @@ namespace o_graph
 	}
 
 
-	// ToDO 2018-09-11 ipsch: Rework GetNeighbourList(..)
-	// no need to calculate position first (map knows width & heigth)
-	void Map::GetNeighbourList(std::vector<unsigned int> &node_list, const unsigned int &predecessor)
-	{
-		coordinate pos = GetIJ(predecessor);
-
-		if( (pos.x+1<width_) && (operator()(pos.x+1,pos.y)==terrain_traversable_))
-			node_list.push_back(GetIndex(pos.x+1,pos.y));
-		if( (pos.x-1>=0) && (operator()(pos.x-1,pos.y)==terrain_traversable_))
-			node_list.push_back(GetIndex(pos.x-1,pos.y));
-		if( (pos.y+1<height_) && (operator()(pos.x,pos.y+1)==terrain_traversable_) )
-			node_list.push_back(GetIndex(pos.x,pos.y+1));
-		if( (pos.y-1>=0) && (operator()(pos.x,pos.y-1)==terrain_traversable_))
-			node_list.push_back(GetIndex(pos.x,pos.y-1));
-		return;
-	}
 
 
 	void Map::set_heuristic(const int &id)

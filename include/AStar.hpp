@@ -40,13 +40,10 @@
 
 // ToDo 2018-09-11 ipsch: cmath still needed in AStar?
 #include <cmath>                    // Cs math needed for ???
-#include <vector>					// needed for list of neighbouring Nodes in function ExpandNode
+
 
 #include "BinaryHeap.hpp"			// priority queque used for the open_list_
 #include "rb_tree.hpp"				// binary self balancing tree class used for the closed_list_
-
-// ToDo : 2018-09-11 ipsch: rework heuristics
-// metrics should belont to heuristics also to maps
 
 #include "sNode.hpp"				// A data-struct to encapsulate information about single grid node
 #include "Map.hpp"                  // A class to representation the game map
@@ -80,8 +77,6 @@ int FindPath(const int nStartX, const int nStartY,
 
 
 
-
-class AStar
 /**
  * \brief provides pathfinding capabilities in a graph
  *
@@ -93,30 +88,29 @@ class AStar
  *
  *
  */
+class AStar
 {
 public :
 	explicit AStar(o_graph::Map &map, int *p_buffer, int size_buffer);
 	int FindPath(const int &iS, const int &jS, const int &iT, const int &jT);
 	unsigned int nodes_expanded_;
+
 private :
-
-
 	AStar();
 	void ClearLists();
-	int ExpandNode(sNode *predecessor);
-	int BacktrackPath(sNode *node_on_path);
-	// ToDo : 2018-09-11 ipsch: rework heuristics
-	// should belong to map
-	o_graph::Heuristic_2d_discrete heuristic_;
+	void ExpandNode(sNode *predecessor);
+	int BacktrackPath(sNode *node_on_path) const;
+
 
 	o_data_structures::BinaryHeap<float, sNode*> open_list_;   /**< Priority queue containing all Nodes that need processing */
 
-	RedBlackTree<unsigned int, sNode*>
-		closed_list_;                  /**< Binary search tree containing all visited nodes  */
+	RedBlackTree<unsigned int, sNode*> closed_list_;                  /**< Binary search tree containing all visited nodes  */
 	o_graph::Map &map_;                         /**< Reference to the game map (provided by caller) */
+
+	int output_buffer_size_; 	       /**< size of the Buffer \ref p_output_buffer_ */
 	int* p_output_buffer_;             /**< pointer to buffer where the shortest path is written to if found by AStar::FindPath(..)
 	                                    *  \details - ownership of memory is handled by caller */
-	int output_buffer_size_; 	       /**< size of the Buffer \ref p_output_buffer_ */
+
 };
 
 

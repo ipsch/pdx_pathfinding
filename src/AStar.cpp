@@ -16,11 +16,6 @@
 
 
 
-
-int FindPath(const int nStartX, const int nStartY,
-             const int nTargetX, const int nTargetY,
-             const unsigned char* pMap, const int nMapWidth, const int nMapHeight,
-             int* pOutBuffer, const int nOutBufferSize)
 /**
  * \brief Interface function that redirects the task of finding a path to an class AStar object.
  *
@@ -44,8 +39,11 @@ int FindPath(const int nStartX, const int nStartY,
  *   can be stored in pOutBuffer all surplus nodes are discarded.
  *
  */
+int FindPath(const int nStartX, const int nStartY,
+             const int nTargetX, const int nTargetY,
+             const unsigned char* pMap, const int nMapWidth, const int nMapHeight,
+             int* pOutBuffer, const int nOutBufferSize)
 {
-
 	o_graph::Map map(nMapWidth,nMapHeight,pMap);
 	AStar Pathfinder(map,pOutBuffer,nOutBufferSize);
 	return Pathfinder.FindPath(nStartX, nStartY, nTargetX, nTargetY);
@@ -74,17 +72,19 @@ int FindPath(const int nStartX, const int nStartY,
 //{ }
 
 
-AStar::AStar(o_graph::Map &map, int *p_buffer, int size_buffer) :
-		map_(map), p_output_buffer_(p_buffer), output_buffer_size_(size_buffer), nodes_expanded_(0)
 /**\brief Constructor
  * \param[in] map Reference to the game map represented by an instance of class Map
  * \param[in] p_buffer Pointer to the output buffer where the path is written to (Memory ownership by caller)
  * \param[in] size_buffer length of the buffer p_buffer
  */
-{ }
+AStar::AStar(o_graph::Map &map, int *p_buffer, int size_buffer) :
+		map_(map), p_output_buffer_(p_buffer), output_buffer_size_(size_buffer), nodes_expanded_(0)
+{
+	// nothing to do here
+}
 
 
-int AStar::ExpandNode(sNode *predecessor)
+
 /**
  * \brief Method to expand the node supplied by AStar::FindPath(..) and put its neigbours on the AStar::open_list_
  *
@@ -92,55 +92,49 @@ int AStar::ExpandNode(sNode *predecessor)
  *
  * \return Returns error-code (Not used at the moment)
  */
+void AStar::ExpandNode(sNode *predecessor)
 {
-	std::vector<unsigned int> list_of_successor_ids;
-	map_.get_neighbours(list_of_successor_ids, predecessor);
-
+	map_.get_neighbours(predecessor);
 	while(!map_.neighbour_list_.is_empty())
 	{
-
 		unsigned int successor_id = map_.neighbour_list_.pop();
-        if (closed_list_.find(successor_id)) // successor already visited
+
+		// search closed list for successor
+        if (closed_list_.find(successor_id))
             continue;
 
-        int path_cost = predecessor->path_cost_ + 1.; // 1 = distance(predecessor, successor);
+        int path_cost = predecessor->path_cost_ + 1; // 1 = distance(predecessor, successor);
 
-
+        // search open list for successor
 		unsigned int search_index;
 		bool search_success = open_list_.find_(search_index,
 				[&successor_id] (o_data_structures::BinaryHeapNode<float, sNode*> &N) {return N.data_->id_==successor_id;});
-		//bool search_success = open_list_.find_(search_index,
-		//		[] (o_data_structures::BinaryHeapNode<float, sNode*> &N) {return false;});
-
 
         if (search_success)
         	if(path_cost >= open_list_.A_[search_index].data_->path_cost_ )
         		continue;
 
-        float fvalue = map_.heuristic(successor_id) + (double) path_cost;//heuristic_(map_.GetIJ(successor_id));
 
-		//sNode successor;
-        ++nodes_expanded_;
         sNode *p_successor = new sNode();
         p_successor->id_ = successor_id;
         p_successor->p_predecessor_ = predecessor;
         p_successor->path_cost_ = path_cost;
+        float fvalue = map_.heuristic(successor_id) + (double) path_cost;//heuristic_(map_.GetIJ(successor_id));
         p_successor->fvalue_ = fvalue;
 
-		//ReferencingNode<sNode> r_successor(p_successor->fvalue_,p_successor);
+        ++nodes_expanded_; // ToDo: 2018-09-25 ipsch: Remove this in shipping version
 
-		// ToDO 2018-09-13 ipsch: mem-leak in AStar::Expand node
-		// ChangeKey referencing Node new item
-		// old referencing node get's deleted, but old item isn't
+		// ToDO 2018-09-25 ipsch: check change_key using valgrind
 		if (search_success)
             open_list_.change_key(search_index, fvalue);
         else
         	open_list_.insert(fvalue, p_successor);
 	}
-    return 0;
+    return;
 }
 
-int AStar::BacktrackPath(sNode *target)
+
+
 /**
  * \brief Reconstructs the shortest path found by AStar::FindPath() and writes it to Buffer p_output_buffer;
  *
@@ -160,6 +154,7 @@ int AStar::BacktrackPath(sNode *target)
  * - Backtrack relies on class sNode::p_predecessor_
  *
  */
+int AStar::BacktrackPath(sNode *target) const
 {
 	sNode *current = target;
 	while (current->p_predecessor_ != 0L)
@@ -173,8 +168,6 @@ int AStar::BacktrackPath(sNode *target)
 
 
 
-
-int AStar::FindPath(const int &iS, const int &jS, const int &iT, const int &jT)
 /**
  * \brief A*s main-loop: Finds the shortest path between a start- and target-position
  *
@@ -192,6 +185,7 @@ int AStar::FindPath(const int &iS, const int &jS, const int &iT, const int &jT)
  *
  *
  */
+int AStar::FindPath(const int &iS, const int &jS, const int &iT, const int &jT)
 {
 	int path_length = -1; // will be set to actual length if path exists
 
@@ -203,10 +197,8 @@ int AStar::FindPath(const int &iS, const int &jS, const int &iT, const int &jT)
 
 	unsigned int target_node_id = map_.GetIndex(iT,jT);
 
-
 	map_.set_heuristic(target_node_id);
 	open_list_.insert(p_start_node->fvalue_,p_start_node);
-
 
     do
     {
@@ -227,18 +219,18 @@ int AStar::FindPath(const int &iS, const int &jS, const int &iT, const int &jT)
 
         ExpandNode(p_current_node);
 
-    } while (open_list_.n_items_!=0);
+    } while ( open_list_.n_items_ != 0 );
 
     ClearLists();
     return path_length;
 }
 
 
-void AStar::ClearLists()
 /**
  * \brief frees memory allocated for graph nodes
  * Memory is allocated by AStar::ExpandNode(..) and managed by open- and closed list.
  */
+void AStar::ClearLists()
 {
 	closed_list_.TraverseLRN(
 			[](RedBlackTree<unsigned int, sNode*>::NodeType *N) {delete N->data_;},

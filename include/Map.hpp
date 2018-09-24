@@ -153,6 +153,9 @@ namespace o_graph
 
 		void set_heuristic(const int &i, const int &j);
 		void set_heuristic(const int &id);
+		double heuristic(const int &i, const int &j) const;
+		double heuristic(const unsigned int &id) const;
+
 		int i0_;
 		int j0_;
 		double max_manhattan_;
@@ -160,12 +163,12 @@ namespace o_graph
 		const int width_;
 		const int height_;
 
-		ListLIFO<unsigned int, 4> neighbour_list_;
+		ListLIFO<unsigned int, 3> neighbour_list_;
 
+		void get_ij(const int &index, int &i, int &j) const;
 		coordinate GetIJ(const int &index) const;
 		int GetIndex(const int &i, const int &j) const {return i + j*width_;}
-		void get_neighbours(std::vector<unsigned int> &node_list, const sNode * node);
-		void GetNeighbourList(std::vector<unsigned int> &node_list, const unsigned int &predecessor);
+		void get_neighbours(const sNode * node);
 		unsigned char operator()(const int &i, const int &j) const
 			{return data_[i + j*width_];}
 
@@ -173,8 +176,7 @@ namespace o_graph
 			{return (operator()(i,j)==Map::terrain_traversable_);}
 		friend MapMetaObject LoadMap(const std::string &path_to_file);
 
-		double heuristic(const int &i, const int &j) const;
-		double heuristic(const unsigned int &id) const;
+
 
 	protected :
 		explicit Map();
