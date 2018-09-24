@@ -49,19 +49,27 @@ namespace o_graph
 			const sNode * node) const
 	{
 
+		unsigned int prev_id = 0 - 1;
+		if ( node->p_predecessor_ != 0L )
+			prev_id = node->p_predecessor_->id_;
+
 		unsigned int id = node->id_;
 		coordinate pos = GetIJ(node->id_);
 
-		if( (pos.x+1<width_) && (data_[id+1]==terrain_traversable_))
+		if( (pos.x+1<width_) && (data_[id+1]==terrain_traversable_)
+				&& ( ( id + 1 ) != prev_id ) )
 			node_list.push_back(id+1);
 
-		if( (pos.x-1>=0) && (data_[id-1]==terrain_traversable_))
+		if( (pos.x-1>=0) && (data_[id-1]==terrain_traversable_)
+				&& ( ( id - 1 ) != prev_id ) )
 			node_list.push_back(id-1);
 
-		if( (pos.y+1<height_) && (data_[id+width_]==terrain_traversable_) )
+		if( (pos.y+1<height_) && (data_[id+width_]==terrain_traversable_)
+				&& ( ( id + width_ ) != prev_id ) )
 			node_list.push_back(id+width_);
 
-		if( (pos.y-1>=0) && (data_[id-width_]==terrain_traversable_))
+		if( (pos.y-1>=0) && (data_[id-width_]==terrain_traversable_)
+				&& ( ( id - width_ ) != prev_id ) )
 			node_list.push_back(id-width_);
 
 		return;
