@@ -163,7 +163,7 @@ namespace o_graph
 		const int width_;
 		const int height_;
 
-		ListLIFO<unsigned int, 3> neighbour_list_;
+		ListLIFO<unsigned int, 4> neighbour_list_;
 
 		void get_ij(const int &index, int &i, int &j) const;
 		coordinate GetIJ(const int &index) const;
