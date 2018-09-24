@@ -46,7 +46,7 @@ namespace o_graph
 
 	void Map::get_neighbours(
 			std::vector<unsigned int> &node_list,
-			const sNode * node) const
+			const sNode * node)
 	{
 
 		unsigned int prev_id = 0 - 1;
@@ -58,19 +58,19 @@ namespace o_graph
 
 		if( (pos.x+1<width_) && (data_[id+1]==terrain_traversable_)
 				&& ( ( id + 1 ) != prev_id ) )
-			node_list.push_back(id+1);
+			neighbour_list_.push(id + 1);
 
 		if( (pos.x-1>=0) && (data_[id-1]==terrain_traversable_)
 				&& ( ( id - 1 ) != prev_id ) )
-			node_list.push_back(id-1);
+			neighbour_list_.push(id - 1);
 
 		if( (pos.y+1<height_) && (data_[id+width_]==terrain_traversable_)
 				&& ( ( id + width_ ) != prev_id ) )
-			node_list.push_back(id+width_);
+			neighbour_list_.push(id+width_);
 
 		if( (pos.y-1>=0) && (data_[id-width_]==terrain_traversable_)
 				&& ( ( id - width_ ) != prev_id ) )
-			node_list.push_back(id-width_);
+			neighbour_list_.push(id-width_);
 
 		return;
 	}

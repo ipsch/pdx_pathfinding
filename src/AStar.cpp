@@ -96,9 +96,10 @@ int AStar::ExpandNode(sNode *predecessor)
 	std::vector<unsigned int> list_of_successor_ids;
 	map_.get_neighbours(list_of_successor_ids, predecessor);
 
-	for(auto successor_id : list_of_successor_ids)
+	while(!map_.neighbour_list_.is_empty())
 	{
 
+		unsigned int successor_id = map_.neighbour_list_.pop();
         if (closed_list_.find(successor_id)) // successor already visited
             continue;
 

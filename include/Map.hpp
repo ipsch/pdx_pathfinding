@@ -65,6 +65,35 @@ namespace o_graph
 
 
 
+	template <class T, unsigned int N>
+	class ListLIFO
+	{
+	public :
+		ListLIFO() : iter_(0) { }
+		void push(const T &rhs)
+		{
+			data_[iter_] = rhs;
+			++iter_;
+			return;
+		}
+		T pop()
+		{
+			--iter_;
+			return data_[iter_];
+		}
+		bool is_empty() const
+		{
+			return (iter_<=0);
+		}
+	private :
+		T data_[N];
+		unsigned int iter_;
+
+
+	};
+
+
+
 	/**
 	 * \brief A struct to represent
 	 *
@@ -131,9 +160,11 @@ namespace o_graph
 		const int width_;
 		const int height_;
 
+		ListLIFO<unsigned int, 4> neighbour_list_;
+
 		coordinate GetIJ(const int &index) const;
 		int GetIndex(const int &i, const int &j) const {return i + j*width_;}
-		void get_neighbours(std::vector<unsigned int> &node_list, const sNode * node) const;
+		void get_neighbours(std::vector<unsigned int> &node_list, const sNode * node);
 		void GetNeighbourList(std::vector<unsigned int> &node_list, const unsigned int &predecessor);
 		unsigned char operator()(const int &i, const int &j) const
 			{return data_[i + j*width_];}
