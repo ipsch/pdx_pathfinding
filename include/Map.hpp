@@ -19,20 +19,14 @@
 
 #pragma once
 
-
-
-
-
-
-#include <iostream>                    //
-#include <fstream>
-#include <sstream>
-#include <string>
-#include <cmath>
-#include <stdexcept>
-#include "oString.hpp"  //
-
-
+#include <iostream>      // printing result of LoadMap to screen
+#include <fstream>       // handling files
+#include <sstream>       // translate built-in types to string
+#include <string>        // strings for filenames & output to cout
+#include <cmath>         // fabs(..) & abs(..)
+#include <stdexcept>     // exception handling
+#include "oString.hpp"   // find & replace for std::string
+#include "ListLIFO.hpp"  // simple list to store map nodes temporary
 
 
 namespace o_graph
@@ -80,28 +74,6 @@ namespace o_graph
 
 
 
-	/** \brief simple but fast class to maintain a List of items
-	 *  \details ListLIFO (last out first out) can store N items of type T.
-	 *    access via members push and pop.
-	 *    Provides no guards against incorrect reading/writing! <br>
-	 *    2018-09-25 ipsch: intended to store neighbouring nodes
-	 *    in graph expansion
-	 *  \sa Map::get_neighbours(..)
-	 */
-	template <class T, unsigned int N>
-	class ListLIFO
-	{
-	public :
-		ListLIFO();
-		bool is_empty() const;         // checks if empty
-		void push(const T &rhs);       // writing
-		T pop();                       // read + removal
-	private :
-		T data_[N];				       //!< internal item list
-		unsigned int iter_;            //!< number of items stored
-	};
-
-
 
 
 
@@ -138,14 +110,17 @@ namespace o_graph
 		double heuristic(const int &i, const int &j) const;
 		double heuristic(const unsigned int &id) const;
 
+
+		const int width_;
+		const int height_;
+		const unsigned char *data_;
+
 		int i0_;
 		int j0_;
 		double max_manhattan_;
-		const unsigned char *data_;
-		const int width_;
-		const int height_;
 
-		ListLIFO<unsigned int, 4> neighbour_list_;
+
+		o_data_structures::ListLIFO<unsigned int, 4> neighbour_list_;
 
 		void get_ij(const int &index, int &i, int &j) const;
 		coordinate GetIJ(const int &index) const;
