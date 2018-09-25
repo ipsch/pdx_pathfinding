@@ -1,8 +1,71 @@
-#include "Map.hpp"
+/** \file
+ * 		Map.cpp
+ *
+ *  \brief
+ *  	definitions to Map.hpp
+ *
+ *  \detail
+ *  	Contains definitions for
+ *  	accompanying header-file Map.hpp
+ *  	(classes and functions to represent
+ *  	a 2d game map)
+ *
+ *  \version
+ *  	2018-09-25 ipsch: semi-final (ToDo: cleanup+doc in Map.cpp)
+ *
+ *  \authors
+ *  	ipsch: Ingmar Schnell
+ *      contact: i.p.schnell(at)gmail.com
+ */
 
+
+#include "Map.hpp"  // accompanying header
 
 namespace o_graph
 {
+	//! \brief Constructor to class ListLIFO
+	template <class T, unsigned int N>
+	ListLIFO<T,N>::ListLIFO() :
+			iter_(0)
+	{
+		// nothing to do here
+	}
+
+
+	/** \brief checks if ListLIFO is empty
+	 *  \return true if at least one item is stored
+	 */
+	template <class T, unsigned int N>
+	bool ListLIFO<T,N>::is_empty() const
+	{
+		return (iter_<=0);
+	}
+
+
+	/** \brief Stores an item in ListLIFO
+	 *  \param[in] rhs The item of type T to be stored
+	 */
+	template <class T, unsigned int N>
+	void ListLIFO<T,N>::push(const T &rhs)
+	{
+		data_[iter_] = rhs;
+		++iter_;
+		return;
+	}
+
+
+	/** \brief accesses and removes last stored item
+	 *  \return The last stored item
+	 */
+	template <class T, unsigned int N>
+	T ListLIFO<T,N>::pop()
+	{
+		--iter_;
+		return data_[iter_];
+	}
+
+
+
 
 
 	const unsigned char Map::terrain_traversable_ = 1;

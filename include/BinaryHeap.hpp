@@ -1,7 +1,7 @@
-/**
- * \file BinaryHeap.hpp
+/** \file
+ * 		BinaryHeap.hpp
  *
- * \brief Contains class BinaryHeap that provides a binary minimum heap data structure
+ *  \brief Contains class BinaryHeap that provides a binary minimum heap data structure
  *
  * \details For details on the implementation of class BinarayHeap please see
  *          its documentation in BinaryHeap.hpp (this file) alongside with its definition.

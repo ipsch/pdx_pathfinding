@@ -1,3 +1,22 @@
+/** \file
+ * 		Map.hpp
+ *
+ *  \brief
+ *  	Classes and functions to represent a 2d game map
+ *
+ *  \detail
+ * 		Defines everything related to the representation of
+ * 		a 2d game map and and infrastructure needed for
+ * 		graph expansion done by AStar (or similar algorithm).
+ *
+ *  \version
+ *  	2018-09-25 ipsch: semi-final (ToDo: cleanup+doc in Map.hpp)
+ *
+ *  \authors
+ *  	ipsch: Ingmar Schnell
+ *      contact: i.p.schnell(at)gmail.com
+ */
+
 #pragma once
 
 
@@ -5,51 +24,48 @@
 
 
 
-#include <iostream>
+#include <iostream>                    //
 #include <fstream>
 #include <sstream>
 #include <string>
-
 #include <cmath>
-#include <vector>
-#include <iomanip>
-
 #include <stdexcept>
+#include "oString.hpp"  //
 
 
-#include "oString.hpp"
-#include "metrics_helpers.hpp"
+
 
 namespace o_graph
 {
+
+	//! /brief Struct to represent a single position (x,y) in 2d space
+	struct coordinate
+	{
+		coordinate(const int &i, const int &j) : x(i), y(j) { }
+		int x;
+		int y;
+	};
 
 
 	class GraphNode
 	{
 	public :
 		GraphNode() : id_(0), fvalue_(0), path_cost_(0), p_predecessor_(0L) { }
-		//GraphNode(const unsigned int &id) : id_(id), fvalue_(0), path_cost_(0), p_predecessor_(0L)
-		//{
-		//	std::cout << "alloc: " << this << "\t " << id_ << std::endl;
-		//}
-		//~GraphNode()
-		//{
-		//	std::cout << "free: " << this << "\t " << id_ << std::endl;
-		//}
 		unsigned int id_;
 		float fvalue_;
 		int path_cost_;
 		GraphNode *p_predecessor_;
 
-		bool operator>(const GraphNode &rhs) const {
+		// ToDo : 2918-09-25 ipsch: not sure if to move member definitions to cpp
+		inline bool operator>(const GraphNode &rhs) const {
 			return this->fvalue_>rhs.fvalue_;}
-		bool operator<(const GraphNode &rhs) const {
+		inline bool operator<(const GraphNode &rhs) const {
 			return this->fvalue_<rhs.fvalue_;}
-		bool operator>=(const GraphNode &rhs) const {
+		inline bool operator>=(const GraphNode &rhs) const {
 			return this->fvalue_>=rhs.fvalue_;}
-		bool operator<=(const GraphNode &rhs) const {
+		inline bool operator<=(const GraphNode &rhs) const {
 			return this->fvalue_<=rhs.fvalue_;}
-		bool operator==(const GraphNode &rhs) const {
+		inline bool operator==(const GraphNode &rhs) const {
 			return this->fvalue_==rhs.fvalue_;}
 
 		GraphNode &operator=(const GraphNode &rhs)
@@ -64,51 +80,34 @@ namespace o_graph
 
 
 
+	/** \brief simple but fast class to maintain a List of items
+	 *  \details ListLIFO (last out first out) can store N items of type T.
+	 *    access via members push and pop.
+	 *    Provides no guards against incorrect reading/writing! <br>
+	 *    2018-09-25 ipsch: intended to store neighbouring nodes
+	 *    in graph expansion
+	 *  \sa Map::get_neighbours(..)
+	 */
 	template <class T, unsigned int N>
 	class ListLIFO
 	{
 	public :
-		ListLIFO() : iter_(0) { }
-		void push(const T &rhs)
-		{
-			data_[iter_] = rhs;
-			++iter_;
-			return;
-		}
-		T pop()
-		{
-			--iter_;
-			return data_[iter_];
-		}
-		bool is_empty() const
-		{
-			return (iter_<=0);
-		}
+		ListLIFO();
+		bool is_empty() const;         // checks if empty
+		void push(const T &rhs);       // writing
+		T pop();                       // read + removal
 	private :
-		T data_[N];
-		unsigned int iter_;
-
-
+		T data_[N];				       //!< internal item list
+		unsigned int iter_;            //!< number of items stored
 	};
 
 
 
-	/**
-	 * \brief A struct to represent
-	 *
-	 *
-	 */
-	struct coordinate
-	{
-		coordinate(const int &i, const int &j) : x(i), y(j) { }
-		int x;
-		int y;
-	};
 
 
 
-	/**
-	 * \brief A struct that consists of the most essential information about the game map
+
+	/** \brief A struct that consists of the most essential information about the game map
 	 */
 	struct MapMetaObject
 	{
@@ -123,23 +122,7 @@ namespace o_graph
 
 
 
-	class Heuristic_2d_discrete
-	{
-	private :
-		int x0_;
-		int y0_;
-	public :
-		void Set(const coordinate &target)
-		{
-			x0_=target.x;
-			y0_=target.y;
-			return;
-		}
-		int operator()(const coordinate &position) const
-		{
-			return DiscreteMeasure(position.x-x0_, position.y-y0_);
-		}
-	};
+
 
 
 
