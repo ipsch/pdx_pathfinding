@@ -1,5 +1,3 @@
-#ifndef BinaryHeapNode_HPP_
-#define BinaryHeapNode_HPP_
 //============================================================================
 // Projekt     : oDataStructs
 // Name        : rb_node.cpp
@@ -23,62 +21,115 @@
 //          color_=true represents the color BLACK.
 //          color_=false represents red accordingly
 
-#include "tuple.hpp"
+#pragma once
 
-template <class ... Args> struct BinaryHeapNode {};
-
-template <class KeyType>
-class BinaryHeapNode<KeyType>
+namespace o_data_structures
 {
-public :
-	typedef BinaryHeapNode<KeyType> NodeType;
-	KeyType key_;
-	BinaryHeapNode(KeyType key) :
-		key_(key) { };
-};
+
+	/** \brief a Node that provides two fields (first a key and second a reference to an instance of an Object)
+	 *
+	 *  \details
+	 * This class can be used in a tree structure or search algorithm if the Objects referenced by ReferencingNode
+	 * shouldn't be moved in memory (for example if they are addressed by some pointer or are very big)
+	 *
+	 * the defined operators >,<, >=, <= and == operate on the field key_ and leave reference_ untouched
+	 */
+	template <typename KeyType, typename DataType>
+	class BinaryHeapNode
+	{
+	public :
+		explicit BinaryHeapNode();
+		explicit BinaryHeapNode(const KeyType &key, DataType data);
+		//explicit BinaryHeapNode(const BinaryHeapNode<KeyType,DataType> &rhs);
+
+		KeyType key_;                  ///< the key (used as order relation)
+		DataType data_;                ///< reference to some Object
+
+		bool operator>(const BinaryHeapNode &rhs) const;
+		bool operator<(const BinaryHeapNode &rhs) const;
+		bool operator>=(const BinaryHeapNode &rhs) const;
+		bool operator<=(const BinaryHeapNode &rhs) const;
+		bool operator==(const BinaryHeapNode &rhs) const;
+		BinaryHeapNode &operator=(const BinaryHeapNode &rhs);
+	}; // END OF CLASS BinaryHeapNode
 
 
 
-template <class KeyType, class DataType>
-class BinaryHeapNode<KeyType, DataType>
-{
-public :
-	typedef BinaryHeapNode<KeyType, DataType> NodeType;
-	KeyType key_;
-	DataType data_;
-	BinaryHeapNode(KeyType key, DataType data) :
-		key_(key), data_(data) { };
-};
+
+
+	template<typename KeyType, typename DataType>
+	BinaryHeapNode<KeyType,DataType>::BinaryHeapNode() :
+			key_(0), data_(0L)
+	{
+		// Nothing to do here
+	}
+
+
+	template<typename KeyType, typename DataType>
+	BinaryHeapNode<KeyType,DataType>::BinaryHeapNode(const KeyType &key, DataType data) :
+			key_(key), data_(data)
+	{
+		// Nothing to do here
+	}
+
+
+	/** \brief Copy Contructor
+	 */
+	//template<typename KeyType, typename DataType>
+	//BinaryHeapNode<KeyType,DataType>::BinaryHeapNode(const BinaryHeapNode &rhs) :
+	//		key_(rhs.key_), data_(rhs.data_)
+	//{
+	//	// Nothing to do here
+	//}
+
+
+	template<typename KeyType, typename DataType>
+	inline bool BinaryHeapNode<KeyType,DataType>::operator>(const BinaryHeapNode &rhs) const
+	{
+		return key_>rhs.key_;
+	}
+
+
+	template<typename KeyType, typename DataType>
+	inline bool BinaryHeapNode<KeyType,DataType>::operator<(const BinaryHeapNode &rhs) const
+	{
+		return key_<rhs.key_;
+	}
+
+
+	template<typename KeyType, typename DataType>
+	inline bool BinaryHeapNode<KeyType,DataType>::operator>=(const BinaryHeapNode &rhs) const
+	{
+		return key_>=rhs.key_;
+	}
+
+
+	template<typename KeyType, typename DataType>
+	inline bool BinaryHeapNode<KeyType,DataType>::operator<=(const BinaryHeapNode &rhs) const
+	{
+		return key_<=rhs.key_;
+	}
+
+
+	template<typename KeyType, typename DataType>
+	inline bool BinaryHeapNode<KeyType,DataType>::operator==(const BinaryHeapNode &rhs) const
+	{
+		return key_==rhs.key_;
+	}
 
 
 
-template <class KeyType, class ... Args>
-class BinaryHeapNode<KeyType, Args ...>
-{
-public :
-	typedef BinaryHeapNode<KeyType, Args...> NodeType;
-	KeyType key_;
-	tuple<Args...> data_;
-	BinaryHeapNode(KeyType key, Args ... args) :
-		key_(key), data_(args...) { };
-};
+	/**
+	 * \brief copies fields of ReferencingNode
+	 */
+	template<typename KeyType, typename DataType>
+	inline BinaryHeapNode<KeyType,DataType> &BinaryHeapNode<KeyType,DataType>::operator=(const BinaryHeapNode &rhs)
+	{
+		key_ = rhs.key_;
+		data_ = rhs.data_;
+		return *this;
+	}
 
 
+} // END OF NAMESPACE o_data_structures
 
-template <class KeyType>
-void CopyContent(BinaryHeapNode<KeyType> &target, BinaryHeapNode<KeyType> &source)
-{
-	target.key_ = source.key_;
-	return;
-}
-
-template <class KeyType, class ... Args>
-void CopyContent(BinaryHeapNode<KeyType, Args...> &target, BinaryHeapNode<KeyType, Args...> &source)
-{
-	target.key_ = source.key_;
-	target.data_ = source.data_;
-	return;
-}
-
-
-#endif // END define BinaryHeapNode_HPP_

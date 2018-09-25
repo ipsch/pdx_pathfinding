@@ -1,17 +1,19 @@
 /** \file
  * 		BinaryHeap.hpp
  *
- *  \brief Contains class BinaryHeap that provides a binary minimum heap data structure
+ *  \brief
+ *  	Contains class BinaryHeap that provides a binary minimum heap data structure
  *
- * \details For details on the implementation of class BinarayHeap please see
- *          its documentation in BinaryHeap.hpp (this file) alongside with its definition.
- *          Here is just a short list of features of this class.
- *          - BinaryHeap is a template class. It should work with every other class that
- *            provides algebraic relations < , > , ==, >= and <=.
+ *  \details
+ *  	For details on the implementation of class BinarayHeap please see
+ *  	its documentation in BinaryHeap.hpp (this file) alongside with its definition.
+ *      Here is just a short list of features of this class.
+ *      - BinaryHeap is a template class. It should work with every other class that
+ *        provides algebraic relations < , > , ==, >= and <=.
  *
- * \sa
- * - Class BinaryHeap is documented in BinaryHeap.hpp (this file) along with its declaration
- * - Class BinaryHeaps methods are documented in BinaryHeap.tpp along with their definitions
+ *  \sa
+ * 		- Class BinaryHeap is documented in BinaryHeap.hpp (this file) along with its declaration
+ *  	- Class BinaryHeaps methods are documented in BinaryHeap.tpp along with their definitions
  *
  * \section section_BinaryHeap_history Development History
  * \version 2018-09-07: 1.0.0 (ipsch)
@@ -23,10 +25,10 @@
  */
 #pragma once
 
-#include <stdexcept>                   // exception handling
-#include <cmath>
-#include "oMath.hpp"
-
+#include <stdexcept>           // exception handling
+#include <cmath>               // std::floor(..)
+#include "oMath.hpp"           // templates for min / max
+#include "BinaryHeapNode.hpp"  // NodeType used in class BinaryHeap
 
 namespace o_data_structures
 {
@@ -46,7 +48,7 @@ namespace o_data_structures
 	/**
 	 * \brief Index arithmetics to get the index of Node-is right child within BinaryHeap::A_
 	 * \param[in] i Index of node-i
-	 * \return The Index of node-is right child
+	 * \return The index of node-is right child
 	 */
 	inline unsigned int right(const unsigned int &i)
 	{
@@ -56,7 +58,7 @@ namespace o_data_structures
 	/**
 	 * \brief Index arithmetics to get the index of Node-is parent within BinaryHeap::A_
 	 * \param[in] i Index of node-i
-	 * \return The Index of node-is parent
+	 * \return The index of node-is parent
 	 */
 	inline unsigned int parent(const unsigned int &i)
 	{
@@ -66,50 +68,7 @@ namespace o_data_structures
 
 
 
-	/**
-	 * \brief a Node that provides two fields (first a key and second a reference to an instance of an Object)
-	 *
-	 * \details
-	 * This class can be used in a tree structure or search algorithm if the Objects referenced by ReferencingNode
-	 * shouldn't be moved in memory (for example if they are addressed by some pointer or are very big)
-	 *
-	 * the defined operators >,<, >=, <= and == operate on the field key_ and leave reference_ untouched
-	 */
-	template <typename KeyType, typename DataType>
-	class BinaryHeapNode
-	{
-	public :
-		explicit BinaryHeapNode() :
-				key_(0), data_(0L) { }
-		explicit BinaryHeapNode(const KeyType &key, DataType data) :
-				key_(key), data_(data) { }               ///< Contructor
-		/* explicit */ BinaryHeapNode(const BinaryHeapNode &rhs) :
-				key_(rhs.key_), data_(rhs.data_) { }     ///< Copy Contructor
 
-		KeyType key_;                               ///< the key (used as order relation)
-		DataType data_;                                        ///< reference to some Object
-
-		bool operator>(const BinaryHeapNode &rhs) const {
-			return key_>rhs.key_;}                 ///< operating on key_
-		bool operator<(const BinaryHeapNode &rhs) const {
-			return key_<rhs.key_;}                 ///< operating on key_
-		bool operator>=(const BinaryHeapNode &rhs) const {
-			return key_>=rhs.key_;}                ///< operating on key_
-		bool operator<=(const BinaryHeapNode &rhs) const {
-			return key_<=rhs.key_;}                ///< operating on key_
-		bool operator==(const BinaryHeapNode &rhs) const {
-			return key_==rhs.key_;}                ///< operating on key_
-
-		/**
-		 * \brief copies fields of ReferencingNode
-		 */
-		BinaryHeapNode &operator=(const BinaryHeapNode &rhs)
-		{
-			key_ = rhs.key_;
-			data_ = rhs.data_;
-			return *this;
-		}
-	};
 
 
 	template <class ... Args> class BinaryHeap;
