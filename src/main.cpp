@@ -107,7 +107,6 @@
 #include <vector>                      // list of filenames
 
 #include "oString.hpp"                 // helper functions for string handling
-#include "LoadMap.hpp"
 #include "time_measure.hpp"
 #include "Map.hpp"                     //
 #include "AStar.hpp"
