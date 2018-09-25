@@ -17,7 +17,6 @@
 #include <stdexcept>
 
 
-#include "sNode.hpp"
 #include "oString.hpp"
 #include "metrics_helpers.hpp"
 
@@ -29,11 +28,11 @@ namespace o_graph
 	{
 	public :
 		GraphNode() : id_(0), fvalue_(0), path_cost_(0), p_predecessor_(0L) { }
-		//sNode(const unsigned int &id) : id_(id), fvalue_(0), path_cost_(0), p_predecessor_(0L)
+		//GraphNode(const unsigned int &id) : id_(id), fvalue_(0), path_cost_(0), p_predecessor_(0L)
 		//{
 		//	std::cout << "alloc: " << this << "\t " << id_ << std::endl;
 		//}
-		//~sNode()
+		//~GraphNode()
 		//{
 		//	std::cout << "free: " << this << "\t " << id_ << std::endl;
 		//}
@@ -168,7 +167,7 @@ namespace o_graph
 		void get_ij(const int &index, int &i, int &j) const;
 		coordinate GetIJ(const int &index) const;
 		int GetIndex(const int &i, const int &j) const {return i + j*width_;}
-		void get_neighbours(const sNode * node);
+		void get_neighbours(const GraphNode * node);
 		unsigned char operator()(const int &i, const int &j) const
 			{return data_[i + j*width_];}
 

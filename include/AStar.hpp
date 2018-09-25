@@ -45,7 +45,6 @@
 #include "BinaryHeap.hpp"			// priority queque used for the open_list_
 #include "rb_tree.hpp"				// binary self balancing tree class used for the closed_list_
 
-#include "sNode.hpp"				// A data-struct to encapsulate information about single grid node
 #include "Map.hpp"                  // A class to representation the game map
 #include "PriorityQueue.hpp"
 
@@ -98,13 +97,13 @@ public :
 private :
 	AStar();
 	void ClearLists();
-	void ExpandNode(sNode *predecessor);
-	int BacktrackPath(sNode *node_on_path) const;
+	void ExpandNode(o_graph::GraphNode *predecessor);
+	int BacktrackPath(o_graph::GraphNode *node_on_path) const;
 
 
-	o_data_structures::BinaryHeap<float, sNode*> open_list_;   /**< Priority queue containing all Nodes that need processing */
+	o_data_structures::BinaryHeap<float, o_graph::GraphNode*> open_list_;   /**< Priority queue containing all Nodes that need processing */
 
-	RedBlackTree<unsigned int, sNode*> closed_list_;                  /**< Binary search tree containing all visited nodes  */
+	RedBlackTree<unsigned int, o_graph::GraphNode*> closed_list_;                  /**< Binary search tree containing all visited nodes  */
 	o_graph::Map &map_;                         /**< Reference to the game map (provided by caller) */
 
 	int output_buffer_size_; 	       /**< size of the Buffer \ref p_output_buffer_ */

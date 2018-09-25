@@ -49,17 +49,14 @@ namespace o_graph
 	}
 
 
-	void Map::get_neighbours(const sNode * node)
+	void Map::get_neighbours(const GraphNode * node)
 	{
 
 		unsigned int prev_id = 0 - 1;
 		if ( node->p_predecessor_ != 0L )
 			prev_id = node->p_predecessor_->id_;
 
-
 		unsigned int id = node->id_;
-		//int i,j;
-		//get_ij(id,i,j);
 		coordinate pos = GetIJ(node->id_);
 
 		if( (pos.x+1<width_) && (data_[id+1]==terrain_traversable_)
@@ -111,7 +108,10 @@ namespace o_graph
 	double Map::heuristic(const unsigned int &id) const
 	{
 		coordinate vec = GetIJ(id);
-		return heuristic(vec.x, vec.y);
+		double dx = (double) (vec.x-i0_);
+		double dy = (double) (vec.y-j0_);
+		double manhattan = fabs(dx) + fabs(dy);
+		return manhattan + (manhattan/max_manhattan_);
 	}
 
 	/*

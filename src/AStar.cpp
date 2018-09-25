@@ -92,7 +92,7 @@ AStar::AStar(o_graph::Map &map, int *p_buffer, int size_buffer) :
  *
  * \return Returns error-code (Not used at the moment)
  */
-void AStar::ExpandNode(sNode *predecessor)
+void AStar::ExpandNode(o_graph::GraphNode *predecessor)
 {
 	map_.get_neighbours(predecessor);
 	while(!map_.neighbour_list_.is_empty())
@@ -108,14 +108,14 @@ void AStar::ExpandNode(sNode *predecessor)
         // search open list for successor
 		unsigned int search_index;
 		bool search_success = open_list_.find_(search_index,
-				[&successor_id] (o_data_structures::BinaryHeapNode<float, sNode*> &N) {return N.data_->id_==successor_id;});
+				[&successor_id] (o_data_structures::BinaryHeapNode<float, o_graph::GraphNode*> &N) {return N.data_->id_==successor_id;});
 
         if (search_success)
         	if(path_cost >= open_list_.A_[search_index].data_->path_cost_ )
         		continue;
 
 
-        sNode *p_successor = new sNode();
+        o_graph::GraphNode *p_successor = new o_graph::GraphNode();
         p_successor->id_ = successor_id;
         p_successor->p_predecessor_ = predecessor;
         p_successor->path_cost_ = path_cost;
@@ -151,12 +151,12 @@ void AStar::ExpandNode(sNode *predecessor)
  * \return Length of the path from to arrive at target node
  *
  * \sa
- * - Backtrack relies on class sNode::p_predecessor_
+ * - Backtrack relies on class GraphNode::p_predecessor_
  *
  */
-int AStar::BacktrackPath(sNode *target) const
+int AStar::BacktrackPath(o_graph::GraphNode *target) const
 {
-	sNode *current = target;
+	o_graph::GraphNode *current = target;
 	while (current->p_predecessor_ != 0L)
 	{
 		p_output_buffer_[current->path_cost_-1] = current->id_;
@@ -189,7 +189,7 @@ int AStar::FindPath(const int &iS, const int &jS, const int &iT, const int &jT)
 {
 	int path_length = -1; // will be set to actual length if path exists
 
-	sNode *p_start_node = new sNode();
+	o_graph::GraphNode *p_start_node = new o_graph::GraphNode();
 	p_start_node->id_ = map_.GetIndex(iS,jS);
 	p_start_node->fvalue_ = 0;
 	p_start_node->path_cost_ = 0;
@@ -202,7 +202,7 @@ int AStar::FindPath(const int &iS, const int &jS, const int &iT, const int &jT)
 
     do
     {
-    	sNode *p_current_node = open_list_.A_[0].data_;
+    	o_graph::GraphNode *p_current_node = open_list_.A_[0].data_;
     	open_list_.remove(0);
 
         // check if target reached
@@ -233,7 +233,7 @@ int AStar::FindPath(const int &iS, const int &jS, const int &iT, const int &jT)
 void AStar::ClearLists()
 {
 	closed_list_.TraverseLRN(
-			[](RedBlackTree<unsigned int, sNode*>::NodeType *N) {delete N->data_;},
+			[](RedBlackTree<unsigned int, o_graph::GraphNode*>::NodeType *N) {delete N->data_;},
 			closed_list_.root_);
 	for(unsigned int i=0; i< open_list_.n_items_; ++i)
 		delete open_list_.A_[i].data_;
