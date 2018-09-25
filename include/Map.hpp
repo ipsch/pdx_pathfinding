@@ -32,13 +32,7 @@
 namespace o_graph
 {
 
-	//! /brief Struct to represent a single position (x,y) in 2d space
-	struct coordinate
-	{
-		coordinate(const int &i, const int &j) : x(i), y(j) { }
-		int x;
-		int y;
-	};
+
 
 
 	class GraphNode
@@ -73,35 +67,10 @@ namespace o_graph
 	};
 
 
-
-
-
-
-
-
-	/** \brief A struct that consists of the most essential information about the game map
-	 */
-	struct MapMetaObject
-	{
-		MapMetaObject() :
-			nMapWidth_(0), nMapHeight_(0), pMap_(0L) { }
-		MapMetaObject(const unsigned int &width, const unsigned int &height, unsigned char *data) :
-			nMapWidth_(width), nMapHeight_(height), pMap_(data) { }
-		int unsigned nMapWidth_;
-		int unsigned nMapHeight_;
-		unsigned char * pMap_;
-	};
-
-
-
-
-
-
-
 	class Map
 	{
 	public :
-		explicit Map(const MapMetaObject &map);
+		Map(const Map &map);
 		explicit Map(const int &width, const int &height, const unsigned char *data);
 		//void Load(const std::string &path_and_file_name);
 
@@ -120,33 +89,46 @@ namespace o_graph
 		double max_manhattan_;
 
 
+
+
 		o_data_structures::ListLIFO<unsigned int, 4> neighbour_list_;
 
 		void get_ij(const int &index, int &i, int &j) const;
-		coordinate GetIJ(const int &index) const;
-		int GetIndex(const int &i, const int &j) const {return i + j*width_;}
+
+		int get_index(const int &i, const int &j) const {return i + j*width_;}
 		void get_neighbours(const GraphNode * node);
 		unsigned char operator()(const int &i, const int &j) const
 			{return data_[i + j*width_];}
 
-		bool Traversable(const int &i, const int &j) const
+		bool is_traversable(const int &i, const int &j) const
 			{return (operator()(i,j)==Map::terrain_traversable_);}
-		friend MapMetaObject LoadMap(const std::string &path_to_file);
 
 
 
 	protected :
+
+		//! /brief Struct to represent a single position (x,y) in 2d space
+		typedef struct coordinate
+		{
+			coordinate(const int &i, const int &j) : x(i), y(j) { }
+			int x;
+			int y;
+		} Coordinate;
+
+
+		Coordinate GetIJ(const int &index) const;
+
 		explicit Map();
 		static const unsigned char terrain_traversable_;
 		static const unsigned char terrain_blocked_;
 
-
+		friend Map LoadMap(const std::string &path_to_file);
 	};
 
 
 	void PrintMap(const Map &map, std::ostream &output_stream = std::cout);
 
-	MapMetaObject LoadMap(const std::string &path_to_file);
+	Map LoadMap(const std::string &path_to_file);
 
 
 }

@@ -1,5 +1,4 @@
-/**
- * \file AStar.cpp
+/** \file AStar.cpp
  * this file is part of project pdx_pathfinding
  *
  * \brief definitions to class AStar and interface function int FindPath()
@@ -190,12 +189,12 @@ int AStar::FindPath(const int &iS, const int &jS, const int &iT, const int &jT)
 	int path_length = -1; // will be set to actual length if path exists
 
 	o_graph::GraphNode *p_start_node = new o_graph::GraphNode();
-	p_start_node->id_ = map_.GetIndex(iS,jS);
+	p_start_node->id_ = map_.get_index(iS,jS);
 	p_start_node->fvalue_ = 0;
 	p_start_node->path_cost_ = 0;
 	p_start_node->p_predecessor_ = 0L;
 
-	unsigned int target_node_id = map_.GetIndex(iT,jT);
+	unsigned int target_node_id = map_.get_index(iT,jT);
 
 	map_.set_heuristic(target_node_id);
 	open_list_.insert(p_start_node->fvalue_,p_start_node);

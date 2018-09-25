@@ -28,15 +28,15 @@ namespace o_graph
 	const unsigned char Map::terrain_blocked_ = 0;
 
 
-	Map::Map() : data_(0L), width_(0), height_(0),
+	Map::Map() : width_(0), height_(0), data_(0L),
 			i0_(0), j0_(0), max_manhattan_(.0)
 	{
 		// noting to do here
 	}
 
 
-	Map::Map(const MapMetaObject &map) :
-			width_(map.nMapWidth_), height_(map.nMapHeight_), data_(map.pMap_),
+	Map::Map(const Map &map) :
+			width_(map.width_), height_(map.height_), data_(map.data_),
 			i0_(0), j0_(0), max_manhattan_(.0)
 	{
 		// noting to do here
@@ -44,7 +44,7 @@ namespace o_graph
 
 
 	Map::Map(const int &width, const int &height, const unsigned char *data) :
-		width_(width), height_(height), data_(data),
+		height_(height), width_(width), data_(data),
 		i0_(0), j0_(0), max_manhattan_(.0)
 	{
 		// noting to do here
@@ -60,7 +60,7 @@ namespace o_graph
 	}
 
 
-	coordinate Map::GetIJ(const int &index) const
+	Map::Coordinate Map::GetIJ(const int &index) const
 	{
 		int j = index / width_;
 		int i = index - j*width_;
@@ -133,71 +133,9 @@ namespace o_graph
 		return manhattan + (manhattan/max_manhattan_);
 	}
 
-	/*
-	void Map::Load(const std::string &path_and_file_name)
-	{
-		std::string line;
-		std::string::size_type sz;
-		std::ifstream map_data_stream(path_and_file_name.c_str(),std::ifstream::in);
-
-		if(!map_data_stream.good())
-			throw("file couldn't be opened");
-		if(data_!=0L)
-			delete[] data_;
-
-		do // handle map header data.
-		   // Header is located before bulk data in *.map file
-		   // bulk data is indicated by "pMap=" keyword.
-		{
-			getline(map_data_stream,line);
-			if(line.find("MapWidth")!=std::string::npos)
-				width_ = std::stoi(FindAndReplaceAll(line,"MapWidth=",""),&sz);
-			if(line.find("MapHeight")!=std::string::npos)
-				height_ = std::stoi(FindAndReplaceAll(line,"MapHeight=",""),&sz);
 
 
-
-		} while( (!(line.find("MapData")!=std::string::npos))
-				&& map_data_stream.good());
-
-		unsigned int size = width_*height_;
-		data_ = new unsigned char[size]();
-
-
-		unsigned int iter=0;
-		do // handle map bulk data
-		{
-			getline(map_data_stream,line);
-			for(std::size_t column=0; column < line.size(); ++column)
-			{
-				switch (line[column])
-				{
-				case terrain_traversable_:
-					data_[iter]=1;
-					break;
-				case terrain_blocked_:
-					data_[iter]=0;
-					break;
-				default :
-					data_[iter]=terrain_traversable_;
-					break;
-				}
-				++iter;
-
-			}
-		} while(map_data_stream.good()); // END READING FROM FILE
-
-
-		map_data_stream.close();
-		return;
-	}
-	*/
-
-
-
-
-	/**
-	 *  \brief A class to represent the game map
+	/** \brief A class to represent the game map
 	 *
 	 *
 	 *
@@ -258,82 +196,13 @@ namespace o_graph
 	}
 
 
-
-
-	MapMetaObject LoadMap(const std::string &path_to_file)
+	Map LoadMap(const std::string &path_to_file)
 	{
-
-		unsigned char *data;
-		unsigned int width;
-		unsigned int height;
-
-		std::ifstream MapStream(path_to_file.c_str(),std::ifstream::in);
-
-		if(!MapStream.good())
-			throw std::runtime_error("file coudn't be opened");
-
-
-		std::string line;
-		std::string::size_type sz;
-
-		do // handle map header data.
-		   // Header is located before bulk data in *.map file
-		   // bulk data is indicated by "pMap=" keyword.
-		{
-			getline(MapStream,line);
-			if(line.find("MapWidth")!=std::string::npos)
-				width = std::stoi(FindAndReplaceAll(line,"MapWidth=",""),&sz);
-			if(line.find("MapHeight")!=std::string::npos)
-				height = std::stoi(FindAndReplaceAll(line,"MapHeight=",""),&sz);
-
-
-
-		} while( (!(line.find("MapData")!=std::string::npos))
-				&& MapStream.good());
-
-
-		data = new unsigned char [width*height+2];
-
-
-		unsigned int iter=0;
-		do // handle map bulk data
-		{
-			getline(MapStream,line);
-			for(std::size_t collumn=0; collumn < line.size(); ++collumn)
-			{
-
-				switch (line[collumn])
-				{
-				case '.':
-					data[iter]=Map::terrain_traversable_;
-					break;
-				case '@':
-					data[iter]=Map::terrain_blocked_;
-					break;
-				default :
-					data[iter]=Map::terrain_traversable_;
-					break;
-				}
-				++iter;
-
-			}
-
-
-		} while(MapStream.good()); // END READING FROM FILE
-
-
-
-
-
-		MapStream.close();
-
-		MapMetaObject temporary_meta_map;
-		temporary_meta_map.nMapHeight_ = height;
-		temporary_meta_map.nMapWidth_ = width;
-		temporary_meta_map.pMap_ = data;
-
-
-		return temporary_meta_map;
+		unsigned char *data = 0L;
+		unsigned int width = 0;
+		unsigned int height = 0;
+		LoadMap(path_to_file, width, height, data);
+		return Map(width, height, data);
 	}
 
 
@@ -349,7 +218,4 @@ namespace o_graph
 		return;
 	}
 
-}
-
-
-
+} // END NAMESPACE o_graph

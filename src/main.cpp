@@ -1,7 +1,7 @@
-/*!
+/** \file main.cpp
  * project: pdx_pathfinding
  *
- * \file main.cpp
+ *
  *
  * \brief contains main() to pdx_pathfinding project + documentation
  *
@@ -108,9 +108,9 @@
 
 #include "oString.hpp"                 // helper functions for string handling
 #include "time_measure.hpp"
-#include "Map.hpp"                     //
-#include "AStar.hpp"
-#include "NRRan.hpp"
+#include "Map.hpp"                     // representation of game map
+#include "AStar.hpp"                   // Path finding algorithm
+#include "NRRan.hpp"                   // Numerical Recipes random number generator
 #include "Class_AnalysisRuntime.hpp"
 
 
@@ -214,7 +214,7 @@ void RandomizeCoordinates(int &x, int &y, o_graph::Map &map)
 	{
 		x = (int) (RNG.doub()*map.width_);
 		y = (int) (RNG.doub()*map.height_);
-		if(map.Traversable(x,y))
+		if(map.is_traversable(x,y))
 			valid = true;
 	}
 	return;
@@ -280,8 +280,7 @@ AnalysisRuntime RunNTimes(unsigned int nRuns, o_graph::Map &map, std::string map
 
 void SingleMapOnce(const std::string &file_name, int xStart, int yStart, int xTarget, int yTarget)
 {
-	o_graph::MapMetaObject GameMap = o_graph::LoadMap(file_name);
-	o_graph::Map map(GameMap);
+	o_graph::Map map = o_graph::LoadMap(file_name);
 
 	std::cout << "map name: " << file_name << "\n";
 	std::cout << "size: ";
@@ -304,8 +303,7 @@ void SingleMapOnce(const std::string &file_name, int xStart, int yStart, int xTa
 
 void SingleMapNTimes(const std::string &file_name, int runs_per_map = 1)
 {
-	o_graph::MapMetaObject GameMap = o_graph::LoadMap(file_name);
-	o_graph::Map map(GameMap);
+	o_graph::Map map = o_graph::LoadMap(file_name);
 
 	std::cout << "map name: " << file_name << "\n";
 	std::cout << "size: ";

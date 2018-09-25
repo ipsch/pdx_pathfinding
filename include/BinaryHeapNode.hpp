@@ -73,6 +73,7 @@ namespace o_data_structures
 	}
 
 
+	// ToDo: 2018-09-25 ipsch: contructor not working in BinaryHeapNode.hpp
 	/** \brief Copy Contructor
 	 */
 	//template<typename KeyType, typename DataType>
