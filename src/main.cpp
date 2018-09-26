@@ -203,7 +203,23 @@ int * pOutBuffer;
 
 
 
+struct setting
+{
+	setting(int x0, int y0, int x1, int y1, std::string file_name, int runs, int run_opt,
+			bool iterate, bool random) :
+			x0(x0), y0(y0), x1(x1), y1(y1), file_name(file_name), runs_per_map(runs), run_opt(run_opt),
+			iterate_maps(iterate), randomize_xy(random) { }
 
+	int x0;
+	int y0;
+	int x1;
+	int y1;
+	std::string file_name;
+	int runs_per_map;
+	int run_opt;
+	bool iterate_maps;
+	bool randomize_xy;
+};
 
 
 
@@ -218,6 +234,20 @@ void RandomizeCoordinates(int &x, int &y, o_graph::Map &map)
 			valid = true;
 	}
 	return;
+}
+
+
+o_graph::Map OpenMap(std::string file_name)
+{
+	o_graph::Map map = o_graph::LoadMap(file_name);
+
+	std::cout << "map name: " << file_name << "\n";
+	std::cout << "size: ";
+	std::cout << map.width_ << "x";
+	std::cout << map.height_ << " @ ";
+	std::cout << "pMap: " << map.data_ << "\n";
+
+	return map;
 }
 
 
@@ -253,79 +283,58 @@ AnalysisRuntimeData Core(int nStartX, int nStartY, int nTargetX, int nTargetY,
 }
 
 
-AnalysisRuntime RunNTimes(unsigned int nRuns, o_graph::Map &map, std::string map_name)
+void IterateRuns(setting &s, o_graph::Map &map)
 {
 
 	std::string file_analysis;
-	file_analysis = FindAndReplaceAll(map_name,"/maps/","/benchmark/");
+	file_analysis = FindAndReplaceAll(s.file_name,"/maps/","/benchmark/");
 	file_analysis = FindAndReplaceAll(file_analysis,".map",".log");
 	AnalysisRuntime analysis(map.width_, map.height_, file_analysis);
 
-	for(unsigned int i=0; i<nRuns; ++i)
+	for(unsigned int i=0; i<s.runs_per_map; ++i)
 	{
-		int StartX, StartY, TargetX, TargetY;
-		RandomizeCoordinates(StartX, StartY, map);
-		RandomizeCoordinates(TargetX, TargetY, map);
+		if(s.randomize_xy)
+		{
+			RandomizeCoordinates(s.x0, s.y0, map);
+			RandomizeCoordinates(s.x1, s.y1, map);
+		}
 
 		std::cout << i << ":\t";
-		AnalysisRuntimeData result = Core(StartX, StartY, TargetX, TargetY,
-				map, map_name);
+		AnalysisRuntimeData result = Core(s.x0, s.y0, s.x1, s.y1,
+				map, s.file_name);
 
 	    analysis.AddData(result);
 	}
-
-	return analysis;
-}
-
-
-void SingleMapOnce(const std::string &file_name, int xStart, int yStart, int xTarget, int yTarget)
-{
-	o_graph::Map map = o_graph::LoadMap(file_name);
-
-	std::cout << "map name: " << file_name << "\n";
-	std::cout << "size: ";
-	std::cout << map.width_ << "x";
-	std::cout << map.height_ << " @ ";
-	std::cout << "pMap: " << map.data_ << "\n";
-
-	AnalysisRuntimeData result = Core(xStart, yStart, xTarget, yTarget,
-			map, file_name);
-
-	//PrintTestResultToFile(); // print header
-	PrintAnalysis(xStart, yStart, xTarget, yTarget,
-			result.path_length_, result.nodes_expanded_,
-			result.wall_time_, result.cpu_time_,
-			pOutBuffer); // print test result
-
-	return;
-}
-
-
-void SingleMapNTimes(const std::string &file_name, int runs_per_map = 1)
-{
-	o_graph::Map map = o_graph::LoadMap(file_name);
-
-	std::cout << "map name: " << file_name << "\n";
-	std::cout << "size: ";
-	std::cout << map.width_ << "x";
-	std::cout << map.height_ << " @ ";
-	std::cout << "pMap: " << map.data_ << "\n";
-
-	AnalysisRuntime analysis = RunNTimes(runs_per_map, map, file_name);
+	analysis.CalcMean();
 	analysis.Evaluate();
 	return;
 }
 
 
-void MultiMapsNTimes(int runs_per_map = 1)
+void IterateMaps(setting s)
 {
-	for(auto iter_map=MAPS.begin(); iter_map!=MAPS.end(); ++iter_map)
-		SingleMapNTimes(*iter_map, runs_per_map);
+	if (s.iterate_maps)
+	{
+		for(auto iter_map=MAPS.begin(); iter_map!=MAPS.end(); ++iter_map)
+		{
+			o_graph::Map map = OpenMap(*iter_map);
+			IterateRuns(s, map);
+			delete[] map.data_;
+		}
+	}
+	else
+	{
+		o_graph::Map map = OpenMap(s.file_name);
+		IterateRuns(s, map);
+		delete[] map.data_;
+	}
 	return;
 }
 
 
 
+
+/*
 struct setting
 {
 	setting(int x0, int y0, int x1, int y1, std::string file_name, int runs, int run_opt) :
@@ -339,29 +348,20 @@ struct setting
 	int runs;
 	int run_opt;
 };
-
+*/
 
 int main(void)
 {
 	pOutBuffer = new int[nBufferSize];
 
-	setting setting(391,5,418,23, "./maps/maze512-1-0.map", 10000, 2);
+	//setting setting(391,5,418,23, "./maps/maze512-1-0.map", 10000, 2,true, true);
 
-	//setting setting(0,0,1,2, "./maps/pdx_example.map", 1, 0);
+	setting setting(475,123,455,189, "./maps/maze512-1-0.map", 10000, 2,false, false);
+
+	//setting setting(0,0,1,2, "./maps/pdx_example.map", 1, 0, false, false);
 
     try{
-    	switch(setting.run_opt)
-    	{
-    	case 0 :
-    		SingleMapOnce(setting.file_name, setting.x0,setting.y0,setting.x1,setting.y1);
-    		break;
-    	case 1 :
-    		SingleMapNTimes(setting.file_name, setting.runs);
-    		break;
-    	case 2:
-    		MultiMapsNTimes(setting.runs);
-			break;
-    	}
+    	IterateMaps(setting);
 	}
     catch(const std::exception& e)
     {

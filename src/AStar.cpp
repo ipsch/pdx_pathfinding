@@ -113,13 +113,7 @@ void AStar::ExpandNode(o_graph::GraphNode *predecessor)
         	if(path_cost >= open_list_.A_[search_index].data_->path_cost_ )
         		continue;
 
-
-        o_graph::GraphNode *p_successor = new o_graph::GraphNode();
-        p_successor->id_ = successor_id;
-        p_successor->p_predecessor_ = predecessor;
-        p_successor->path_cost_ = path_cost;
         float fvalue = map_.heuristic(successor_id) + (double) path_cost;//heuristic_(map_.GetIJ(successor_id));
-        p_successor->fvalue_ = fvalue;
 
         ++nodes_expanded_; // ToDo: 2018-09-25 ipsch: Remove this in shipping version
 
@@ -127,7 +121,14 @@ void AStar::ExpandNode(o_graph::GraphNode *predecessor)
 		if (search_success)
             open_list_.change_key(search_index, fvalue);
         else
+        {
+            o_graph::GraphNode *p_successor = new o_graph::GraphNode();
+            p_successor->id_ = successor_id;
+            p_successor->p_predecessor_ = predecessor;
+            p_successor->path_cost_ = path_cost;
+            p_successor->fvalue_ = fvalue;
         	open_list_.insert(fvalue, p_successor);
+        }
 	}
     return;
 }
@@ -196,13 +197,17 @@ int AStar::FindPath(const int &iS, const int &jS, const int &iT, const int &jT)
 
 	unsigned int target_node_id = map_.get_index(iT,jT);
 
-	map_.set_heuristic(target_node_id);
+	map_.set_heuristic(iT,jT);
 	open_list_.insert(p_start_node->fvalue_,p_start_node);
 
     do
     {
     	o_graph::GraphNode *p_current_node = open_list_.A_[0].data_;
     	open_list_.remove(0);
+        closed_list_.Insert(
+        		/* key: */ p_current_node->id_,
+				/* p_data: */ p_current_node );
+
 
         // check if target reached
         if ( p_current_node->id_ == target_node_id )
@@ -212,9 +217,7 @@ int AStar::FindPath(const int &iS, const int &jS, const int &iT, const int &jT)
         }
 
     	// move to closed list
-        closed_list_.Insert(
-        		/* key: */ p_current_node->id_,
-				/* p_data: */ p_current_node );
+
 
         ExpandNode(p_current_node);
 
@@ -232,7 +235,7 @@ int AStar::FindPath(const int &iS, const int &jS, const int &iT, const int &jT)
 void AStar::ClearLists()
 {
 	closed_list_.TraverseLRN(
-			[](RedBlackTree<unsigned int, o_graph::GraphNode*>::NodeType *N) {delete N->data_;},
+			[](RedBlackTree<unsigned int, o_graph::GraphNode*>::NodeType *N) { delete N->data_; },
 			closed_list_.root_);
 	for(unsigned int i=0; i< open_list_.n_items_; ++i)
 		delete open_list_.A_[i].data_;

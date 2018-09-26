@@ -180,6 +180,28 @@ int FindBin(const double &x0, const double &x1, const int &n, const double &x)
 }
 
 
+void AnalysisRuntime::CalcMean()
+{
+	int N=0;
+	double mean_cpu_time = .0;
+	double mean_wall_time = .0;
+
+	for(myDataType::iterator it = data_.begin(); it != data_.end(); it++)
+	{
+		++N;
+		mean_cpu_time += (*it).cpu_time_;
+		mean_wall_time += (*it).wall_time_;
+	}
+
+	mean_cpu_time = mean_cpu_time / (double) N;
+	mean_wall_time = mean_wall_time / (double) N;
+
+	std::cout << "--------------------------------------------------\n";
+	std::cout << mean_cpu_time << "\t" << mean_wall_time << std::endl;
+
+}
+
+
 void AnalysisRuntime::Evaluate()
 {
 	int n_bins_path = 20; // number_of_bins_for_path_length = 100;

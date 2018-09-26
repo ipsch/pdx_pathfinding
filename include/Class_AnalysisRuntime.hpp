@@ -67,6 +67,7 @@ public :
 			const double &wall_time,
 			const double &cpu_time);
 	void Evaluate();
+	void CalcMean();
 private :
 	void (*CallbackOutput_)(const oTable<double> &, std::ostream &) = &oTablePrint;
 	AnalysisRuntime();
