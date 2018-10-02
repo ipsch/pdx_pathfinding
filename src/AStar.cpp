@@ -117,7 +117,7 @@ void AStar::ExpandNode(o_graph::GraphNode *predecessor)
 
         ++nodes_expanded_; // ToDo: 2018-09-25 ipsch: Remove this in shipping version
 
-		// ToDO 2018-09-25 ipsch: check change_key using valgrind
+
 		if (search_success)
             open_list_.change_key(search_index, fvalue);
         else
@@ -235,7 +235,7 @@ int AStar::FindPath(const int &iS, const int &jS, const int &iT, const int &jT)
 void AStar::ClearLists()
 {
 	closed_list_.TraverseLRN(
-			[](RedBlackTree<unsigned int, o_graph::GraphNode*>::NodeType *N) { delete N->data_; },
+			[](o_data_structures::RedBlackTree<unsigned int, o_graph::GraphNode*>::NodeType *N) { delete N->data_; },
 			closed_list_.root_);
 	for(unsigned int i=0; i< open_list_.n_items_; ++i)
 		delete open_list_.A_[i].data_;

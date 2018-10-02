@@ -43,10 +43,9 @@
 
 
 #include "BinaryHeap.hpp"			// priority queque used for the open_list_
-#include "rb_tree.hpp"				// binary self balancing tree class used for the closed_list_
-
 #include "Map.hpp"                  // A class to representation the game map
 #include "PriorityQueue.hpp"
+#include "RedBlackTree.hpp"				// binary self balancing tree class used for the closed_list_
 
 using namespace PriorityQueue;
 
@@ -103,7 +102,7 @@ private :
 
 	o_data_structures::BinaryHeap<float, o_graph::GraphNode*> open_list_;   /**< Priority queue containing all Nodes that need processing */
 
-	RedBlackTree<unsigned int, o_graph::GraphNode*> closed_list_;                  /**< Binary search tree containing all visited nodes  */
+	o_data_structures::RedBlackTree<unsigned int, o_graph::GraphNode*> closed_list_;                  /**< Binary search tree containing all visited nodes  */
 	o_graph::Map &map_;                         /**< Reference to the game map (provided by caller) */
 
 	int output_buffer_size_; 	       /**< size of the Buffer \ref p_output_buffer_ */

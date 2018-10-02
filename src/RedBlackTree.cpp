@@ -1,11 +1,11 @@
 /** \file
- * 		BinaryHeap.cpp
+ * 		RedBlackTree.cpp
  *
  *  \brief
- *  	accompanying .cpp file to BinaryHeap.hpp
+ *  	accompanying .cpp file to RedBlackTree.hpp
  *
  *	\details
- *		This file is a stub since BinaryHeap is
+ *		This file is a stub since RedBlackTree is
  *		a template class.
  *
  *  \version
@@ -16,9 +16,4 @@
  *      contact: i.p.schnell(at)gmail.com
  */
 
-#include "BinaryHeap.hpp"
-
-
-
-
-
+#include "RedBlackTree.hpp"
