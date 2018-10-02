@@ -204,7 +204,7 @@ int AStar::FindPath(const int &iS, const int &jS, const int &iT, const int &jT)
     {
     	o_graph::GraphNode *p_current_node = open_list_.A_[0].data_;
     	open_list_.remove(0);
-        closed_list_.Insert(
+        closed_list_.insert(
         		/* key: */ p_current_node->id_,
 				/* p_data: */ p_current_node );
 
@@ -234,7 +234,7 @@ int AStar::FindPath(const int &iS, const int &jS, const int &iT, const int &jT)
  */
 void AStar::ClearLists()
 {
-	closed_list_.TraverseLRN(
+	closed_list_.traverse_LRN(
 			[](o_data_structures::RedBlackTree<unsigned int, o_graph::GraphNode*>::NodeType *N) { delete N->data_; },
 			closed_list_.root_);
 	for(unsigned int i=0; i< open_list_.n_items_; ++i)
