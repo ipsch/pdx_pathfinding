@@ -24,7 +24,6 @@
 
 #pragma once
 
-#include "tuple.hpp"
 #include <iostream> // ToDo: remove in shipping version
 
 namespace o_data_structures
@@ -48,7 +47,7 @@ namespace o_data_structures
 		KeyType key_;
 		bool color_;
 		RedBlackNode(KeyType key) :
-			left_(0L), right_(0L), parent_(0L), key_(key), color_(true)
+			left_(0L), right_(0L), parent_(0L), key_(key), color_(false)
 		{
 			// Nothing to do here
 		};
@@ -69,7 +68,7 @@ namespace o_data_structures
 			DataType data_;
 			bool color_;
 			RedBlackNode(KeyType key, DataType data) :
-				left_(0L), right_(0L), parent_(0L), key_(key), data_(data), color_(true)
+				left_(0L), right_(0L), parent_(0L), key_(key), data_(data), color_(false)
 			{
 				// Nothing to do here
 			};
@@ -149,11 +148,11 @@ namespace o_data_structures
 		void traverse_LRN(Func func, NodeType *node);
 
 		// Tree operation/manipulation
-		void rotate_left(NodeType *N);
-		void rotate_right(NodeType *N);
+		void rotate_left(NodeType *n);
+		void rotate_right(NodeType *n);
 		void BinaryInsert(NodeType *mountpoint, NodeType *newNode);
-		void FixInsertion(NodeType *N);
-		void FixRemoval(NodeType *N);
+		void FixInsertion(NodeType *n);
+		void FixRemoval(NodeType *n);
 
 	protected :
 		static const bool black_ = true;
@@ -215,9 +214,7 @@ namespace o_data_structures
 	{
 		if (g->left_ == 0L)
 			return false;
-		if (n == g->left_->right_)
-			return true;
-		return false;
+		return (n == g->left_->right_) ? true : false;
 	}
 
 
@@ -311,55 +308,22 @@ namespace o_data_structures
 
 
 
+
 	template <class KeyType, class DataType>
 	template <typename Func>
 	void RedBlackTree<KeyType,DataType>::traverse_NLR(Func func, NodeType *node)
-	/**
-	 * \brief Traverses the Tree in pre-order (NLR = Node, Left, Right) and applies func to all nodes visited
-	 *
-	 * \details Making func a template makes TraverseLRN() flexible and usefull in many ways;
-	 * for example can it be used as a callback function to output the contend of the trees nodes
-	 * But since usage isn't too straight forward we give an example on how to use it:
-	 *
-	 * \example
-	 * \code
-	 * class BigObject ...;                     // A class with extensive use of memory (lets say a big array)
-	 * RedBlackTree<int, *BigObject> list;      // A list in form of a RedBlackTree
-	 * for(i=0; i<100; ++i)                     // Filling the tree with pointers to BigObjects
-	 * 		list.Insert(i, new BigObject(..));
-	 * ..
-	 *                                   // Do stuff with the list
-	 * // Print all keys and some_member_ of BigObject
-	 * list.TraverseNLR(
-	 *			[](RedBlackTree<int, *BigObject>::NodeType *bar)
-	 *				{std::cout << bar->key_ << "\t" << bar_->data_->some_member_ << std::endl;});
-	 *
-	 * // Clean up list
-	 * list.TraverseNLR(
-	 *			[](RedBlackTree<int, *BigObject>::NodeType *bar)
-	 *				{delete bar->data_; bar->data_=NULL;});
-	 * return;
-	 * \endcode
-	 *
-	 * \param[in] *Node Pointer a node where to start traversing (default = this->root_ (The trees root))
-	 * \param[in] func a function pointer or a closure (lambda-function) that will be applied to all nodes
-	 * visited
-	 */
 	{
 		if (node==0L)
 			return;
 		func(node);
 		if (node->left_!=0L)
-			traverse_LRN(func,node->left_);
+			traverse_NLR(func,node->left_);
 		if (node->right_!=0L)
-			traverse_LRN(func,node->right_);
+			traverse_NLR(func,node->right_);
 		return;
 	}
 
 
-	template <class KeyType, class DataType>
-	template <typename Func>
-	void RedBlackTree<KeyType,DataType>::traverse_LNR(Func func, NodeType *node)
 	/**
 	 * \brief Traverses the Tree in in-order (LNR = Left, Node, Right) and applies func to all nodes visited
 	 *
@@ -369,14 +333,17 @@ namespace o_data_structures
 	 *
 	 * \sa Please see documentation of TraverseNLR(..) for details
 	 */
+	template <class KeyType, class DataType>
+	template <typename Func>
+	void RedBlackTree<KeyType,DataType>::traverse_LNR(Func func, NodeType *node)
 	{
 		if (node==0L)
 			return;
 		if (node->left_!=0L)
-			TraverseLRN(func,node->left_);
+			traverse_LNR(func,node->left_);
 		func(node);
 		if (node->right_!=0L)
-			TraverseLRN(func,node->right_);
+			traverse_LNR(func,node->right_);
 		return;
 	}
 
@@ -490,9 +457,9 @@ namespace o_data_structures
 		RedBlackTree<KeyType,DataType>::FixInsertion(newNode);
 
 		// since FixTree can change the root
-		root_ = newNode;
-		while(root_->parent_!=0L)
-			root_ = root_->parent_;
+		//root_ = newNode;
+		//while(root_->parent_!=0L)
+		//	root_ = root_->parent_;
 	}
 
 
@@ -512,7 +479,7 @@ namespace o_data_structures
 				mountpoint->left_ = newNode;
 		}
 		// newNode to Right Sub-branch
-		else if (mountpoint!=0L) // && (newNode->data_>=mountpoint->data_)
+		else if (mountpoint != 0L) // && (newNode->data_>=mountpoint->data_)
 		{
 			if(mountpoint->right_!=0L)
 			{
@@ -523,59 +490,62 @@ namespace o_data_structures
 				mountpoint->right_=newNode;
 		}
 
-		newNode->parent_=mountpoint;
-		newNode->left_=0L;
-		newNode->right_=0L;
-		newNode->color_=red_;
+		newNode->parent_ = mountpoint;
+		//newNode->left_ = 0L;
+		//newNode->right_ = 0L;
+		//newNode->color_ = red_;
 
 		return;
 	}
 
 
 	template <class KeyType, class DataType>
-	void RedBlackTree<KeyType,DataType>::FixInsertion(NodeType *N)
+	void RedBlackTree<KeyType,DataType>::FixInsertion(NodeType *n)
 	{
-		if(N->parent_==0L)
+		if(n->parent_ == 0L)
 		{
-			// N has no parent => N is root => set color to BLACK
-			N->color_=true;
+			// n is RED & has no parent => N is root => set n's color to BLACK
+			n->color_ = true;
+			root_ = n;
 		}
-		else if(N->parent_->color_==true)
+		else if(n->parent_->color_ == black_)
 		{
-			return; // N has a BLACK parent => N is RED => insertion is no Problem
+			// n is RED & has a BLACK parent => insertion is no Problem
+			return;
 		}
-		else if( (get_uncle(N)!=0L?get_uncle(N)->color_:true)==false) // N has RED parent AND RED uncle
-		{                                // =>
-			N->parent_->color_ = black_;
-			get_uncle(N)->color_ = black_;
-			get_grandparent(N)->color_ = red_;
-			FixInsertion(get_grandparent(N));
+		else if( (get_uncle(n) != 0L ? get_uncle(n)->color_ : black_) == red_)
+		{
+			// n is RED has RED parent & has RED uncle => grandparent is BLACK
+			n->parent_->color_ = black_;
+			get_uncle(n)->color_ = black_;
+			get_grandparent(n)->color_ = red_;
+			FixInsertion(get_grandparent(n));
 		}
 		else
 		{
-			NodeType *p = N->parent_;
-			NodeType *g = get_grandparent(N);
+			// n is RED has RED parent but has BLACK uncle
+			NodeType *p = n->parent_;
+			NodeType *g = get_grandparent(n);
 
-			if (is_LeftInnerGrandChild(N,g))
+			if (is_LeftInnerGrandChild(n,g))
 			{
 				rotate_left(p);
-				N = N->left_;
+				n = n->left_;
+				p = n->parent_;
 			}
-			else if (is_RightInnerGrandChild(N,g))
+			else if (is_RightInnerGrandChild(n,g))
 			{
-				RedBlackTree<KeyType,DataType>::rotate_right(p);
-				N = N->right_;
+				rotate_right(p);
+				n = n->right_;
+				p = n->parent_;
 			}
 
-			p = N->parent_;
-			g = get_grandparent(N);
-
-			if (N == p->left_)
-				RedBlackTree<KeyType,DataType>::rotate_right(g);
+			if (n == p->left_)
+				rotate_right(g);
 			else
-				RedBlackTree<KeyType,DataType>::rotate_left(g);
-			p->color_ = true;
-			g->color_ = false;
+				rotate_left(g);
+			p->color_ = black_;
+			g->color_ = red_;
 		}
 		return;
 	}
