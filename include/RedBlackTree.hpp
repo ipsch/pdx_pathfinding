@@ -3,7 +3,7 @@
  *
  *  \brief
  *  	contains data structure "red-black tree"
- *      (an implementation of self balancing 2-3-Trees)
+ *      (an implementation of a self balancing 2-3-Tree)
  *
  *  \version
  *  	2018-10-02 ipsch: 1.2 - reworked documentation
@@ -11,16 +11,35 @@
  *  \authors
  *  	ipsch: Ingmar Schnell
  *      contact: i.p.schnell(at)gmail.com
+ *
+ *  \detail
+ *      A Red-Black-Tree is a data structure to efficiently store
+ *      data elements, which obey an order relation.
+ *      The data is organized in a binary tree, where
+ *      the Tree is self balancing; meaning the tree depth is approximately equal
+ *      for all path from its root to its leave nodes.
+ *      Searching for an element within the tree profits from the self
+ *      balancing properties and is of the order of log(n) where n denoted
+ *      the number of elements.
+ *      Following properties must be fulfilled for a Red-Black-Tree:
+ *      \section node_properties Node properties
+ *          - key value
+ *          - data value
+ *      	- pointer to related nodes left child, right child, parent
+ *          - color: A node is either black or red
+ *  	\section RB_conditions Red-Black-Tree Conditions
+ *  		- All external leaf nodes (nodes without children)
+ *  		  aka NIL-node (not in list) are black
+ *  		- both childs of a red node are black
+ *  		- Every path from an arbitrary node down to its leaf nodes contains
+ *  		  the same number of black nodes (called black-depth)
+ *
+ *  	\section RBTree_references References
+ *   		Rudolf Bayer (1972). "Symmetric binary B-Trees:
+ *	        Data structure and maintenance algorithms".
+ *	        Acta Informatica. 1 (4): 290–306. doi:10.1007/BF00289509.
+ *
  */
-
-	// Reference   : Rudolf Bayer (1972). "Symmetric binary B-Trees:
-	//               Data structure and maintenance algorithms".
-	//               Acta Informatica. 1 (4): 290–306. doi:10.1007/BF00289509.
-	// RB-Tree Conditions
-	// 	1.) Alle externen Blatt-Knoten (d. s. die #NIL-Knoten) sind schwarz.
-	// 	2.) Ist ein Knoten rot, so sind beide Kinder schwarz.
-	// 	3.) Jeder Pfad von einem gegebenen Knoten zu seinen Blattknoten enthält die gleiche Anzahl schwarzer Knoten.
-
 
 #pragma once
 
@@ -28,14 +47,15 @@
 
 namespace o_data_structures
 {
+	const bool RED = false;   //< Node color
+	const bool BLACK = true;  //< Node color
 
-	/** \brief Prototype for variadic template class RedBlackNode
-	 */
+
+	//! \brief Prototype for variadic template class RedBlackNode
 	template <class ... Args> struct RedBlackNode;
 
 
-	/** \brief Specialization of class RedBlackNode with only one field (key_)
-	 */
+	//! \brief Specialization of class RedBlackNode with only one field (key_)
 	template <class KeyType>
 	class RedBlackNode<KeyType>
 	{
@@ -54,196 +74,32 @@ namespace o_data_structures
 	}; // END CLASS RedBlackNode<KeyType>
 
 
-	/** \brief Specialization of class RedBlackNode with two fields (key_, data_)
-	 */
+	//! \brief Specialization of class RedBlackNode with two fields (key_, data_)
 	template <class KeyType, class DataType>
 	class RedBlackNode<KeyType, DataType>
 	{
 	public :
 		typedef RedBlackNode<KeyType,DataType> NodeType;
-			NodeType *left_;
-			NodeType *right_;
-			NodeType *parent_;
-			KeyType key_;
-			DataType data_;
-			bool color_;
-			RedBlackNode(KeyType key, DataType data) :
-				left_(0L), right_(0L), parent_(0L), key_(key), data_(data), color_(false)
-			{
-				// Nothing to do here
-			};
+		NodeType *left_;
+		NodeType *right_;
+		NodeType *parent_;
+		KeyType key_;
+		DataType data_;
+		bool color_;
+		RedBlackNode(KeyType key, DataType data) :
+				left_(0L), right_(0L), parent_(0L), key_(key), data_(data), color_(RED)
+		{
+			// Nothing to do here
+		};
 	}; // END CLASS RedBlackNode<KeyType, DataType>
 
 
-
-	/*
-
-	 ToDo: implement operator=
-
-	template <class KeyType>
-	void CopyContent(RedBlackNode<KeyType> &target, RedBlackNode<KeyType> &source)
-	{
-		target.key_ = source.key_;
-		return;
-	}
-
-	template <class KeyType, class DataType>
-	void CopyContent(RedBlackNode<KeyType, Args...> &target, RedBlackNode<KeyType, Args...> &source)
-	{
-		target.key_ = source.key_;
-		target.data_ = source.data_;
-		return;
-	}
-
-
+	/** \brief function to print information about a node to std::cout;
+	 *  \detail designed to work with class RedBlackNode<..>
+	 *  ToDo: remove in shipping version
 	 */
-
-
-
-
-
-
-	/** \brief Prototype for variadic template class RedBlackTree
-	 */
-	//template <class ... Args> class RedBlackTree;
-
-
-
-
-	/** \brief Specialization of class RedBlackNode with only one field (key_)
-	 */
-	template <class KeyType, class DataType>
-	class RedBlackTree//<KeyType,DataType>
-	{
-	public :
-		typedef RedBlackNode<KeyType, DataType> NodeType;
-		RedBlackTree() : root_(0L) { }
-		~RedBlackTree() {clear(root_);};
-
-		NodeType *root_;         // base of tree
-
-		NodeType *find(const KeyType &key) const;
-		NodeType *find(const KeyType &key, NodeType *N) const;
-		void insert(const KeyType &key, const DataType &data);
-		void remove(NodeType *N);
-		//void traverse() const;
-		void clear() {clear(root_); root_=0L;}
-		void clear(NodeType *n);
-	//protected :
-
-
-
-		// accessing Node properties and Node relations
-
-		NodeType *get_root(void) const {return root_;}
-
-
-		// Tree traversal and data visualization
-		// NLR=Pre-order, LNR=In-order, LRN=Post-order
-		template <typename Func>
-		void traverse_NLR(Func func, NodeType *node);
-		template <typename Func>
-		void traverse_LNR(Func func, NodeType *node);
-		template <typename Func>
-		void traverse_LRN(Func func, NodeType *node);
-
-		// Tree operation/manipulation
-		void rotate_left(NodeType *n);
-		void rotate_right(NodeType *n);
-		void BinaryInsert(NodeType *mountpoint, NodeType *newNode);
-		void FixInsertion(NodeType *n);
-		void FixRemoval(NodeType *n);
-
-	protected :
-		static const bool black_ = true;
-		static const bool red_ = false;
-
-
-		NodeType *get_grandparent(NodeType *n) const;
-		NodeType *get_sibling(NodeType *n) const;
-		NodeType *get_uncle(NodeType *n) const;
-		bool is_LeftInnerGrandChild(NodeType *n, NodeType *g) const;
-		bool is_RightInnerGrandChild(NodeType *n, NodeType *g) const;
-		inline bool get_color(NodeType *n) const {return (n == 0L) ? black_ : n->color_;}
-
-	};
-
-
-
-	// accessing Node properties and Node relations ###############################
-	// returns Grandparent of Node N (parent of parent)
-	// Note: N might be root
-	template <class KeyType, class DataType>
-	typename RedBlackTree<KeyType,DataType>::NodeType *RedBlackTree<KeyType,DataType>::get_grandparent(NodeType *n) const
-	{
-		return (n->parent_ != 0L) ? n->parent_->parent_ : 0L;
-	}
-
-
-	// returns the sibling of Node N
-	// Note: N might be root & sibling might not exist (returning 0L aka NIL)
-	template <class KeyType, class DataType>
-	typename RedBlackTree<KeyType,DataType>::NodeType *RedBlackTree<KeyType,DataType>::get_sibling(NodeType *n) const
-	{
-		NodeType* p = n->parent_;
-		if (n->parent_ == 0L)
-			return 0L;
-		return (n == p->left_) ? p->right_ : p->left_;
-	}
-
-
-	template <class KeyType, class DataType>
-	typename RedBlackTree<KeyType,DataType>::NodeType *RedBlackTree<KeyType,DataType>::get_uncle(NodeType *n) const
-	{
-		NodeType* g = get_grandparent(n);
-		return ( n->parent_ == g->left_ ) ? g->right_ : g->left_;
-	}
-
-
-	template <class KeyType, class DataType>
-	bool RedBlackTree<KeyType,DataType>::is_RightInnerGrandChild(NodeType *n, NodeType *g) const
-	{
-		if (g->right_== 0L)
-			return false;
-		return (n == g->right_->left_ ) ? true : false;
-	}
-
-
-	template <class KeyType, class DataType>
-	bool RedBlackTree<KeyType,DataType>::is_LeftInnerGrandChild(NodeType *n, NodeType *g) const
-	{
-		if (g->left_ == 0L)
-			return false;
-		return (n == g->left_->right_) ? true : false;
-	}
-
-
-
-
-	// Tree traversal and data visualization ######################################
-	template <class KeyType, class DataType>
-	typename RedBlackTree<KeyType,DataType>::NodeType *RedBlackTree<KeyType,DataType>::find(const KeyType &key) const
-	{
-		return RedBlackTree<KeyType,DataType>::find(key,root_);
-	}
-
-
-	template <class KeyType, class DataType>
-	typename RedBlackTree<KeyType,DataType>::NodeType *RedBlackTree<KeyType,DataType>::find(const KeyType &key, NodeType *N) const
-	{
-		if (N==0L) return 0L;
-		if (key == N->key_)
-			return N;
-		else if (key < N->key_)
-			return RedBlackTree<KeyType,DataType>::find(key,N->left_);
-		else if (key > N->key_)
-			return RedBlackTree<KeyType,DataType>::find(key,N->right_);
-		return 0L;
-	}
-
-
-	template <class KeyType, class DataType>
-	void printNodeDetails(RedBlackNode<KeyType,DataType> *n)
+	template <typename NodeType>
+	void printNodeDetails(NodeType *n)
 	{
 		std::cout << "Node->data_:" << n->data_ << "\t";
 		std::cout << "@ " << n << "\n";
@@ -254,12 +110,19 @@ namespace o_data_structures
 	}
 
 
+	/** \brief function to print information about a node to std::cout;
+	 *  \detail designed to work with class RedBlackNode<..>
+	 *  output can be used to represent the graphs structure using the online
+	 *  plugin "Dagre Interactive Demo" at
+	 *  http://www.samsarin.com/project/dagre-d3/latest/demo/interactive-demo.html
+	 *  ToDo: remove in shipping version
+	 */
 	template <class NodeType>
 	void printNodeDID(NodeType *N)
 	{
 		static int number_of_NIL_nodes = 0;
 
-		if(N->left_!=0L)
+		if (N->left_ != 0L)
 		{
 			std::cout << "\""<< N << "(" << N->key_ << "/" << N->color_ << ")";
 			//std::cout << " [label=\""<< N->data_ << "\"] ";
@@ -274,7 +137,7 @@ namespace o_data_structures
 			++number_of_NIL_nodes ;
 		}
 
-		if(N->right_!=0L)
+		if (N->right_ != 0L)
 		{
 			std::cout << "\""<< N << "(" << N->key_ << "/" << N->color_ << ")";
 			std::cout << "\" -> \"" ;
@@ -289,7 +152,7 @@ namespace o_data_structures
 		}
 
 
-		if(N->parent_!=0L)
+		if (N->parent_ != 0L)
 		{
 			std::cout << "\""<< N << "(" << N->key_ << "/" << N->color_ << ")";
 			std::cout << "\" -> \"";
@@ -307,55 +170,212 @@ namespace o_data_structures
 	}
 
 
+	/** \brief Specialization of class RedBlackTree with two fields (key_, data_)
+	 *
+	 *  \sa see the file documentation at the top of this file for a details
+	 */
+	template <class KeyType, class DataType>
+	class RedBlackTree//<KeyType,DataType>
+	{
+	public :
+		typedef RedBlackNode<KeyType, DataType> NodeType;
+		RedBlackTree() : root_(0L) { }
+		~RedBlackTree() {clear(root_);};
+
+		NodeType *root_;  //< base of tree
+
+		// Adding / removing nodes
+		void insert(const KeyType &key, const DataType &data);
+		void remove(NodeType *N);
+		void clear(NodeType *n);
+		void clear() {clear(root_); root_=0L;}
+
+		// Searching the tree
+		NodeType *find(const KeyType &key, NodeType *N) const;
+		NodeType *find(const KeyType &key) const;
+
+		// Tree traversal (NLR=Pre-order, LNR=In-order, LRN=Post-order)
+		template <typename Func>
+		void traverse_NLR(Func func, NodeType *node);
+		template <typename Func>
+		void traverse_LNR(Func func, NodeType *node);
+		template <typename Func>
+		void traverse_LRN(Func func, NodeType *node);
+
+	protected :
+		NodeType *get_grandparent(NodeType *n) const;
+		NodeType *get_sibling(NodeType *n) const;
+		NodeType *get_uncle(NodeType *n) const;
+		bool is_LeftInnerGrandChild(NodeType *n, NodeType *g) const;
+		bool is_RightInnerGrandChild(NodeType *n, NodeType *g) const;
+		inline bool get_color(NodeType *n) const {return (n == 0L) ? BLACK : n->color_;}
+
+		void rotate_left(NodeType *n);
+		void rotate_right(NodeType *n);
+
+		void insert_binary(NodeType *n, NodeType *m);
+		void fix_insertion(NodeType *n);
+		void fix_removal(NodeType *n);
+	};
 
 
+	/** \param[in] n The node whose parent we seek to find
+	 *  \return Pointer to 'n's parent if it exists; null pointer otherwise (<=> n is root_)
+	 */
+	template <class KeyType, class DataType>
+	typename RedBlackTree<KeyType,DataType>::NodeType *RedBlackTree<KeyType,DataType>::get_grandparent(NodeType *n) const
+	{
+		return (n->parent_ != 0L) ? n->parent_->parent_ : 0L;
+	}
+
+
+	/** \param[in] n The node whose sibling we seek to find
+	 *  \return Pointer to 'n's sibling if it exists; null pointer otherwise (<= n is root_ or sibling doesn't exist)
+	 */
+	template <class KeyType, class DataType>
+	typename RedBlackTree<KeyType,DataType>::NodeType *RedBlackTree<KeyType,DataType>::get_sibling(NodeType *n) const
+	{
+		NodeType* p = n->parent_;
+		if (n->parent_ == 0L)
+			return 0L;
+		return (n == p->left_) ? p->right_ : p->left_;
+	}
+
+
+	/** \param[in] n The node whose uncle we seek to find
+	 *  \return Pointer to 'n's uncle if it exists; null pointer otherwise
+	 *  (Grandparent might not exist; if grandparent exists, uncle should exist
+	 *  because of RB-Tree condition (II)).
+	 */
+	template <class KeyType, class DataType>
+	typename RedBlackTree<KeyType,DataType>::NodeType *RedBlackTree<KeyType,DataType>::get_uncle(NodeType *n) const
+	{
+		NodeType* g = get_grandparent(n);
+		return (n->parent_ == g->left_) ? g->right_ : g->left_;
+	}
+
+
+	/** \brief Checks if n is the right inner grand child of g. (see diagram below)
+	 *  \param[in] n node we like to check
+	 *  \param[in] g 'n's grandparent
+	 *  \return true if n is 'g's right inner grand child; false otherwise
+	 *  \detail \code
+	 *         g
+	 *        / \
+	 *           p
+	 *          /
+	 *         n
+	 *  \endcode
+	 *  \note since fix_insertion(..) (only caller of is_RightInnerGrandChild(..) ) derives g,
+	 *  we provide it as argument (for performance reason) instead of re-deriving it locally
+	 */
+	template <class KeyType, class DataType>
+	bool RedBlackTree<KeyType,DataType>::is_RightInnerGrandChild(NodeType *n, NodeType *g) const
+	{
+		if (g->right_== 0L)
+			return false;
+		return (n == g->right_->left_ ) ? true : false;
+	}
+
+
+	/** \brief Checks if n is the left inner grand child of g. (see diagram below)
+	 *  \param[in] n node we like to check
+	 *  \param[in] g 'n's grandparent
+	 *  \return true if n is 'g's right inner grand child; false otherwise
+	 *  \detail \code
+	 *         g
+	 *        / \
+	 *       p
+	 *        \
+	 *         n
+	 *  \endcode
+	 *  \note since fix_insertion(..) (only caller of is_LeftInnerGrandChild(..) ) derives g,
+	 *  we provide it as argument (for performance reason) instead of re-deriving it locally
+	 */
+	template <class KeyType, class DataType>
+	bool RedBlackTree<KeyType,DataType>::is_LeftInnerGrandChild(NodeType *n, NodeType *g) const
+	{
+		if (g->left_ == 0L)
+			return false;
+		return (n == g->left_->right_) ? true : false;
+	}
+
+
+	/** \brief Searches Red-Black-Tree for key beginning at node n
+	 *  \param[in] key The key to search for
+	 *  \param[in] n The node to start the search at (tree traversal is NLR=node,left,right)
+	 *  \return Pointer to node with its key value being equal to search key; null pointer no node is found.
+	 */
+	template <class KeyType, class DataType>
+	typename RedBlackTree<KeyType,DataType>::NodeType *RedBlackTree<KeyType,DataType>::find(const KeyType &key, NodeType *n) const
+	{
+		if (n == 0L) return 0L;
+		if (key == n->key_)
+			return n;
+		else if (key < n->key_)
+			return RedBlackTree<KeyType,DataType>::find(key, n->left_);
+		else if (key > n->key_)
+			return RedBlackTree<KeyType,DataType>::find(key, n->right_);
+		return 0L;
+	}
+
+
+	/** \brief Searches Red-Black-Tree for key beginning at root_
+	 *  \detail delegates search to find(const KeyType &key, NodeType *n) with n=root_
+	 *  \param[in] key The key to search for
+	 *  \return Pointer to node with its key value being equal to search key; null pointer no node is found.
+	 */
+	template <class KeyType, class DataType>
+	typename RedBlackTree<KeyType,DataType>::NodeType *RedBlackTree<KeyType,DataType>::find(const KeyType &key) const
+	{
+		return RedBlackTree<KeyType,DataType>::find(key,root_);
+	}
+
+
+	/** \brief Traverses the Tree in pre-order (NLR = Node, Left, Right) and applies func to all nodes visited
+	 *  \param[in] *Node Pointer a node where to start traversing
+	 *  \param[in] func a function pointer or a closure (lambda-function) that will be applied to all nodes visited
+	 *  \example
+	 */
 	template <class KeyType, class DataType>
 	template <typename Func>
 	void RedBlackTree<KeyType,DataType>::traverse_NLR(Func func, NodeType *node)
 	{
-		if (node==0L)
+		if (node == 0L)
 			return;
 		func(node);
-		if (node->left_!=0L)
+		if (node->left_ != 0L)
 			traverse_NLR(func,node->left_);
-		if (node->right_!=0L)
+		if (node->right_ != 0L)
 			traverse_NLR(func,node->right_);
 		return;
 	}
 
 
-	/**
-	 * \brief Traverses the Tree in in-order (LNR = Left, Node, Right) and applies func to all nodes visited
-	 *
-	 * \param[in] *Node Pointer a node where to start traversing (default = this->root_ (The trees root))
-	 * \param[in] func a function pointer or a closure (lambda-function) that will be applied to all nodes
-	 * visited
-	 *
-	 * \sa Please see documentation of TraverseNLR(..) for details
+	/** \brief Traverses the Tree in in-order (LNR = Left, Node, Right) and applies func to all nodes visited
+	 *  \param[in] *Node Pointer a node where to start traversing
+	 *  \param[in] func a function pointer or a closure (lambda-function) that will be applied to all nodes visited
+	 *  \sa See documentation of traverse_NLR(..) for an example on how to use tree traversal
 	 */
 	template <class KeyType, class DataType>
 	template <typename Func>
 	void RedBlackTree<KeyType,DataType>::traverse_LNR(Func func, NodeType *node)
 	{
-		if (node==0L)
+		if (node == 0L)
 			return;
-		if (node->left_!=0L)
+		if (node->left_ != 0L)
 			traverse_LNR(func,node->left_);
 		func(node);
-		if (node->right_!=0L)
+		if (node->right_ != 0L)
 			traverse_LNR(func,node->right_);
 		return;
 	}
 
 
-	/**
-	 * \brief Traverses the Tree in post-order (LRN = Left, Right, Node) and applies func to all nodes visited
-	 *
-	 * \param[in] *Node Pointer a node where to start traversing (default = this->root_ (The trees root))
-	 * \param[in] func a function pointer or a closure (lambda-function) that will be applied to all nodes
-	 * visited
-	 *
-	 * \sa Please see documentation of TraverseNLR(..) for details
+	/** \brief Traverses the Tree in post-order (LRN = Left, Right, Node) and applies func to all nodes visited
+	 *  \param[in] *Node Pointer a node where to start traversing
+	 *  \param[in] func a function pointer or a closure (lambda-function) that will be applied to all nodes visited
+	 *  \sa See documentation of traverse_NLR(..) for an example on how to use tree traversal
 	 */
 	template <class KeyType, class DataType>
 	template <typename Func>
@@ -372,33 +392,36 @@ namespace o_data_structures
 	}
 
 
-	// Tree operation/manipulation ################################################
+	/** \brief Rotates the graph left
+	 *  \detail Rotation around node N according to the diagram below
+	 *  Note: Nodes possess pointers to left and right child AND to parent
+	 *  => there are six connections to be changed (3Nodes*2connections)
+	 *  \code
+	 *            P                                 P
+	 *           /                                 /
+	 *          N         rotate_left(N)           R
+	 *         / \            ====>              / \
+	 *        A   R                             N   B
+	 *           / \                           / \
+	 *          M   B                         A   M
+	 *  \endcode
+	 */
 	template <class KeyType, class DataType>
 	void RedBlackTree<KeyType,DataType>::rotate_left(NodeType *N)
-	// Rotates a Node N according to the diagram below
-	// Nodes possess pointers to left and right child AND to parent
-	// => there are six connections to be changed (3Nodes*2connections)
-	//            P                                 P
-	//           /                                 /
-	//          N         rotate_left(N)           R
-	//         / \            ====>              / \
-	//        A   R                             N   B
-	//           / \                           / \
-	//          M   B                         A   M
 	{
 		NodeType *R = N->right_;
-		if(R==0L)
+		if (R == 0L)
 			return;
 		// reconnect P
 		R->parent_=N->parent_;
-		if(N->parent_!=0L)
+		if (N->parent_ != 0L)
 			if (N->parent_->right_==N)
 				N->parent_->right_=R;
 			else
 				N->parent_->left_=R;
 		// reconnect M
 		N->right_=R->left_;
-		if(R->left_!=0L)
+		if (R->left_ != 0L)
 			R->left_->parent_=N;
 		// reconnect N and L
 		N->parent_=R;
@@ -407,165 +430,216 @@ namespace o_data_structures
 	}
 
 
+	/** \brief Rotates the graph right
+	 *  \detail Rotation around node N according to the diagram below
+	 *  Note: Nodes possess pointers to left and right child AND to parent
+	 *  => there are six connections to be changed (3Nodes*2connections)
+	 *  \code
+	 *            P                                 P
+	 *           /                                 /
+	 *          N         rotate_right(N)         L
+	 *         / \            ====>              / \
+	 *        L   B                             A   N
+	 *       / \                                   / \
+	 *      A   M                                 M   B
+	 *  \endcode
+	 */
 	template <class KeyType, class DataType>
 	void RedBlackTree<KeyType,DataType>::rotate_right(NodeType *N)
-	// Rotates a Node N according to the diagram below
-	// Nodes possess pointers to left and right child AND to parent
-	// => there are six connections to be changed (3Nodes*2connections)
-	//            P                                 P
-	//           /                                 /
-	//          N         rotate_right(N)          L
-	//         / \            ====>              / \
-	//        L   B                             A   N
-	//       / \                                   / \
-	//      A   M                                 M   B
 	{
 		NodeType *L = N->left_;
-		if(L==0L)
+		if (L == 0L)
 			return;
 		// reconnect P
-		L->parent_=N->parent_;
-		if(N->parent_!=0L)
-			if (N->parent_->left_==N)
-				N->parent_->left_=L;
+		L->parent_ = N->parent_;
+		if(N->parent_ != 0L)
+			if (N->parent_->left_ == N)
+				N->parent_->left_ = L;
 			else
-				N->parent_->right_=L;
+				N->parent_->right_ = L;
 		// reconnect M
-		N->left_=L->right_;
-		if(L->right_!=0L)
-			L->right_->parent_=N;
-		// reconnect N and L
-		N->parent_=L;
-		L->right_=N;
+		N->left_ = L->right_;
+		if (L->right_ != 0L)
+			L->right_->parent_ = N;
+		// reconnect n and L
+		N->parent_ = L;
+		L->right_ = N;
 		return;
 	}
 
 
+	/** \brief interface to insert a node into the Red-Black-Tree
+	 *
+	 *  \detail Allocates memory for the newly added node and
+	 *  delegates the process of insertion into two stages.
+	 *  First append the node onto the tree taking order conditions into account.
+	 *  Second is to restore Red-Black-Tree conditions that might
+	 *  have been violated through the first stage
+	 *
+	 *  \param[in] The key value of the newly added node
+	 *  \param[in] the data value of the newly added node
+	 */
 	template <class KeyType, class DataType>
 	void RedBlackTree<KeyType,DataType>::insert(const KeyType &key, const DataType &data)
-	// This insert function serves as interface / is public
-	// It manages features specific for RB-Trees;
-	// It utilizes a recursive insert function that is private and
-	// related to the underlying data structure of a BSTree
 	{
-		NodeType *newNode = new NodeType(key, data);
-
-		// insert newNode as if we just had a
-		// binary-search-Tree, restore Conditions
-		// specific for red-black-trees afterwards
-		RedBlackTree<KeyType,DataType>::BinaryInsert(root_, newNode);
-		RedBlackTree<KeyType,DataType>::FixInsertion(newNode);
-
-		// since FixTree can change the root
-		//root_ = newNode;
-		//while(root_->parent_!=0L)
-		//	root_ = root_->parent_;
-	}
-
-
-	template <class KeyType, class DataType>
-	void RedBlackTree<KeyType,DataType>::BinaryInsert(NodeType *mountpoint,
-			NodeType *newNode)
-	{
-		// newNode to Left Sub-branch
-		if(mountpoint!=0L && newNode->key_<mountpoint->key_)
-		{
-			if(mountpoint->left_!=0L)
-			{
-				BinaryInsert(mountpoint->left_, newNode);
-				return;
-			}
-			else
-				mountpoint->left_ = newNode;
-		}
-		// newNode to Right Sub-branch
-		else if (mountpoint != 0L) // && (newNode->data_>=mountpoint->data_)
-		{
-			if(mountpoint->right_!=0L)
-			{
-				BinaryInsert(mountpoint->right_, newNode);
-				return;
-			}
-			else
-				mountpoint->right_=newNode;
-		}
-
-		newNode->parent_ = mountpoint;
-		//newNode->left_ = 0L;
-		//newNode->right_ = 0L;
-		//newNode->color_ = red_;
-
+		NodeType *node = new NodeType(key, data);
+		insert_binary(node, root_);
+		fix_insertion(node);
 		return;
 	}
 
 
+	/** \brief Appends a node onto the existing Red-Black-Tree (inserting 1st stage of 2)
+	 *
+	 *  \detail When inserting a node into the tree it's first placed
+	 *  taking only order conditions of an ordered binary tree into account:
+	 *  For every Node in the tree its node value is greater than its left
+	 *  childs value and smaller or equal than its right childs value.
+	 *  note: after appending a node Red-Black-Tree conditions are most likely violated
+	 *  and need to be restored by calling fix_insertion(..)
+	 *
+	 *  \param[in] n The node we want to insert
+	 *  \param[in] m (Mounting node) The node where we try to append the newly added node onto
+	 */
 	template <class KeyType, class DataType>
-	void RedBlackTree<KeyType,DataType>::FixInsertion(NodeType *n)
+	void RedBlackTree<KeyType,DataType>::insert_binary(NodeType *n, NodeType *m)
 	{
+		if (m == 0L)
+		{
+			root_ = n;
+			n->parent_ = 0L;
+		}
+		else if (n->key_ < m->key_)
+		{
+			if (m->left_ == 0L)
+			{
+				m->left_ = n;
+				n->parent_ = m;
+			}
+			else
+			{
+				insert_binary(n, m->left_);
+			}
+		}
+		else // if (n->key_ >= m->key_)
+		{
+			if (m->right_ == 0L)
+			{
+				m->right_ = n;
+				n->parent_ = m;
+			}
+			else
+			{
+				insert_binary(n, m->right_);
+			}
+		}
+		return;
+	}
+
+
+	/** \brief Restores Red-Black-Tree conditions (inserting 2nd stage of 2)
+	 *
+	 *  \detail fix_insertion(..) should be called after insert_binary(..)
+	 *  has inserted a node into the tree.
+	 *  insert_binary(..) takes order conditions into
+	 *  account but might violate Red-Black-Tree conditions.
+	 *  fix_insertion(..) restores RB-conditions and preserves order conditions.
+	 *
+	 *  \param[in] n Pointer to the node which was inserted last
+	 *
+	 *  \sa see source code for further documentation
+	 */
+	template <class KeyType, class DataType>
+	void RedBlackTree<KeyType,DataType>::fix_insertion(NodeType *n)
+	{
+		// n is RED & has no parent
+		// => N must become root
 		if(n->parent_ == 0L)
 		{
-			// n is RED & has no parent => N is root => set n's color to BLACK
 			n->color_ = true;
 			root_ = n;
-		}
-		else if(n->parent_->color_ == black_)
-		{
-			// n is RED & has a BLACK parent => insertion is no Problem
 			return;
 		}
-		else if( (get_uncle(n) != 0L ? get_uncle(n)->color_ : black_) == red_)
+
+		// n is RED & has a BLACK parent
+		// => RB-condition is fulfilled
+		// => insertion doesn't need to be fixed
+		if(n->parent_->color_ == BLACK)
 		{
-			// n is RED has RED parent & has RED uncle => grandparent is BLACK
-			n->parent_->color_ = black_;
-			get_uncle(n)->color_ = black_;
-			get_grandparent(n)->color_ = red_;
-			FixInsertion(get_grandparent(n));
+			return;
 		}
+
+		// n is RED, has a RED parent & has a RED uncle
+		// => RB-condition is violated (n red, parent red) but:
+		// => grandparent is BLACK (red parent & red uncle)
+		// => recolor parent, uncle & grandparent + move problem a level upwards
+		if( (get_uncle(n) != 0L ? get_uncle(n)->color_ : BLACK) == RED)
+		{
+			n->parent_->color_ = BLACK;
+			get_uncle(n)->color_ = BLACK;
+			get_grandparent(n)->color_ = RED;
+			fix_insertion(get_grandparent(n));
+			return;
+		}
+
+		// all remaining cases: 4 possible combinations
+		//   (a)           (b)        (c)         (d)
+		//		    G           G           G           G
+		//         / \         / \         / \         / \
+		//        P   U       P   U       U   P       U   P
+		//       /             \             /             \
+		//      N               N           N               N
+		// n is RED, has RED parent and BLACK uncle (grandparent may have any color)
+		// => if dealing with (b) or (c): translate (b) to (a) and (c) to (d)
+		//    note: order relation must be preserved (n's position mustn't be swapped, instead
+		//    graph is rotated around p and nodes "renamed" accordingly)
+		// => rotate graph around g (pulling p upwards) and recolor p,g to "balance" subtree
+
+		NodeType *p = n->parent_;
+		NodeType *g = get_grandparent(n);
+
+		if (is_LeftInnerGrandChild(n,g))
+		{
+			rotate_left(p);
+			n = n->left_;
+			p = n->parent_;
+		}
+		else if (is_RightInnerGrandChild(n,g))
+		{
+			rotate_right(p);
+			n = n->right_;
+			p = n->parent_;
+		}
+
+		if (n == p->left_)
+			rotate_right(g);
 		else
-		{
-			// n is RED has RED parent but has BLACK uncle
-			NodeType *p = n->parent_;
-			NodeType *g = get_grandparent(n);
+			rotate_left(g);
+		p->color_ = BLACK;
+		g->color_ = RED;
 
-			if (is_LeftInnerGrandChild(n,g))
-			{
-				rotate_left(p);
-				n = n->left_;
-				p = n->parent_;
-			}
-			else if (is_RightInnerGrandChild(n,g))
-			{
-				rotate_right(p);
-				n = n->right_;
-				p = n->parent_;
-			}
-
-			if (n == p->left_)
-				rotate_right(g);
-			else
-				rotate_left(g);
-			p->color_ = black_;
-			g->color_ = red_;
-		}
 		return;
 	}
 
 
-
-
-	// remove let you pick an arbitrary node N within the rb-tree and delete it.
-	// remove works in three steps.
-	// step 1: find node D in Ns left (or right) subtree with next smaller (or greater) key (favor left/right subtree depending on subtrees depth).
-	//         Move contend of Node D to N (key and data. RB-tree properties as color/children etc. stay UNCHANGED).
-	//         (Note: D will have at most one child by property of a binary tree (node is "most left" or "most right" Node in the subtree)
-	// step 2: if D has a child connect Ds child to Ds parent by replacing D. D is now unconnected => delete D (after step 3).
-	//         (binary tree properties are preserved to this point rb-tree properties might be lost by disconnecting D.
-	// step 3: repair rb-tree properties starting at Ds child.
-	//         There are a view cases where rb-tree properties can be restored by repainting Nodes in Ds childs proximity.
-	//         The more complex cases (where Nodes have to be moved) are handled by the FixRemoval function.
-	// NOTE  : Steps 2 and 3 can be switched without changing the result (FixRemoval moves D and Ds subtree (aka D and its child) like
-	//         a single unit. By applying step 2 first We don't have to implement lots of special rules to handle Ds childs NIL nodes.
-
+	/** \brief removes a node from the Red-Black-Tree
+	 *
+	 *  \detail
+	 * remove let you pick an arbitrary node N within the rb-tree and delete it.
+	 * remove works in three steps.
+	 * step 1: find node D in Ns left (or right) subtree with next smaller (or greater) key (favor left/right subtree depending on subtrees depth).
+	 *         Move contend of Node D to N (key and data. RB-tree properties as color/children etc. stay UNCHANGED).
+	 *         (Note: D will have at most one child by property of a binary tree (node is "most left" or "most right" Node in the subtree)
+	 * step 2: if D has a child connect Ds child to Ds parent by replacing D. D is now unconnected => delete D (after step 3).
+	 *         (binary tree properties are preserved to this point rb-tree properties might be lost by disconnecting D.
+	 * step 3: repair rb-tree properties starting at Ds child.
+	 *         There are a view cases where rb-tree properties can be restored by repainting Nodes in Ds childs proximity.
+	 *         The more complex cases (where Nodes have to be moved) are handled by the fix_removal function.
+	 * NOTE  : Steps 2 and 3 can be switched without changing the result (fix_removal moves D and Ds subtree (aka D and its child) like
+	 *         a single unit. By applying step 2 first We don't have to implement lots of special rules to handle Ds childs NIL nodes.
+	 *
+	 *  \param[in] N Pointer to the node to be removed
+	 */
 	template <class KeyType, class DataType>
 	void RedBlackTree<KeyType,DataType>::remove(NodeType *N)
 	{
@@ -576,14 +650,14 @@ namespace o_data_structures
 		// step 1: find node D
 		// Note: The "most RIGHT" node from LEFT sub tree has the next
 		//       SMALLER key to N (and vice versa for the right sub tree)
-		while(left!=0L || right!=0L )
+		while ((left != 0L) || (right != 0L))
 		{
-			if(left!=0L)
+			if (left != 0L)
 			{
 				D = left;
 				left = left->right_;
 			}
-			if(right!=0L)
+			if (right != 0L)
 			{
 				D = right;
 				right = right->left_;
@@ -616,8 +690,8 @@ namespace o_data_structures
 		NodeType *C = ( D->right_ == 0L ) ? D->left_ : D->right_;
 
 		// case (A)
-		if( ( D->color_ == black_ ) && ( C == 0L ) )
-			FixRemoval(D);
+		if( ( D->color_ == BLACK ) && ( C == 0L ) )
+			fix_removal(D);
 
 		// all cases (implicitly (B) )
 		if(D->parent_!=0L)
@@ -634,15 +708,16 @@ namespace o_data_structures
 		if(C!=0L)
 		{
 			C->parent_ = D->parent_;
-			C->color_ = black_;
+			C->color_ = BLACK;
 		}
 
 		delete D;
 	}
 
 
+	// ToDo: 2018-10-04 ipsch: documentation of fix_removal in RedBlackTree.hpp + changes from renaming
 	template <class KeyType, class DataType>
-	void RedBlackTree<KeyType,DataType>::FixRemoval(NodeType *N)
+	void RedBlackTree<KeyType,DataType>::fix_removal(NodeType *N)
 	{
 		//case 1:
 		if (N->parent_ == 0L)
@@ -656,11 +731,11 @@ namespace o_data_structures
 		//delete_case2(n);
 		//return;
 		NodeType *S = GetSibling(N);
-		if (S->color_ == red_)
+		if (S->color_ == RED)
 		{
 			std::cout << "FixRemove (case 2)\n";
-			N->parent_->color_ = red_;
-			S->color_ = black_;
+			N->parent_->color_ = RED;
+			S->color_ = BLACK;
 			if (N == N->parent_->left_)
 				rotate_left(N->parent_);
 			else
@@ -669,57 +744,57 @@ namespace o_data_structures
 
 		//delete_case3(n);
 		S = get_sibling(N);
-		if ((N->parent_->color_ == black_) &&
-				(S->color_ == black_) &&
-				(GetColor(S->left_) == black_) &&
-				(GetColor(S->right_) == black_))
+		if ((N->parent_->color_ == BLACK) &&
+				(S->color_ == BLACK) &&
+				(GetColor(S->left_) == BLACK) &&
+				(GetColor(S->right_) == BLACK))
 		{
 			std::cout << "FixRemove (case 3)\n";
-			S->color_ = red_;
-			FixRemoval(N->parent_);
+			S->color_ = RED;
+			fix_removal(N->parent_);
 			return;
 		}
 
 
 		//delete_case4(n);
 		S = GetSibling(N);
-		if ((N->parent_->color_ == red_) &&
-				(S->color_ == black_) &&
-				(GetColor(S->left_) == black_) &&
-				(GetColor(S->right_) == black_))
+		if ((N->parent_->color_ == RED) &&
+				(S->color_ == BLACK) &&
+				(GetColor(S->left_) == BLACK) &&
+				(GetColor(S->right_) == BLACK))
 		{
 			std::cout << "FixRemove (case 4)\n";
-			S->color_ = red_;
-			N->parent_->color_ = black_;
+			S->color_ = RED;
+			N->parent_->color_ = BLACK;
 			return;
 		}
 
 
 		//delete_case5(n);
 		S = GetSibling(N);
-		if  (S->color_ == black_)
+		if  (S->color_ == BLACK)
 		{
 			std::cout << "FixRemove (case 5)\n";
 			// this if statement is trivial,
 			// due to case 2 (even though case 2 changed the sibling to a sibling's child,
-			// the sibling's child can't be red_, since no red_ parent_ can have a red_ child).
+			// the sibling's child can't be RED, since no RED parent_ can have a RED child).
 			//
-			// the following statements just force the red_ to be on the left_ of the left_ of the parent_,
+			// the following statements just force the RED to be on the left_ of the left_ of the parent_,
 			// or right_ of the right_, so case six will rotate correctly.
 			if ((N == N->parent_->left_) &&
-					(GetColor(S->right_) == black_) &&
-					(GetColor(S->left_) == red_))
+					(GetColor(S->right_) == BLACK) &&
+					(GetColor(S->left_) == RED))
 			{ /* this last test is trivial too due to cases 2-4. */
-				S->color_ = red_;
-				S->left_->color_ = black_;
+				S->color_ = RED;
+				S->left_->color_ = BLACK;
 				rotate_right(S);
 			}
 			else if ((N == N->parent_->right_) &&
-					(GetColor(S->left_) == black_) &&
-					(GetColor(S->right_) == red_))
+					(GetColor(S->left_) == BLACK) &&
+					(GetColor(S->right_) == RED))
 			{/* this last test is trivial too due to cases 2-4. */
-				S->color_ = red_;
-				S->right_->color_ = black_;
+				S->color_ = RED;
+				S->right_->color_ = BLACK;
 				rotate_left(S);
 			}
 		}
@@ -729,22 +804,23 @@ namespace o_data_structures
 		S = GetSibling(N);
 		std::cout << "FixRemove (case 6)\n";
 		S->color_ = N->parent_->color_;
-		N->parent_->color_ = black_;
+		N->parent_->color_ = BLACK;
 
 		if (N == N->parent_->left_)
 		{
-			S->right_->color_ = black_;
+			S->right_->color_ = BLACK;
 			rotate_left(N->parent_);
 		}
 		else
 		{
-			S->left_->color_ = black_;
+			S->left_->color_ = BLACK;
 			rotate_right(N->parent_);
 		}
 
 	}
 
 
+	// ToDo: 2018-10-04 ipsch: documentation of clear() in RedBlackTree.hpp + move and document clear(..)
 	template <class KeyType, class DataType>
 	void RedBlackTree<KeyType,DataType>::clear(NodeType *n)
 	{

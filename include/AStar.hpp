@@ -1,16 +1,18 @@
-/*!
- * \file AStar.hpp
- * AStar.hpp was written as a part of project pdx_pathfinding
+/** \file
+ * 		AStar.hpp
  *
- * \brief Provides pathfinding capabilities
+ *  \brief
+ *  	Provides pathfinding capabilities
  *
- * \details AStar.hpp contains declarations for class AStar and
- * an interface function int FindPath(..):
- * - Class AStar provides the pathfinding capabilities, it's basically
- *   a realization of the A*-algorithm first described
- *   by Peter Hart, Nils J. Nilsson and Bertram Raphael in 1968.
- *   The class must be supplemented by a representation of a graph to work on (see Map.hpp).
- *   It comes alongside with methods for interfacing with the main program and handling internal (sub-)tasks.
+ *  \details
+ *  	AStar.hpp was written as a part of project pdx_pathfinding.
+ * 		AStar.hpp contains declaration of class AStar and
+ * 		an interface to function int FindPath(..):
+ * 		- Class AStar provides the pathfinding capabilities, it's basically
+ *   	  a realization of the A*-algorithm first described
+ *   	  by Peter Hart, Nils J. Nilsson and Bertram Raphael in 1968.
+ *   	  The class must be supplemented by a representation of a graph to work on (see Map.hpp).
+ *   	  It comes alongside with methods for interfacing with the main program and handling internal (sub-)tasks.
  *   Its internal data structure is not meant to be accessed directly from the outside
  * - The function int FindPath() serves as an interface to meet the
  *   requirements by Paradox Studios on how to call the implemented pathfinding algorithm.
@@ -35,19 +37,15 @@
  *
  */
 
-#ifndef ASTAR_HPP_
-#define ASTAR_HPP_
-
-// ToDo 2018-09-11 ipsch: cmath still needed in AStar?
-#include <cmath>                    // Cs math needed for ???
+#pragma once
 
 
-#include "BinaryHeap.hpp"			// priority queque used for the open_list_
+
+
 #include "Map.hpp"                  // A class to representation the game map
-#include "PriorityQueue.hpp"
+#include "BinaryHeap.hpp"			// priority queque used for the open_list_
 #include "RedBlackTree.hpp"				// binary self balancing tree class used for the closed_list_
 
-using namespace PriorityQueue;
 
 
 int FindPath(const int nStartX, const int nStartY,
@@ -75,8 +73,7 @@ int FindPath(const int nStartX, const int nStartY,
 
 
 
-/**
- * \brief provides pathfinding capabilities in a graph
+/** \brief provides pathfinding capabilities in a graph
  *
  * For implementation details on class AStars methods see documentation in AStar.cpp
  *
@@ -114,10 +111,3 @@ private :
 
 
 
-
-
-
-
-
-
-#endif

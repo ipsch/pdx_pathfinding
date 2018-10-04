@@ -1,7 +1,14 @@
-/** \file AStar.cpp
- * this file is part of project pdx_pathfinding
+/** \file
+ * 		AStar.cpp
  *
- * \brief definitions to class AStar and interface function int FindPath()
+ * 	\brief
+ * 		contains definitions to class AStar (pathfinding capabilities)
+ * 		declared in accompanying header file AStar.hpp
+ *
+ * 	\details
+ * 		This file is part of project pdx_pathfinding
+ *
+ *
  *
  *
  *
@@ -15,8 +22,7 @@
 
 
 
-/**
- * \brief Interface function that redirects the task of finding a path to an class AStar object.
+/** \brief Interface function that delegates the task of finding a path to a class AStar object
  *
  * \details Interface function to make AStar class compatible to Paradoxs requirements
  *
@@ -71,10 +77,10 @@ int FindPath(const int nStartX, const int nStartY,
 //{ }
 
 
-/**\brief Constructor
- * \param[in] map Reference to the game map represented by an instance of class Map
- * \param[in] p_buffer Pointer to the output buffer where the path is written to (Memory ownership by caller)
- * \param[in] size_buffer length of the buffer p_buffer
+/** \brief Constructor
+ *  \param[in] map Reference to the game map represented by an instance of class Map
+ *  \param[in] p_buffer Pointer to the output buffer where the path is written to (Memory ownership by caller)
+ *  \param[in] size_buffer length of the buffer p_buffer
  */
 AStar::AStar(o_graph::Map &map, int *p_buffer, int size_buffer) :
 		map_(map), p_output_buffer_(p_buffer), output_buffer_size_(size_buffer), nodes_expanded_(0)
@@ -84,12 +90,11 @@ AStar::AStar(o_graph::Map &map, int *p_buffer, int size_buffer) :
 
 
 
-/**
- * \brief Method to expand the node supplied by AStar::FindPath(..) and put its neigbours on the AStar::open_list_
+/** \brief Method to expand the node supplied by AStar::FindPath(..) and put its neigbours on the AStar::open_list_
  *
  * \param[in] predecessor The Node supplied by AStar::FindPath(int iS, int jS, int iT, int jT) to be expanded next
  *
- * \return Returns error-code (Not used at the moment)
+ *
  */
 void AStar::ExpandNode(o_graph::GraphNode *predecessor)
 {
@@ -135,10 +140,9 @@ void AStar::ExpandNode(o_graph::GraphNode *predecessor)
 
 
 
-/**
- * \brief Reconstructs the shortest path found by AStar::FindPath() and writes it to Buffer p_output_buffer;
+/** \brief Reconstructs the shortest path found by AStar::FindPath() and writes it to Buffer p_output_buffer
  *
- * \details BacktrackPath(..) will trace back the path by looking
+ *  \details BacktrackPath(..) will trace back the path by looking
  * at the node by which target was expanded (its predecessor) and then again at targets predecessors predecessor and so on.
  * Note: The first node is excluded from output buffer AStar::p_output_buffer_ as required by paradox.
  * notes for an version that include the first node:
@@ -168,8 +172,7 @@ int AStar::BacktrackPath(o_graph::GraphNode *target) const
 
 
 
-/**
- * \brief A*s main-loop: Finds the shortest path between a start- and target-position
+/** \brief 'AStar's main-loop: Finds the shortest path between a start- and target-position
  *
  *
  * \note
@@ -208,29 +211,31 @@ int AStar::FindPath(const int &iS, const int &jS, const int &iT, const int &jT)
         		/* key: */ p_current_node->id_,
 				/* p_data: */ p_current_node );
 
-
         // check if target reached
-        if ( p_current_node->id_ == target_node_id )
+        if (p_current_node->id_ == target_node_id)
         {
         	path_length = BacktrackPath(p_current_node);
             break;
         }
 
-    	// move to closed list
-
-
         ExpandNode(p_current_node);
 
-    } while ( open_list_.n_items_ != 0 );
+    } while (open_list_.n_items_ != 0);
 
     ClearLists();
     return path_length;
 }
 
 
-/**
- * \brief frees memory allocated for graph nodes
- * Memory is allocated by AStar::ExpandNode(..) and managed by open- and closed list.
+/** \brief Frees memory allocated by expand_node(..)
+ *
+ *  \detail Initially memory for GraphNodes is allocated by expand_node(..) but
+ *  the nodes (and ownership of memory) are transferred to open_list_ and closed_list_;
+ * 	ClearLists() frees this memory by going through both lists an deleting graph nodes.
+ *
+ *  \note Note that both lists only manage nodes through pointers.
+ *  Since those lists didn't allocate memory for these nodes, they aren't in charge
+ *  of deleting them. Their destructors relate to their own data structure only.
  */
 void AStar::ClearLists()
 {

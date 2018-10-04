@@ -35,30 +35,27 @@ namespace o_data_structures
 
 	//#define BINARYHEAP_CAUTIOUS
 
-	/**
-	 * \brief Index arithmetics to get the index of Node-is left child within BinaryHeap::A_
-	 * \param[in] i Index of node-i
-	 * \return The Index of node-is left child
+	/** \brief Index arithmetics to get the index of Node-is left child within BinaryHeap::A_
+	 *  \param[in] i Index of node-i
+	 *  \return The Index of node-is left child
 	 */
 	inline unsigned int left(const unsigned int &i)
 	{
 		return 2*i+1;
 	}
 
-	/**
-	 * \brief Index arithmetics to get the index of Node-is right child within BinaryHeap::A_
-	 * \param[in] i Index of node-i
-	 * \return The index of node-is right child
+	/** \brief Index arithmetics to get the index of Node-is right child within BinaryHeap::A_
+	 *  \param[in] i Index of node-i
+	 *  \return The index of node-is right child
 	 */
 	inline unsigned int right(const unsigned int &i)
 	{
 		return 2*i+2;
 	}
 
-	/**
-	 * \brief Index arithmetics to get the index of Node-is parent within BinaryHeap::A_
-	 * \param[in] i Index of node-i
-	 * \return The index of node-is parent
+	/** \brief Index arithmetics to get the index of Node-is parent within BinaryHeap::A_
+	 *  \param[in] i Index of node-i
+	 *  \return The index of node-is parent
 	 */
 	inline unsigned int parent(const unsigned int &i)
 	{
@@ -66,71 +63,64 @@ namespace o_data_structures
 	}
 
 
-
-
-
-
-
 	template <class ... Args> class BinaryHeap;
 
-	/**
-	 * \class BinaryHeap
-	 * \brief BinaryHeap is an implementation of a complete binary minimum search tree
+	/** \brief BinaryHeap is an implementation of a complete binary minimum search tree
 	 *
-	 * \details
-	 * It stores data elements (called items or nodes) of the type (KeyType)
-	 * in a dynamic array (BinaryHeap::A_).
-	 * (Note: we use item and node synonymously: Item shall stress the point
-	 * of storing data while node stresses the point how items relate to each other)
-	 * There are in total n_items_ stored and max_items_ denoting the number
-	 * of storable items (the current size of A_).
+	 *  \details
+	 *  It stores data elements (called items or nodes) of the type (KeyType)
+	 *  in a dynamic array (BinaryHeap::A_).
+	 *  (Note: we use item and node synonymously: Item shall stress the point
+	 *  of storing data while node stresses the point how items relate to each other)
+	 *  There are in total n_items_ stored and max_items_ denoting the number
+	 *  of storable items (the current size of A_).
 	 *
-	 * Using index arithmetics every item can be associated with a left and a right child node
-	 * ( left() and right(..) ) and vice versa ( parent(..) ).
-	 * Through this hierarchical structure the items in A_ are associated with
-	 * different levels (rank_ = 0, 1, 2, ..).
+	 *  Using index arithmetics every item can be associated with a left and a right child node
+	 *  ( left() and right(..) ) and vice versa ( parent(..) ).
+	 *  Through this hierarchical structure the items in A_ are associated with
+	 *  different levels (rank_ = 0, 1, 2, ..).
 	 *
-	 * The following table gives an overview how many nodes exist on each level and
-	 * how many nodes exist in total. As can be seen from the table there will always
-	 * be one single node at the end of A_ that isn't actually used to store data.
-	 * We uses this additional note for swap operations
+	 *  The following table gives an overview how many nodes exist on each level and
+	 *  how many nodes exist in total. As can be seen from the table there will always
+	 *  be one single node at the end of A_ that isn't actually used to store data.
+	 *  We uses this additional note for swap operations
 	 *
-	 *	rank 	|	Nodes in level 	|	Nodes in Tree	|	 swap Nodes		|	arraySize
-	 *----------|-------------------|-------------------|-------------------|--------------
-	 *	rank_	|					|	 (max_items_)	|	A_[ASize_-1]	|	(ASize_)
-	 *    n     |        2^n		|	  2^(n+1)-1 	|		  1			|	2^(n+1)
-	 *    0		|		 1			|	 	  1			|		  1			|		2
-	 *	  1		|		 2			|		  3			|		  1			|		3
-	 *	  2		|		 3			|		  7			|		  1			|	    8
-	 *	  3		|		 4			|		  15		|		  1			|		16
-	 *	  4		|		 5			|		  31		|		  1			|		32
+	 * 	rank 	|	Nodes in level 	|	Nodes in Tree	|	 swap Nodes		|	arraySize
+	 * ----------|-------------------|-------------------|-------------------|--------------
+	 * 	rank_	|					|	 (max_items_)	|	A_[ASize_-1]	|	(ASize_)
+	 *     n     |        2^n		|	  2^(n+1)-1 	|		  1			|	2^(n+1)
+	 *     0		|		 1			|	 	  1			|		  1			|		2
+	 * 	  1		|		 2			|		  3			|		  1			|		3
+	 * 	  2		|		 3			|		  7			|		  1			|	    8
+	 * 	  3		|		 4			|		  15		|		  1			|		16
+	 * 	  4		|		 5			|		  31		|		  1			|		32
 	 *
-	 * For each node N within the tree the minimum Heap condition is fulfilled; meaning:
-	 *   N =< N_LeftChild && N_i =< N_RightChild
+	 *  For each node N within the tree the minimum Heap condition is fulfilled; meaning:
+	 *    N =< N_LeftChild && N_i =< N_RightChild
 	 *
-	 * This implies that the data is partially sorted with the smallest element being always at the top.
-	 * The user/caller doesn't need to manage data to keep the heap structure;
-	 * Instead the methods int insert(KeyType newkey), KeyType remove(const unsigned int &i),
-	 * int increase_key(int i, KeyType newkey), int decrease_key(int i, KeyType newkey)
-	 * int change_key(int i, KeyType newkey), void build()
-	 * manage data manipulation on their own.
+	 *  This implies that the data is partially sorted with the smallest element being always at the top.
+	 *  The user/caller doesn't need to manage data to keep the heap structure;
+	 *  Instead the methods int insert(KeyType newkey), KeyType remove(const unsigned int &i),
+	 *  int increase_key(int i, KeyType newkey), int decrease_key(int i, KeyType newkey)
+	 *  int change_key(int i, KeyType newkey), void build()
+	 *  manage data manipulation on their own.
 	 *
-	 * This class was written with the intention to give some flexibility regarding the stored items.
-	 * Any class that provides the algebraic relations < , > , ==, >= and <= can be used with this class.
-	 * The main intention was to use a class with at least two fields - one being a key value for sorting
-	 * and the other being a pointer to an bigger data structure stored outside of the tree structure.
+	 *  This class was written with the intention to give some flexibility regarding the stored items.
+	 *  Any class that provides the algebraic relations < , > , ==, >= and <= can be used with this class.
+	 *  The main intention was to use a class with at least two fields - one being a key value for sorting
+	 *  and the other being a pointer to an bigger data structure stored outside of the tree structure.
 	 *
-	 * The methods find(..) to search for a certain item/key within the tree do unsorted list search.
+	 *  The methods find(..) to search for a certain item/key within the tree do unsorted list search.
 	 *
-	 * following table gives (theoretical) time complexity of algorithms on a binary heap
+	 *  following table gives (theoretical) time complexity of algorithms on a binary heap
 	 *
-	 * Algorithm|  Average	|    Worst case
-	 * ---------|-----------|-----------------
-	 * Space	|	O(n)	|	O(n)
-	 * Search	|	O(n)	|	O(n)
-	 * insert	|	O(1)	|	O(log n)
-	 * Delete	|	O(log n)|	O(log n)
-	 * Peek		|	O(1)	|	O(1)
+	 *  Algorithm|  Average	|    Worst case
+	 *  ---------|-----------|-----------------
+	 *  Space	|	O(n)	|	O(n)
+	 *  Search	|	O(n)	|	O(n)
+	 *  insert	|	O(1)	|	O(log n)
+	 *  Delete	|	O(log n)|	O(log n)
+	 *  Peek		|	O(1)	|	O(1)
 	 *
 	 *
 	 */
@@ -278,8 +268,6 @@ namespace o_data_structures
 	};
 
 
-
-
 	////////////////////////////////////////////////////////////
 	/// MEMBER FUNCTION IMPLEMENTATION /////////////////////////
 	////////////////////////////////////////////////////////////
@@ -308,7 +296,6 @@ namespace o_data_structures
 	{
 		delete[] A_;
 	}
-
 
 
 	/**
@@ -424,7 +411,6 @@ namespace o_data_structures
 	}
 
 
-
 	/**
 	 * \brief decreases the key of the node at index i to newKey
 	 *
@@ -451,7 +437,6 @@ namespace o_data_structures
 		sift_up(i);
 		return;
 	}
-
 
 
 	/**
@@ -487,7 +472,6 @@ namespace o_data_structures
 	}
 
 
-
 	/**
 	 * \brief restores heap conditions for all elements buttom up
 	 * \details Applies SiftDown for all elements in BinaryHeap::A_
@@ -502,7 +486,6 @@ namespace o_data_structures
 		for (int i = n_items_/2-1; i>=0; --i)
 			sift_down(i);
 	}
-
 
 
 	/**
