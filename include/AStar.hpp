@@ -2,29 +2,27 @@
  * 		AStar.hpp
  *
  *  \brief
- *  	Provides pathfinding capabilities
+ *  	Provides pathfinding capabilities (A*-algorithm)
  *
  *  \details
  *  	AStar.hpp was written as a part of project pdx_pathfinding.
  * 		AStar.hpp contains declaration of class AStar and
  * 		an interface to function int FindPath(..):
- * 		- Class AStar provides the pathfinding capabilities, it's basically
- *   	  a realization of the A*-algorithm first described
+ * 		- Class AStar provides the pathfinding capabilities, it's
+ *   	  an implementation of the A*-algorithm first described
  *   	  by Peter Hart, Nils J. Nilsson and Bertram Raphael in 1968.
  *   	  The class must be supplemented by a representation of a graph to work on (see Map.hpp).
- *   	  It comes alongside with methods for interfacing with the main program and handling internal (sub-)tasks.
- *   Its internal data structure is not meant to be accessed directly from the outside
- * - The function int FindPath() serves as an interface to meet the
- *   requirements by Paradox Studios on how to call the implemented pathfinding algorithm.
- *   It redirects its inputs to an instance of class AStar.
+ * 		- The function int FindPath(..) is an interface to meet the
+ *   	  requirements by Paradox Studios on how to call the implemented pathfinding algorithm.
+ *        It delegates its inputs to an instance of class AStar.
  *
- * \sa
- * - Class AStar is documented in AStar.hpp (this file) along with its declaration.
- * - Class AStars methods are documented in AStar.cpp along with their definitions.
- * - int FindPath(..) is documented in AStar.cpp along with its definition.
- * - The graph representation class AStar works on can be found in Map.hpp (and Map.cpp accordingly)
+ *  \sa
+ * 		- Class AStar is documented in AStar.hpp (this file) along with its declaration.
+ * 		- Class AStars methods are documented in AStar.cpp along with their definitions.
+ * 		- int FindPath(..) is documented in AStar.cpp along with its definition.
+ * 		- The graph representation class AStar works on can be found in Map.hpp (and Map.cpp accordingly)
  *
- *
+ * ToDo: documentation
  * \section section_AStar_history Development History
  * \version 2018-06-25: 0.0.1 (ipsch) (file creation)
  * \version 2018-07-20: 0.3.0 (ipsch) (component completion)
@@ -40,74 +38,66 @@
 #pragma once
 
 
+#include "Map.hpp"           // A class to represent the game map
+#include "BinaryHeap.hpp"	 // Priority queue used for the open_list_
+#include "RedBlackTree.hpp"  // Binary self balancing tree class used for the closed_list_
 
 
-#include "Map.hpp"                  // A class to representation the game map
-#include "BinaryHeap.hpp"			// priority queque used for the open_list_
-#include "RedBlackTree.hpp"				// binary self balancing tree class used for the closed_list_
-
-
-
+// interface function documented in AStar.cpp
 int FindPath(const int nStartX, const int nStartY,
              const int nTargetX, const int nTargetY,
              const unsigned char* pMap, const int nMapWidth, const int nMapHeight,
              int* pOutBuffer, const int nOutBufferSize);
-// nStartX and nStartY are the 0 based coordinates of the start position.
-// nTargetX and nTargetY are the 0-based coordinates of the target position.
 
 
+// interface function with additional diagnostics documented in AStar.cpp
+// ToDO: remove in shipping version
 int FindPath(const int nStartX, const int nStartY,
              const int nTargetX, const int nTargetY,
              const unsigned char* pMap, const int nMapWidth, const int nMapHeight,
              int* pOutBuffer, const int nOutBufferSize, unsigned int &nodes_expanded);
 
 
-
-
-
-
-
-
-
-
-
-
-
-/** \brief provides pathfinding capabilities in a graph
- *
- * For implementation details on class AStars methods see documentation in AStar.cpp
- *
- *
- *
- * \section section_AStar_details Implementation details
- *
- *
- */
-class AStar
+namespace pathfinder
 {
-public :
-	explicit AStar(o_graph::Map &map, int *p_buffer, int size_buffer);
-	int FindPath(const int &iS, const int &jS, const int &iT, const int &jT);
-	unsigned int nodes_expanded_;
+	// ToDO: documentation
+	/** \brief provides pathfinding capabilities in a graph
+	 *
+	 *  \detail Implementation details:
+	 *  - Buffer to write computed path to is owned by caller
+	 *  - Early return if computed path exceeds buffer size
+	 *  - For implementation details on class AStars methods
+	 *    see documentation in AStar.cpp
+	 *
+	 */
+	class AStar
+	{
+	public :
+		explicit AStar(o_graph::Map &map, int *p_buffer, int size_buffer);
+		int FindPath(const int &iS, const int &jS, const int &iT, const int &jT);
 
-private :
-	AStar();
-	void ClearLists();
-	void ExpandNode(o_graph::GraphNode *predecessor);
-	int BacktrackPath(o_graph::GraphNode *node_on_path) const;
+		unsigned int nodes_expanded_; //< for diagnostics ToDO : remove in shipping version
 
+	protected :
+		typedef o_graph::Map Map;
+		typedef o_graph::MapNode MapNode;
+		typedef o_data_structures::BinaryHeap<float, MapNode*> OpenList;
+		typedef o_data_structures::BinaryHeapNode<float, MapNode*> OpenListItem;
+		typedef o_data_structures::RedBlackTree<unsigned int, MapNode*> ClosedList;
+		typedef o_data_structures::RedBlackNode<unsigned int, MapNode*> ClosedListItem;
 
-	o_data_structures::BinaryHeap<float, o_graph::GraphNode*> open_list_;   /**< Priority queue containing all Nodes that need processing */
+		AStar();
+		void ExpandNode(MapNode *predecessor);
+		int BacktrackPath(MapNode *node_on_path) const;
+		void ClearLists();
 
-	o_data_structures::RedBlackTree<unsigned int, o_graph::GraphNode*> closed_list_;                  /**< Binary search tree containing all visited nodes  */
-	o_graph::Map &map_;                         /**< Reference to the game map (provided by caller) */
+		int output_buffer_size_;  //< size of Buffer for returning computed path
+		int *p_output_buffer_;    //< pointer to buffer for returning computed path (memory owned by caller)
+		Map &map_;                //< Reference to the game map (provided by caller)
+		OpenList open_list_;      //< Priority queue containing all Nodes that need processing
+		ClosedList closed_list_;  //< Binary search tree containing all visited nodes
 
-	int output_buffer_size_; 	       /**< size of the Buffer \ref p_output_buffer_ */
-	int* p_output_buffer_;             /**< pointer to buffer where the shortest path is written to if found by AStar::FindPath(..)
-	                                    *  \details - ownership of memory is handled by caller */
+	}; // END OF CLASS AStar
 
-};
-
-
-
+} // END OF NAMESPACE pathfinder
 

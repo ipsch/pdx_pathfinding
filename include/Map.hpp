@@ -35,28 +35,28 @@ namespace o_graph
 
 
 
-	class GraphNode
+	class MapNode
 	{
 	public :
-		GraphNode() : id_(0), fvalue_(0), path_cost_(0), p_predecessor_(0L) { }
+		MapNode() : id_(0), fvalue_(0), path_cost_(0), p_predecessor_(0L) { }
 		unsigned int id_;
 		float fvalue_;
 		int path_cost_;
-		GraphNode *p_predecessor_;
+		MapNode *p_predecessor_;
 
 		// ToDo : 2918-09-25 ipsch: not sure if to move member definitions to cpp
-		inline bool operator>(const GraphNode &rhs) const {
+		inline bool operator>(const MapNode &rhs) const {
 			return this->fvalue_>rhs.fvalue_;}
-		inline bool operator<(const GraphNode &rhs) const {
+		inline bool operator<(const MapNode &rhs) const {
 			return this->fvalue_<rhs.fvalue_;}
-		inline bool operator>=(const GraphNode &rhs) const {
+		inline bool operator>=(const MapNode &rhs) const {
 			return this->fvalue_>=rhs.fvalue_;}
-		inline bool operator<=(const GraphNode &rhs) const {
+		inline bool operator<=(const MapNode &rhs) const {
 			return this->fvalue_<=rhs.fvalue_;}
-		inline bool operator==(const GraphNode &rhs) const {
+		inline bool operator==(const MapNode &rhs) const {
 			return this->fvalue_==rhs.fvalue_;}
 
-		GraphNode &operator=(const GraphNode &rhs)
+		MapNode &operator=(const MapNode &rhs)
 		{
 			id_ = rhs.id_;
 			fvalue_ = rhs.fvalue_;
@@ -96,7 +96,7 @@ namespace o_graph
 		void get_ij(const int &index, int &i, int &j) const;
 
 		int get_index(const int &i, const int &j) const {return i + j*width_;}
-		void get_neighbours(const GraphNode * node);
+		void get_neighbours(const MapNode * node);
 		unsigned char operator()(const int &i, const int &j) const
 			{return data_[i + j*width_];}
 

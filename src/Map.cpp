@@ -68,7 +68,7 @@ namespace o_graph
 	}
 
 
-	void Map::get_neighbours(const GraphNode * node)
+	void Map::get_neighbours(const MapNode * node)
 	{
 
 		unsigned int prev_id = 0 - 1;
