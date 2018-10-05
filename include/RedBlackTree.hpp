@@ -5,13 +5,6 @@
  *  	contains data structure "red-black tree"
  *      (an implementation of a self balancing 2-3-Tree)
  *
- *  \version
- *  	2018-10-02 ipsch: 1.2 - reworked documentation
- *
- *  \authors
- *  	ipsch: Ingmar Schnell
- *      contact: i.p.schnell(at)gmail.com
- *
  *  \detail
  *      A Red-Black-Tree is a data structure to efficiently store
  *      data elements, which obey an order relation.
@@ -39,9 +32,17 @@
  *	        Data structure and maintenance algorithms".
  *	        Acta Informatica. 1 (4): 290–306. doi:10.1007/BF00289509.
  *
+ *  \version
+ *  	2018-10-02 ipsch: 1.0.2 - final + reworked documentation
+ *
+ *  \author
+ *  	ipsch: Ingmar Schnell
+ *      contact: i.p.schnell(at)gmail.com
  */
 
 #pragma once
+#ifndef RED_BLACK_TREE_HPP_
+#define RED_BLACK_TREE_HPP_
 
 #include <iostream> // ToDo: remove in shipping version
 
@@ -834,3 +835,5 @@ namespace o_data_structures
 
 
 } // END OF NAMESPACE o_data_structures
+
+#endif // END OF RED_BLACK_TREE_HPP_

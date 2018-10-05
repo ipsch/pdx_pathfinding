@@ -5,13 +5,15 @@
  *  	contains template class ListLifo (simple list to store some items)
  *
  *  \version
- *  	2018-09-25 ipsch: 1.0
+ *  	2018-09-25 ipsch: 1.0 final
  *
- *  \authors
+ *  \author
  *  	ipsch: Ingmar Schnell
  *      contact: i.p.schnell(at)gmail.com
  */
 #pragma once
+#ifndef LIST_LIFO_HPP_
+#define LIST_LIFO_HPP_
 
 namespace o_data_structures
 {
@@ -81,6 +83,7 @@ namespace o_data_structures
 
 } // END OF NAMESPACE
 
+#endif // END OF LIST_LIFO_HPP_
 
 
 

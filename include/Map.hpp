@@ -18,6 +18,8 @@
  */
 
 #pragma once
+#ifndef MAP_HPP_
+#define MAP_HPP_
 
 #include <iostream>      // printing result of LoadMap to screen
 #include <fstream>       // handling files
@@ -130,8 +132,8 @@ namespace o_graph
 
 	Map LoadMap(const std::string &path_to_file);
 
+} // END OF NAMESPACE o_graph
 
-}
-
+#endif // END OF MAP_HPP_
 
 

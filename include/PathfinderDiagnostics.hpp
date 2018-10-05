@@ -1,5 +1,20 @@
-#pragma once
+/** \file
+ * 		PathfinderDiagnostivs.hpp
+ *
+ * 	\brief
+ * 		Tools to evaluate a pathfinding algorithms performance
+ *
+ * 	\version
+ * 		2018-10-05 ipsch: 0.9.1 pre-final (detailed documentation needed)
+ *
+ *  \author
+ *  	ipsch: Ingmar Schnell
+ *  	contact: i.p.schnell(at)gmail.com
+ */
 
+#pragma once
+#ifndef PATHFINDER_DIAGNOSTICS_HPP_
+#define PATHFINDER_DIAGNOSTICS_HPP_
 
 #include <vector>
 #include <iostream>
@@ -78,5 +93,6 @@ private :
 	std::string output_file_name_;
 };
 
+#endif // END OF PATHFINDER_DIAGNOSTICS_HPP_
 
 

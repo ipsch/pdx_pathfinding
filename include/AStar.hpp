@@ -4,6 +4,12 @@
  *  \brief
  *  	Provides pathfinding capabilities (A*-algorithm)
  *
+ *  \version
+ *  	version 2018-10-05: 0.9.0 (ipsch) final pre-shipping (development features to be removed)
+ *
+ *  \autor
+ *
+ *
  *  \details
  *  	AStar.hpp was written as a part of project pdx_pathfinding.
  * 		AStar.hpp contains declaration of class AStar and
@@ -22,14 +28,15 @@
  * 		- int FindPath(..) is documented in AStar.cpp along with its definition.
  * 		- The graph representation class AStar works on can be found in Map.hpp (and Map.cpp accordingly)
  *
- * ToDo: documentation
- * \section section_AStar_history Development History
- * \version 2018-06-25: 0.0.1 (ipsch) (file creation)
- * \version 2018-07-20: 0.3.0 (ipsch) (component completion)
- * \version 2018-08-01: 0.5.0 (ipsch) (first executable code)
- * \version 2018-09-05: 0.8.0 (ipsch) (feature complete documentation missing)
  *
- * \author ipsch (Ingmar Palle Schnell)
+ * 	\section section_AStar_history Development History
+ * 		\version 2018-06-25: 0.0.1 (ipsch) (file creation)
+ * 		\version 2018-07-20: 0.3.0 (ipsch) (component completion)
+ * 		\version 2018-08-01: 0.5.0 (ipsch) (first executable code)
+ * 		\version 2018-09-05: 0.8.0 (ipsch) (feature complete documentation missing)
+ *		\version 2018-10-05: 0.9.0 (ipsch) final pre-shipping (development features to be removed)
+ *  \author
+ * 	ipsch (Ingmar Palle Schnell)
  *
  * contact: i.p.schnell(at)gmail.com
  *

@@ -1,4 +1,19 @@
+/** \file
+ * 		oString.hpp
+ *
+ * 	\brief
+ * 		Helper functions to handle 'std::string's
+ *
+ * 	\version
+ * 		2018-10-05 ipsch: 0.9.1 pre-final (detailed documentation needed)
+ *
+ *  \author
+ *  	ipsch: Ingmar Schnell
+ *  	contact: i.p.schnell(at)gmail.com
+ */
 #pragma once
+#ifndef OSTRING_HPP_
+#define OSTRING_HPP_
 
 #include <string>
 
@@ -12,3 +27,4 @@ std::string FindAndReplaceAll(std::string str,
 // rpl - substring that will replace fnd
 // return value is a new string with replacements
 
+#endif // END OF OSTRING_HPP_

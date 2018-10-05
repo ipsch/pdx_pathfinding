@@ -1,3 +1,31 @@
+/** \file
+ * 		NRRan.hpp
+ *
+ * 	\brief
+ * 		Random number generator from 'NUMERICAL RECIPES'
+ *
+ * 	\version
+ * 		2018-10-05 ipsch: 0.9.1 pre-final (detailed documentation needed)
+ *
+ *  \author
+ *  	William H. Press (NUMERICAL RECIPES)
+ *  \author
+ *      Saul A. Teukolsky (NUMERICAL RECIPES)
+ *  \author
+ *  	William T. Vetterling (NUMERICAL RECIPES)
+ *  \author
+ *      Bian P. Flannery (NUMERICAL RECIPES)
+ *  \author
+ *  	ipsch: Ingmar Schnell
+ *  	contact: i.p.schnell(at)gmail.com
+ *
+ *  \reference
+ *      'Numerical Recipes 3rd Edition',
+ *      Cambridge University Press (2007), pp.342-343
+ *
+ */
+
+#pragma once
 #ifndef NRRAN_HPP_
 #define NRRAN_HPP_
 
@@ -35,14 +63,4 @@ struct Ran
 };
 
 
-
-
-
-
-
-
-
-
-
-
-#endif
+#endif // END OF NRRAN_HPP_

@@ -1,3 +1,19 @@
+/** \file
+ * 		oTable.hpp
+ *
+ * 	\brief
+ * 		class to represent a 2d table (with outputs for representing data in gnuplot)
+ *
+ *  \detail ToDo: detailed documentation of oTable.hpp
+ *
+ *  \version
+ *  	2018-10-05 ipsch: 0.9.1 pre-final (documentation needed)
+ *
+ *  \author
+ *  	ipsch: Ingmar Schnell
+ *  	contact: i.p.schnell(at)gmail.com
+ */
+#pragma once
 #ifndef OTABLE_HPP_
 #define OTABLE_HPP_
 
@@ -107,4 +123,4 @@ namespace oMath
 
 } // END namespace oMath
 
-#endif
+#endif // END OF OTABLE_HPP_
