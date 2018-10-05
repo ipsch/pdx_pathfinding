@@ -1,4 +1,5 @@
-/** \file main.cpp
+/** \file
+ * 		main.cpp
  * project: pdx_pathfinding
  *
  *
@@ -98,21 +99,18 @@
 
 
 
-#include <iostream>
-#include <ostream>
-#include <fstream>
-#include <cmath>                       // used
-#include <string>                      // used for filenames
-#include <stdexcept>                   // used for exception handling
-#include <vector>                      // list of filenames
 
-#include "oString.hpp"                 // helper functions for string handling
-#include "time_measure.hpp"
-#include "Map.hpp"                     // representation of game map
-#include "AStar.hpp"                   // Path finding algorithm
-#include "NRRan.hpp"                   // Numerical Recipes random number generator
-#include "Class_AnalysisRuntime.hpp"
+#include <iostream>					  // output to std::cout
+#include <string>                     // used for filenames
+#include <stdexcept>                  // used for exception handling
+#include <vector>                     // list of filenames
 
+#include "oString.hpp"                // helper functions for string handling
+#include "time_measure.hpp"           // functions to measure wall- / cpu-time
+#include "Map.hpp"                    // representation of game map
+#include "AStar.hpp"                  // Path finding algorithm
+#include "NRRan.hpp"                  // Numerical Recipes random number generator
+#include "PathfinderDiagnostics.hpp"  // Tool to evaluate pathfinder performance
 
 
 std::vector<std::string> MAPS

@@ -24,25 +24,24 @@
 
 /** \brief Interface function that delegates the task of finding a path to a class AStar object
  *
- * \details Interface function to make AStar class compatible to Paradoxs requirements
+ *  \details Interface function to make AStar class compatible to Paradoxs requirements;
  *
- * \param[in] nStartX The zero based x-coordinate of the start position
- * \param[in] nStartY The zero based y-coordinate of the start position
- * \param[in] nTargetX The zero based x-coordinate of the target position
- * \param[in] nTargetY The zero based y-coordinate of the target position
- * \param[in] pMap A pointer to the grid data (see \ref Map.hpp)
- * \param[in] nMapWidth the width of the map (its extent in x-direction)
- * \param[in] nMapHeight the height of the map (its extent in y-direction)
- * \param[out] pOutBuffer Pointer to a buffer where the indices of visited grid points are
- *   stored (excluding the starting position)
- * \param[in] nOutBufferSize length of the buffer pOutBuffer
+ *  \param[in] nStartX The zero based x-coordinate of the start position
+ *  \param[in] nStartY The zero based y-coordinate of the start position
+ *  \param[in] nTargetX The zero based x-coordinate of the target position
+ *  \param[in] nTargetY The zero based y-coordinate of the target position
+ *  \param[in] pMap A pointer to the grid data (see \ref Map.hpp)
+ *  \param[in] nMapWidth the width of the map (its extent in x-direction)
+ *  \param[in] nMapHeight the height of the map (its extent in y-direction)
+ *  \param[out] pOutBuffer Pointer to a buffer where the indices of visited grid points are
+ *  stored (excluding the starting position)
+ *  \param[in] nOutBufferSize length of the buffer pOutBuffer
  *
- * \return Returns the length of the shortest path between Start and
- *   Target, or -1 if no such path exists
+ *  \return Returns the length of the shortest path between Start and
+ *  Target, or -1 if no such path exists
  *
- * \note If the shortest path consists of more visited nodes than
- *   can be stored in pOutBuffer all surplus nodes are discarded.
- *
+ *  \note If the shortest path consists of more visited nodes than
+ *  can be stored in pOutBuffer all surplus nodes are discarded.
  */
 int FindPath(const int nStartX, const int nStartY,
              const int nTargetX, const int nTargetY,
@@ -55,7 +54,28 @@ int FindPath(const int nStartX, const int nStartY,
 }
 
 
-
+/** \brief Interface function that delegates the task of finding a path to a class AStar object
+ *
+ *  \details Version of Interface with additional diagnostic capbilities;
+ *  NOT compatible to paradox requirements!!
+ *
+ *  \param[in] nStartX The zero based x-coordinate of the start position
+ *  \param[in] nStartY The zero based y-coordinate of the start position
+ *  \param[in] nTargetX The zero based x-coordinate of the target position
+ *  \param[in] nTargetY The zero based y-coordinate of the target position
+ *  \param[in] pMap A pointer to the grid data (see \ref Map.hpp)
+ *  \param[in] nMapWidth the width of the map (its extent in x-direction)
+ *  \param[in] nMapHeight the height of the map (its extent in y-direction)
+ *  \param[out] pOutBuffer Pointer to a buffer where the indices of visited grid points are
+ *  stored (excluding the starting position)
+ *  \param[in] nOutBufferSize length of the buffer pOutBuffer
+ *
+ *  \return Returns the length of the shortest path between Start and
+ *  Target, or -1 if no such path exists
+ *
+ *  \note If the shortest path consists of more visited nodes than
+ *  can be stored in pOutBuffer all surplus nodes are discarded.
+ */
 int FindPath(const int nStartX, const int nStartY,
              const int nTargetX, const int nTargetY,
              const unsigned char* pMap, const int nMapWidth, const int nMapHeight,
@@ -72,11 +92,6 @@ int FindPath(const int nStartX, const int nStartY,
 
 namespace pathfinder
 {
-	//AStar::AStar() //:
-			//output_buffer_size_(0), p_output_buffer_(0L), map_(0L)
-	/** Constructor (made private to not be accessible form the outside) */
-	//{ }
-
 
 	/** \brief Constructor
 	 *  \param[in] map Reference to the game map represented by an instance of class Map
@@ -90,12 +105,10 @@ namespace pathfinder
 	}
 
 
-
-	/** \brief Method to expand the node supplied by AStar::FindPath(..) and put its neigbours on the AStar::open_list_
+	/** \brief Method to expand the node supplied by AStars main loop (AStar::FindPath(..))
 	 *
-	 * \param[in] predecessor The Node supplied by AStar::FindPath(int iS, int jS, int iT, int jT) to be expanded next
-	 *
-	 *
+	 *  \param[in] Pointer to the node that will be expanded
+	 *  (supplied by AStar::FindPath(int iS, int jS, int iT, int jT))
 	 */
 	void AStar::ExpandNode(MapNode *predecessor)
 	{
@@ -124,7 +137,6 @@ namespace pathfinder
 
 			++nodes_expanded_; // ToDo: 2018-09-25 ipsch: Remove this in shipping version
 
-
 			if (search_success)
 				open_list_.change_key(search_index, fvalue);
 			else
@@ -139,7 +151,6 @@ namespace pathfinder
 		}
 		return;
 	}
-
 
 
 	/** \brief Reconstructs the shortest path found by AStar::FindPath() and writes it to Buffer p_output_buffer
@@ -170,23 +181,33 @@ namespace pathfinder
 	}
 
 
-
-
 	/** \brief 'AStar's main-loop: Finds the shortest path between a start- and target-position
 	 *
+	 *  \detail For details on the A-Star algorithm we like to point to standard literature
+	 *  and online sources:
+	 *  - https://www.redblobgames.com/pathfinding/a-star/introduction.html (date: 2018-10-04)
+	 *  - https://de.wikipedia.org/wiki/A*-Algorithmus (date: 2018-10-04)
+	 *  or orignal papers:
+	 *  - P. E. Hart, N. J. Nilsson, B. Raphael:
+	 *    A Formal Basis for the Heuristic Determination of Minimum Cost Paths.
+	 *    IEEE Transactions on Systems Science and Cybernetics SSC4 (2), 1968, S. 100–107.
+     *  - P. E. Hart, N. J. Nilsson, B. Raphael:
+     *    Correction to „A Formal Basis for the Heuristic Determination of Minimum Cost Paths“.
+     *    SIGART Newsletter, 37, 1972, S. 28–29.
 	 *
-	 * \note
+	 *  \note Note slight differences to standard literature:
+	 *  - Before entering main loop the heuristics (owned by AStar.map_) need to
+	 *    be setup: input starting point as point of reference
+	 *  - If target position is found we need to break loop (not returning at this point)
+	 *    since memory needs to be free (clear_lists(..)).
 	 *
-	 * \par on ownership of memory
-	 * Memory associated with graph nodes is owned by the instance of AStar.
-	 * Memory is allocated by AStar::ExpandNode(..)
+	 *  \param[in] iS The zero based x-coordinate of the start position
+	 *  \param[in] jS The zero based y-coordinate of the start position
+	 *  \param[in] iT The zero based x-coordinate of the target position
+	 *  \param[in] jT The zero based y-coordinate of the target position
 	 *
-	 * are not owned by openlist or closedlist either.
-	 * Owner is the instance of AStar.  allocates memory that is in turn
-	 * linked by one of the lists. AStar has no way of accessing this memory exect through
-	 * those lists
-	 *
-	 *
+	 *	\return length of the path from starting position to target;
+	 *  -1 if no path exist or path length exceeded length of output buffer
 	 */
 	int AStar::FindPath(const int &iS, const int &jS, const int &iT, const int &jT)
 	{
@@ -194,9 +215,6 @@ namespace pathfinder
 
 		MapNode *p_start_node = new MapNode();
 		p_start_node->id_ = map_.get_index(iS,jS);
-		p_start_node->fvalue_ = 0;
-		p_start_node->path_cost_ = 0;
-		p_start_node->p_predecessor_ = 0L;
 
 		unsigned int target_node_id = map_.get_index(iT,jT);
 

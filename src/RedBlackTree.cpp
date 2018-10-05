@@ -9,9 +9,9 @@
  *		a template class.
  *
  *  \version
- *  	2018-10-02 ipsch: 1.0.0
+ *  	2018-10-02 ipsch: 1.0.0 final
  *
- *  \authors
+ *  \author
  *  	ipsch: Ingmar Schnell
  *      contact: i.p.schnell(at)gmail.com
  */
