@@ -2,13 +2,11 @@
  * 		Map.cpp
  *
  *  \brief
- *  	definitions to Map.hpp
+ *  	Classes and functions to represent a 2d game map
  *
  *  \detail
- *  	Contains definitions for
- *  	accompanying header-file Map.hpp
- *  	(classes and functions to represent
- *  	a 2d game map)
+ *  	Contains definitions to
+ *  	accompanying header file Map.hpp
  *
  *  \version
  *  	2018-09-25 ipsch: semi-final (ToDo: cleanup+doc in Map.cpp)
@@ -156,9 +154,9 @@ namespace o_graph
 		{
 			getline(MapStream,line);
 			if(line.find("MapWidth")!=std::string::npos)
-				width = std::stoi(FindAndReplaceAll(line,"MapWidth=",""),&sz);
+				width = std::stoi(o_string::FindAndReplaceAll(line,"MapWidth=",""),&sz);
 			if(line.find("MapHeight")!=std::string::npos)
-				height = std::stoi(FindAndReplaceAll(line,"MapHeight=",""),&sz);
+				height = std::stoi(o_string::FindAndReplaceAll(line,"MapHeight=",""),&sz);
 
 		} while( (!(line.find("MapData")!=std::string::npos))
 				&& MapStream.good());

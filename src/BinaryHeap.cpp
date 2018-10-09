@@ -2,9 +2,10 @@
  * 		BinaryHeap.cpp
  *
  *  \brief
- *  	accompanying .cpp file to BinaryHeap.hpp
+ *  	Provides a binary minimum heap data structure (class BinaryHeap)
  *
  *	\details
+ *		Accompanying .cpp file to BinaryHeap.hpp;
  *		This file is a stub since BinaryHeap is
  *		a template class.
  *
@@ -17,8 +18,3 @@
  */
 
 #include "BinaryHeap.hpp"
-
-
-
-
-

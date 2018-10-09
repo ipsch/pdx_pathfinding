@@ -92,7 +92,7 @@ AnalysisRuntime::~AnalysisRuntime()
 void AnalysisRuntime::AddData(const AnalysisRuntimeData &data)
 {
 	data_.push_back(data);
-	max_path_length_ = oMax<int>(max_path_length_, data.path_length_);
+	max_path_length_ = o_math::max<int>(max_path_length_, data.path_length_);
 	return;
 }
 
@@ -210,8 +210,8 @@ void AnalysisRuntime::Evaluate()
 	double delta_bin_path = (double) max_path_length_/ (double) n_bins_path;
 	double delta_bin_dist = (double) max_manhattan_distance_/ (double) n_bins_dist;
 
-	oTable<double> table_sum_of_runtime(n_bins_path,n_bins_dist);
-	oTable<unsigned int> table_number_of_runs(n_bins_path,n_bins_dist);
+	o_math::oTable<double> table_sum_of_runtime(n_bins_path,n_bins_dist);
+	o_math::oTable<unsigned int> table_number_of_runs(n_bins_path,n_bins_dist);
 
 	for(int i=0; i<n_bins_path; ++i)
 	{

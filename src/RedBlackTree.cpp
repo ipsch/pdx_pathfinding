@@ -2,9 +2,10 @@
  * 		RedBlackTree.cpp
  *
  *  \brief
- *  	accompanying .cpp file to RedBlackTree.hpp
+ *  	Provides a "red-black tree" data structure
  *
  *	\details
+ *	 	Accompanying .cpp file to RedBlackTree.hpp;
  *		This file is a stub since RedBlackTree is
  *		a template class.
  *

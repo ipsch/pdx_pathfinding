@@ -1,5 +1,5 @@
 /** \file
- * 		PathfinderDiagnostivs.hpp
+ * 		PathfinderDiagnostics.hpp
  *
  * 	\brief
  * 		Tools to evaluate a pathfinding algorithms performance
@@ -22,17 +22,14 @@
 #include <fstream>
 #include <ostream>
 #include <string>
-#include "oTable.hpp"
+#include "oTable.hpp"  // class to represent data + compatibility to gnuplot
+#include "oMath.hpp"   // Mathematical helper functions
 
 
-using namespace oMath;
+
 struct AnalysisRuntimeData;
 
-template<typename T>
-inline T oMax(const T &a, const T &b)
-{
-	return (a>=b) ? a : b;
-}
+
 
 void PrintAnalysis(const int &xi, const int &yi, const int &xf, const int &yf,
 		const AnalysisRuntimeData &ana, const int *pOutBuffer);
@@ -84,7 +81,7 @@ public :
 	void Evaluate();
 	void CalcMean();
 private :
-	void (*CallbackOutput_)(const oTable<double> &, std::ostream &) = &oTablePrint;
+	void (*CallbackOutput_)(const o_math::oTable<double> &, std::ostream &) = &o_math::oTablePrint;
 	AnalysisRuntime();
 	typedef std::vector<AnalysisRuntimeData> myDataType;
 	int max_manhattan_distance_;

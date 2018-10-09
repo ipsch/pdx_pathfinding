@@ -4,45 +4,37 @@
  *  \brief
  *  	Provides pathfinding capabilities (A*-algorithm)
  *
- *  \version
- *  	version 2018-10-05: 0.9.0 (ipsch) final pre-shipping (development features to be removed)
- *
- *  \autor
- *
- *
  *  \details
  *  	AStar.hpp was written as a part of project pdx_pathfinding.
  * 		AStar.hpp contains declaration of class AStar and
  * 		an interface to function int FindPath(..):
- * 		- Class AStar provides the pathfinding capabilities, it's
- *   	  an implementation of the A*-algorithm first described
- *   	  by Peter Hart, Nils J. Nilsson and Bertram Raphael in 1968.
- *   	  The class must be supplemented by a representation of a graph to work on (see Map.hpp).
+ * 		- Class AStar provides the pathfinding capabilities.
+ * 		  It is an implementation of the A*-algorithm (see references).
+ *   	  The class must be supplemented by a representation of a graph/map to work on.
  * 		- The function int FindPath(..) is an interface to meet the
- *   	  requirements by Paradox Studios on how to call the implemented pathfinding algorithm.
+ *   	  requirements by Paradox on how to call the implemented pathfinding algorithm.
  *        It delegates its inputs to an instance of class AStar.
  *
  *  \sa
- * 		- Class AStar is documented in AStar.hpp (this file) along with its declaration.
- * 		- Class AStars methods are documented in AStar.cpp along with their definitions.
- * 		- int FindPath(..) is documented in AStar.cpp along with its definition.
- * 		- The graph representation class AStar works on can be found in Map.hpp (and Map.cpp accordingly)
+ * 		- Class 'AStar's methods are documented in AStar.cpp
+ * 		- int FindPath(..) is documented in AStar.cpp
+ * 		- For graph/map see Map.hpp and Map.cpp
  *
+ *  \version
+ *  	version 2018-10-05: 0.9.0 (ipsch) final pre-shipping (development features to be removed)
  *
- * 	\section section_AStar_history Development History
- * 		\version 2018-06-25: 0.0.1 (ipsch) (file creation)
- * 		\version 2018-07-20: 0.3.0 (ipsch) (component completion)
- * 		\version 2018-08-01: 0.5.0 (ipsch) (first executable code)
- * 		\version 2018-09-05: 0.8.0 (ipsch) (feature complete documentation missing)
- *		\version 2018-10-05: 0.9.0 (ipsch) final pre-shipping (development features to be removed)
  *  \author
- * 	ipsch (Ingmar Palle Schnell)
+ * 		ipsch: Ingmar Schnell
+ * 		contact: i.p.schnell(at)gmail.com
  *
- * contact: i.p.schnell(at)gmail.com
- *
+ * 	\references
+ * 		 * 		  first described
+ *   	  by Peter Hart, Nils J. Nilsson and Bertram Raphael in 1968.
  */
 
 #pragma once
+#ifndef ASTAR_HPP_
+#define ASTAR_HPP_
 
 
 #include "Map.hpp"           // A class to represent the game map
@@ -68,14 +60,15 @@ int FindPath(const int nStartX, const int nStartY,
 namespace pathfinder
 {
 	// ToDO: documentation
-	/** \brief provides pathfinding capabilities in a graph
+	/** \brief provides pathfinding capabilities (implements A*-algorithm)
 	 *
 	 *  \detail Implementation details:
 	 *  - Buffer to write computed path to is owned by caller
 	 *  - Early return if computed path exceeds buffer size
+	 *
+	 *  \sa
 	 *  - For implementation details on class AStars methods
 	 *    see documentation in AStar.cpp
-	 *
 	 */
 	class AStar
 	{
@@ -107,4 +100,6 @@ namespace pathfinder
 	}; // END OF CLASS AStar
 
 } // END OF NAMESPACE pathfinder
+
+#endif // END OF ASTAR_HPP_
 

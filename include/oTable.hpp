@@ -2,30 +2,34 @@
  * 		oTable.hpp
  *
  * 	\brief
- * 		class to represent a 2d table (with outputs for representing data in gnuplot)
+ * 		Class to represent a 2d table (with outputs compatible to gnuplot)
  *
- *  \detail ToDo: detailed documentation of oTable.hpp
+ *  \detail
+ *		Contains class oTable.
+ *		oTable is intended to store data in a table format that can
+ *		comfortably written to standard output for later processing
+ *		with gnuplot.
+ *		oTable is part of namespace o_math (my own mathematical helpers collection)
  *
  *  \version
- *  	2018-10-05 ipsch: 0.9.1 pre-final (documentation needed)
+ *  	2018-10-09 ipsch: 1.9.1 final
  *
  *  \author
  *  	ipsch: Ingmar Schnell
  *  	contact: i.p.schnell(at)gmail.com
  */
+
 #pragma once
 #ifndef OTABLE_HPP_
 #define OTABLE_HPP_
 
 
-#include <iostream>
-#include <fstream>
-#include <ostream>
-#include <iomanip>
-#include <string>
-#include <sstream>
+#include <ostream>  // writing data to output
+#include <iomanip>  // for setting output format (scientific, width etc.)
+#include <string>   // strings used for labels
+#include <sstream>  // converting actual data to labels
 
-namespace oMath
+namespace o_math
 {
 
 	template <typename T>
@@ -39,9 +43,11 @@ namespace oMath
 			{return data_[index(row,column)];}
 		T operator()(const unsigned int &row, const unsigned int &column) const
 			{return data_[index(row,column)];}
-		const unsigned int size_;
+
 		const unsigned int rows_;
 		const unsigned int cols_;
+		const unsigned int size_;
+
 		std::string * col_axis_;
 		std::string * row_axis_;
 	private :

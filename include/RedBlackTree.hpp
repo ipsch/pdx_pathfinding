@@ -2,35 +2,14 @@
  * 		RedBlackTree.hpp
  *
  *  \brief
- *  	contains data structure "red-black tree"
- *      (an implementation of a self balancing 2-3-Tree)
+ *  	Provides a "red-black tree" data structure
  *
  *  \detail
- *      A Red-Black-Tree is a data structure to efficiently store
- *      data elements, which obey an order relation.
- *      The data is organized in a binary tree, where
- *      the Tree is self balancing; meaning the tree depth is approximately equal
- *      for all path from its root to its leave nodes.
- *      Searching for an element within the tree profits from the self
- *      balancing properties and is of the order of log(n) where n denoted
- *      the number of elements.
- *      Following properties must be fulfilled for a Red-Black-Tree:
- *      \section node_properties Node properties
- *          - key value
- *          - data value
- *      	- pointer to related nodes left child, right child, parent
- *          - color: A node is either black or red
- *  	\section RB_conditions Red-Black-Tree Conditions
- *  		- All external leaf nodes (nodes without children)
- *  		  aka NIL-node (not in list) are black
- *  		- both childs of a red node are black
- *  		- Every path from an arbitrary node down to its leaf nodes contains
- *  		  the same number of black nodes (called black-depth)
- *
- *  	\section RBTree_references References
- *   		Rudolf Bayer (1972). "Symmetric binary B-Trees:
- *	        Data structure and maintenance algorithms".
- *	        Acta Informatica. 1 (4): 290–306. doi:10.1007/BF00289509.
+ *  	Contains
+ *  	- Class RedBlackTree (a self balancing binary tree structure)
+ *  	- Class RedBlackNode (a node type designed to be used in RedBlackTree)
+ *  	Both classes are part of namespace o_data_structures
+ *  	(a collection of different data structures)
  *
  *  \version
  *  	2018-10-02 ipsch: 1.0.2 - final + reworked documentation
@@ -173,7 +152,38 @@ namespace o_data_structures
 
 	/** \brief Specialization of class RedBlackTree with two fields (key_, data_)
 	 *
-	 *  \sa see the file documentation at the top of this file for a details
+	 *
+	 *  \detail Class RedBlackTree is an implementation of a self balancing binary tree
+	 *  that is equivalent to a 2-3-4-Tree (aka B-Tree of order 4).
+	 *  It is a structure to store data that obeys an order relation.
+	 *  Self balancing implies that the tree depth is approximately equal
+	 *  for all path from its root to its leave nodes.
+	 *  Search speed benefits from the equal depth and is of the order
+	 *  of log(n) where n denoted the total number of elements.
+	 *
+	 *  The trees Node feature following properties
+	 *  \section node_properties Node properties
+	 *  	- key value
+	 *      - data value
+	 *      - pointer to related nodes left child, right child and parent
+	 *      - color: A node is either black or red
+	 *
+	 *  Following properties (RB-Tree conditions) must be fulfilled
+	 *  for Red-Black-Tree to be valid:
+	 *  \section RB_conditions Red-Black-Tree Conditions
+	 *  	- (1) All external leaf nodes (nodes without children)
+	 *  	  aka NIL-node (not in list) are black
+	 *  	- (2) both childs of a red node are black
+	 *  	- (3) Every path from an arbitrary node down to its leaf nodes contains
+	 *  	  the same number of black nodes (called black-depth)
+	 *
+	 *  \section RBTree_references References
+	 *  	Rudolf Bayer (1972). "Symmetric binary B-Trees:
+	 *	    Data structure and maintenance algorithms".
+	 *	    Acta Informatica. 1 (4): 290–306. doi:10.1007/BF00289509.
+	 *
+	 *
+	 *  \sa class RedBlackNode
 	 */
 	template <class KeyType, class DataType>
 	class RedBlackTree//<KeyType,DataType>

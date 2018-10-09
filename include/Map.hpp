@@ -89,11 +89,11 @@ namespace o_graph
 		int i0_;
 		int j0_;
 		double max_manhattan_;
-
-
-
-
 		o_data_structures::ListLIFO<unsigned int, 4> neighbour_list_;
+
+
+
+
 
 		void get_ij(const int &index, int &i, int &j) const;
 
@@ -108,8 +108,9 @@ namespace o_graph
 
 
 	protected :
+		explicit Map();
 
-		//! /brief Struct to represent a single position (x,y) in 2d space
+		//! /brief struct to represent a single position (x,y) in 2d space
 		typedef struct coordinate
 		{
 			coordinate(const int &i, const int &j) : x(i), y(j) { }
@@ -117,12 +118,11 @@ namespace o_graph
 			int y;
 		} Coordinate;
 
-
-		Coordinate GetIJ(const int &index) const;
-
-		explicit Map();
 		static const unsigned char terrain_traversable_;
 		static const unsigned char terrain_blocked_;
+
+
+		Coordinate GetIJ(const int &index) const;
 
 		friend Map LoadMap(const std::string &path_to_file);
 	};

@@ -285,8 +285,8 @@ void IterateRuns(setting &s, o_graph::Map &map)
 {
 
 	std::string file_analysis;
-	file_analysis = FindAndReplaceAll(s.file_name,"/maps/","/benchmark/");
-	file_analysis = FindAndReplaceAll(file_analysis,".map",".log");
+	file_analysis = o_string::FindAndReplaceAll(s.file_name,"/maps/","/benchmark/");
+	file_analysis = o_string::FindAndReplaceAll(file_analysis,".map",".log");
 	AnalysisRuntime analysis(map.width_, map.height_, file_analysis);
 
 	for(unsigned int i=0; i<s.runs_per_map; ++i)

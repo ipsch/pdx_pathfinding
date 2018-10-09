@@ -2,7 +2,7 @@
  * 		BinaryHeapNode.cpp
  *
  *  \brief
- *  	accompanying .cpp file to BinaryHeapNode.hpp
+ *  	Accompanying .cpp file to BinaryHeapNode.hpp
  *
  *	\details
  *		This file is a stub since BinaryHeapNode is

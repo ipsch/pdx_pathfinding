@@ -2,7 +2,7 @@
  * 		BinaryHeap.hpp
  *
  *  \brief
- *  	Contains class BinaryHeap that provides a binary minimum heap data structure
+ *  	Provides a binary minimum heap data structure (class BinaryHeap)
  *
  *  \details
  *  	For details on the implementation of class BinarayHeap please see
@@ -67,11 +67,10 @@ namespace o_data_structures
 
 	/** \brief BinaryHeap is an implementation of a complete binary minimum search tree
 	 *
-	 *  \details
-	 *  It stores data elements (called items or nodes) of the type (KeyType)
+	 *  \details It stores data elements (called items or nodes) of the type (KeyType)
 	 *  in a dynamic array (BinaryHeap::A_).
 	 *  (Note: we use item and node synonymously: Item shall stress the point
-	 *  of storing data while node stresses the point how items relate to each other)
+	 *  of storing data while node stresses the point how items relate to each other).
 	 *  There are in total n_items_ stored and max_items_ denoting the number
 	 *  of storable items (the current size of A_).
 	 *
@@ -85,42 +84,46 @@ namespace o_data_structures
 	 *  be one single node at the end of A_ that isn't actually used to store data.
 	 *  We uses this additional note for swap operations
 	 *
+	 *
 	 * 	rank 	|	Nodes in level 	|	Nodes in Tree	|	 swap Nodes		|	arraySize
-	 * ----------|-------------------|-------------------|-------------------|--------------
+	 * ---------|-------------------|-------------------|-------------------|--------------
 	 * 	rank_	|					|	 (max_items_)	|	A_[ASize_-1]	|	(ASize_)
-	 *     n     |        2^n		|	  2^(n+1)-1 	|		  1			|	2^(n+1)
-	 *     0		|		 1			|	 	  1			|		  1			|		2
+	 *    n     |        2^n		|	  2^(n+1)-1 	|		  1			|	2^(n+1)
+	 *    0		|		 1			|	 	  1			|		  1			|		2
 	 * 	  1		|		 2			|		  3			|		  1			|		3
 	 * 	  2		|		 3			|		  7			|		  1			|	    8
 	 * 	  3		|		 4			|		  15		|		  1			|		16
 	 * 	  4		|		 5			|		  31		|		  1			|		32
 	 *
-	 *  For each node N within the tree the minimum Heap condition is fulfilled; meaning:
-	 *    N =< N_LeftChild && N_i =< N_RightChild
 	 *
-	 *  This implies that the data is partially sorted with the smallest element being always at the top.
+	 *  For each node N within the tree the minimum Heap condition
+	 *  ((N =< N_left) && (N =< N_right))
+	 *  is fulfilled; Where N_left and N_right denote Ns left- and right child accordingly
+	 *
+	 *  This implicates that the data is partially sorted with the smallest element being
+	 *  always on top of the heap (stored at A_[0]).
 	 *  The user/caller doesn't need to manage data to keep the heap structure;
 	 *  Instead the methods int insert(KeyType newkey), KeyType remove(const unsigned int &i),
 	 *  int increase_key(int i, KeyType newkey), int decrease_key(int i, KeyType newkey)
 	 *  int change_key(int i, KeyType newkey), void build()
 	 *  manage data manipulation on their own.
 	 *
+	 *  BinaryHeap was intended to be used in combination with class BinaryHeapNode.
 	 *  This class was written with the intention to give some flexibility regarding the stored items.
-	 *  Any class that provides the algebraic relations < , > , ==, >= and <= can be used with this class.
-	 *  The main intention was to use a class with at least two fields - one being a key value for sorting
-	 *  and the other being a pointer to an bigger data structure stored outside of the tree structure.
+	 *  Any class that provides the ordered relation for < , > , >=, <= and == can be used with this class.
+	 *
 	 *
 	 *  The methods find(..) to search for a certain item/key within the tree do unsorted list search.
 	 *
 	 *  following table gives (theoretical) time complexity of algorithms on a binary heap
 	 *
 	 *  Algorithm|  Average	|    Worst case
-	 *  ---------|-----------|-----------------
-	 *  Space	|	O(n)	|	O(n)
-	 *  Search	|	O(n)	|	O(n)
-	 *  insert	|	O(1)	|	O(log n)
-	 *  Delete	|	O(log n)|	O(log n)
-	 *  Peek		|	O(1)	|	O(1)
+	 *  ---------|----------|-----------------
+	 *  Space	 |	O(n)	|	O(n)
+	 *  Search	 |	O(n)	|	O(n)
+	 *  insert	 |	O(1)	|	O(log n)
+	 *  Delete	 |	O(log n)|	O(log n)
+	 *  Peek     |	O(1)	|	O(1)
 	 *
 	 *
 	 */
@@ -153,7 +156,7 @@ namespace o_data_structures
 
 		// ToDo : 2019-09-11 ipsch: BinaryHeap member should be private
 		// but there are a few accesses that rely on public rights
-		KeyType *A_;                         ///< Array where heap elements get stored in (literally "The Tree")
+		KeyType *A_;                       ///< Array where heap elements get stored in (literally "The Tree")
 		unsigned int max_items_;           ///< Current size of the heap (maximum number of storable elements)
 		unsigned int rank_;                ///< Current number of layers/levels associated with max_items_
 		unsigned int n_items_;             ///< Number of data nodes currently stored in BinarayHeap::A_
@@ -168,6 +171,8 @@ namespace o_data_structures
 	};
 
 
+	// ToDO: 2018-10-09 ipsch: test runtime if BinaryHeap isn't variadic
+	// overload of NoteType might slow accessing down
 	template <typename KeyType, typename DataType>
 	class BinaryHeap<KeyType,DataType> : public BinaryHeap<BinaryHeapNode<KeyType,DataType>>
 	{
@@ -207,10 +212,9 @@ namespace o_data_structures
 
 
 
-		/**
-		 * \brief decreases the key of the node at index i to newKey
+		/** \brief decreases the key of the node at index i to newKey
 		 *
-		 * \details
+		 *  \detail
 		 * Note: If using some class for KeyType Change key will use operator= offer
 		 * the class to overwirte item at index with newKey
 		 *

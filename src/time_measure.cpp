@@ -1,5 +1,26 @@
-/**
- * \brief definitions of functions for time measurement (declared in time_measure.hpp)
+/** \file
+ * 		time_measure.cpp
+ *
+ *  \brief
+ *  	Provides functions for time time measurement
+ *
+ *  \details
+ *  	time_measure.cpp contains definitions to time_measure.hpp
+ *  	compatible on windows and Linux
+ *  	Checks for _WIN32 flag; If _WIN32  isn't set Linux is assumed.
+ *
+ *  \version
+ *  	2018-10-05 ipsch: 1.0.2 final / reworked naming added documentation
+ *
+ *  \author
+ *      AYee: Alexander Yee (original design posted on stackoverflow.com)
+ *  	contact: a-yee@u.northwestern.edu
+ *  \author
+ *  	ipsch: Ingmar Schnell
+ *      contact: i.p.schnell(at)gmail.com
+ *
+ *  \reference
+ *  	https://stackoverflow.com/questions/17432502/how-can-i-measure-cpu-time-and-wall-clock-time-on-both-linux-windows
  */
 
 #include "time_measure.hpp"
@@ -7,9 +28,9 @@
 
 #ifdef _WIN32
 double get_wall_time()
-/**
- * \brief function to measure wall time
- * \return Returns a timestamp of current wall time in seconds
+/** \brief function to measure wall time
+ *  \detail this is the Windows variant of get_wall_time()
+ *  \return Returns a timestamp of current wall time in seconds
  */
 {
     LARGE_INTEGER time,freq;
@@ -28,9 +49,9 @@ double get_wall_time()
 
 
 double get_cpu_time()
-/**
- * \brief function to measure cpu time
- * \return Returns a timestamp of current cpu time in seconds
+/** \brief function to measure cpu time
+ *  \detail this is the Windows variant of get_cpu_time()
+ *  \return Returns a timestamp of current cpu time in seconds
  */
 {
     FILETIME CreationTime;
@@ -67,6 +88,11 @@ double get_cpu_time()
 #else
 #include <time.h>
 #include <sys/time.h>
+
+/** \brief function to measure wall time
+ *  \detail this is the Windows variant of get_wall_time()
+ *  \return Returns a timestamp of current wall time in seconds
+ */
 double get_wall_time()
 {
     struct timeval time;
@@ -77,6 +103,12 @@ double get_wall_time()
     }
     return (double)time.tv_sec + (double)time.tv_usec * .000001;
 }
+
+
+/** \brief function to measure cpu time
+ *  \detail this is the Windows variant of get_cpu_time()
+ *  \return Returns a timestamp of current cpu time in seconds
+ */
 double get_cpu_time()
 {
     return (double)clock() / CLOCKS_PER_SEC;
