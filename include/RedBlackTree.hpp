@@ -829,7 +829,11 @@ namespace o_data_structures
 	}
 
 
-	// ToDo: 2018-10-04 ipsch: documentation of clear() in RedBlackTree.hpp + move and document clear(..)
+	/** \brief Frees memory allocated for tree nodes
+	 *
+	 *  \detail Traverses sub-tree starting at node n in post-order (LRN)
+	 *  \param[in] n Pointer to node
+	 */
 	template <class KeyType, class DataType>
 	void RedBlackTree<KeyType,DataType>::clear(NodeType *n)
 	{
@@ -838,6 +842,7 @@ namespace o_data_structures
 		clear(n->left_);
 		clear(n->right_);
 		delete n;
+		n = 0L;
 		return;
 	}
 

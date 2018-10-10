@@ -8,28 +8,22 @@
  *  	AStar.hpp was written as a part of project pdx_pathfinding.
  * 		AStar.hpp contains declaration of class AStar and
  * 		an interface to function int FindPath(..):
- * 		- Class AStar provides the pathfinding capabilities.
- * 		  It is an implementation of the A*-algorithm (see references).
+ * 		- Class AStar provides pathfinding capabilities.
+ * 		  It is an implementation of the A*-algorithm (see reference in class documentation).
  *   	  The class must be supplemented by a representation of a graph/map to work on.
  * 		- The function int FindPath(..) is an interface to meet the
- *   	  requirements by Paradox on how to call the implemented pathfinding algorithm.
+ *   	  requirements by Paradox on how to call the implemented path finding algorithm.
  *        It delegates its inputs to an instance of class AStar.
  *
- *  \sa
- * 		- Class 'AStar's methods are documented in AStar.cpp
- * 		- int FindPath(..) is documented in AStar.cpp
- * 		- For graph/map see Map.hpp and Map.cpp
- *
  *  \version
- *  	version 2018-10-05: 0.9.0 (ipsch) final pre-shipping (development features to be removed)
+ *  	version 2018-10-05 ipsch: 1.0.0 final
  *
  *  \author
  * 		ipsch: Ingmar Schnell
  * 		contact: i.p.schnell(at)gmail.com
+ *  \sa
+ *  	class Map in Map.hpp for map/graph representation
  *
- * 	\references
- * 		 * 		  first described
- *   	  by Peter Hart, Nils J. Nilsson and Bertram Raphael in 1968.
  */
 
 #pragma once
@@ -58,16 +52,24 @@ int FindPath(const int nStartX, const int nStartY,
 
 namespace pathfinder
 {
-	// ToDO: documentation
+
+
 	/** \brief provides pathfinding capabilities (implements A*-algorithm)
 	 *
 	 *  \detail Implementation details:
-	 *  - Buffer to write computed path to is owned by caller
-	 *  - Early return if computed path exceeds buffer size
+	 *  	- Buffer to write computed path to is owned by caller
+	 *  	- Early return if computed path exceeds buffer size
 	 *
 	 *  \sa
-	 *  - For implementation details on class AStars methods
-	 *    see documentation in AStar.cpp
+	 *  	See AStar.cpp for implementation details on AStars methods
+	 *
+	 * 	\references
+	 *  	- P. E. Hart, N. J. Nilsson, B. Raphael:
+	 *  	  A Formal Basis for the Heuristic Determination of Minimum Cost Paths.
+	 *  	  IEEE Transactions on Systems Science and Cybernetics SSC4 (2), 1968, S. 100–107.
+	 *	    - P. E. Hart, N. J. Nilsson, B. Raphael:
+	 *	      Correction to „A Formal Basis for the Heuristic Determination of Minimum Cost Paths“.
+	 *	      SIGART Newsletter, 37, 1972, S. 28–29.
 	 */
 	class AStar
 	{

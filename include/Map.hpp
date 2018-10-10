@@ -22,6 +22,7 @@
 #ifndef MAP_HPP_
 #define MAP_HPP_
 
+
 #include <iostream>      // printing result of LoadMap to screen
 #include <fstream>       // handling files
 #include <sstream>       // translate built-in types to string
@@ -30,7 +31,6 @@
 #include <stdexcept>     // exception handling
 #include "oString.hpp"   // find & replace for std::string
 #include "ListLIFO.hpp"  // simple list to store map nodes temporary
-
 
 namespace o_graph
 {
@@ -48,7 +48,7 @@ namespace o_graph
 		int path_cost_;           //< for tracking pathcost
 		MapNode *p_predecessor_;  //< Pointer to predecessor (node was expanded by predecessor)
 
-		// ToDo : 2918-09-25 ipsch: not sure if to move member definitions to cpp
+		// operators for oder relations
 		inline bool operator>(const MapNode &rhs) const {
 			return this->fvalue_>rhs.fvalue_;}
 		inline bool operator<(const MapNode &rhs) const {
