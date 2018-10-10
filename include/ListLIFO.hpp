@@ -2,7 +2,7 @@
  * 		ListLIFO.hpp
  *
  *  \brief
- *  	contains template class ListLifo (simple list to store some items)
+ *  	contains template class ListLifo (simple list to store items last in first out)
  *
  *  \version
  *  	2018-09-25 ipsch: 1.0.0 final

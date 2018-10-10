@@ -23,7 +23,7 @@
 #ifndef RED_BLACK_TREE_HPP_
 #define RED_BLACK_TREE_HPP_
 
-#include <iostream> // ToDo: remove in shipping version
+#include <iostream>
 
 namespace o_data_structures
 {
@@ -76,7 +76,6 @@ namespace o_data_structures
 
 	/** \brief function to print information about a node to std::cout;
 	 *  \detail designed to work with class RedBlackNode<..>
-	 *  ToDo: remove in shipping version
 	 */
 	template <typename NodeType>
 	void printNodeDetails(NodeType *n)
@@ -95,7 +94,6 @@ namespace o_data_structures
 	 *  output can be used to represent the graphs structure using the online
 	 *  plugin "Dagre Interactive Demo" at
 	 *  http://www.samsarin.com/project/dagre-d3/latest/demo/interactive-demo.html
-	 *  ToDo: remove in shipping version
 	 */
 	template <class NodeType>
 	void printNodeDID(NodeType *N)

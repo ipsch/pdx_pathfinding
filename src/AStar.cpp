@@ -10,7 +10,9 @@
  *
  *
  *
- *
+ *  \author
+ *  	ipsch: Ingmar Schnell
+ *      contact: i.p.schnell(at)gmail.com
  *
  */
 
@@ -112,7 +114,7 @@ namespace pathfinder
 	 */
 	void AStar::ExpandNode(MapNode *predecessor)
 	{
-		map_.get_neighbours(predecessor);
+		map_.fill_neighbour_list(predecessor);
 		while(!map_.neighbour_list_.is_empty())
 		{
 			unsigned int successor_id = map_.neighbour_list_.pop();
@@ -133,9 +135,9 @@ namespace pathfinder
 				if(path_cost >= open_list_.A_[search_index].data_->path_cost_ )
 					continue;
 
-			float fvalue = map_.heuristic(successor_id) + (double) path_cost;//heuristic_(map_.GetIJ(successor_id));
+			float fvalue = map_.get_heuristic(successor_id) + (double) path_cost;
 
-			++nodes_expanded_; // ToDo: 2018-09-25 ipsch: Remove this in shipping version
+			++nodes_expanded_;
 
 			if (search_success)
 				open_list_.change_key(search_index, fvalue);
@@ -214,9 +216,9 @@ namespace pathfinder
 		int path_length = -1; // will be set to actual length if path exists
 
 		MapNode *p_start_node = new MapNode();
-		p_start_node->id_ = map_.get_index(iS,jS);
+		p_start_node->id_ = map_.get_id(iS,jS);
 
-		unsigned int target_node_id = map_.get_index(iT,jT);
+		unsigned int target_node_id = map_.get_id(iT,jT);
 
 		map_.set_heuristic(iT,jT);
 		open_list_.insert(p_start_node->fvalue_,p_start_node);

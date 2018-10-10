@@ -9,9 +9,9 @@
  *  	accompanying header file Map.hpp
  *
  *  \version
- *  	2018-09-25 ipsch: semi-final (ToDo: cleanup+doc in Map.cpp)
+ *  	2018-10-10 ipsch: 1.0.0 final
  *
- *  \authors
+ *  \author
  *  	ipsch: Ingmar Schnell
  *      contact: i.p.schnell(at)gmail.com
  */
@@ -26,47 +26,43 @@ namespace o_graph
 	const unsigned char Map::terrain_blocked_ = 0;
 
 
+	//! \brief unaccessible constructor (made private)
 	Map::Map() : width_(0), height_(0), data_(0L),
-			i0_(0), j0_(0), max_manhattan_(.0)
+			x0_(0), y0_(0), max_manhattan_(.0)
 	{
 		// noting to do here
 	}
 
 
+	//! \brief Copy constructor (designed to work with LoadMap(..))
 	Map::Map(const Map &map) :
 			width_(map.width_), height_(map.height_), data_(map.data_),
-			i0_(0), j0_(0), max_manhattan_(.0)
+			x0_(0), y0_(0), max_manhattan_(height_ + width_ - 2)
 	{
 		// noting to do here
 	}
 
 
+	//! \brief Constructor (designed to work with Paradoxs interface)
 	Map::Map(const int &width, const int &height, const unsigned char *data) :
 		height_(height), width_(width), data_(data),
-		i0_(0), j0_(0), max_manhattan_(.0)
+		x0_(0), y0_(0), max_manhattan_(height_ + width_ - 2)
 	{
 		// noting to do here
 	}
 
 
-
-	inline void Map::get_ij(const int &index, int &i, int &j) const
-	{
-		j = index / width_;
-		i = index - j*width_;
-		return;
-	}
-
-
-	Map::Coordinate Map::GetIJ(const int &index) const
-	{
-		int j = index / width_;
-		int i = index - j*width_;
-		return coordinate(i,j);
-	}
-
-
-	void Map::get_neighbours(const MapNode * node)
+	/** \brief Calculates ids of the neighbours of a node
+	 *
+	 *  \detail
+	 *  - The ids are pused into Map::neighbour_list_
+	 *  - The backward node (nodes predecessor) isn't
+	 *    pushed to the list
+	 *
+	 *  \param[in] node Pointer to node that is to be expanded
+	 *  by the pathfinder class
+	 */
+	void Map::fill_neighbour_list(const MapNode * node)
 	{
 
 		unsigned int prev_id = 0 - 1;
@@ -74,21 +70,22 @@ namespace o_graph
 			prev_id = node->p_predecessor_->id_;
 
 		unsigned int id = node->id_;
-		coordinate pos = GetIJ(node->id_);
+		int x = get_x(id);
+		int y = get_y(id);
 
-		if( (pos.x+1<width_) && (data_[id+1]==terrain_traversable_)
+		if( ((x+1) < width_) && (data_[id+1]==terrain_traversable_)
 				&& ( ( id + 1 ) != prev_id ) )
 			neighbour_list_.push(id + 1);
 
-		if( (pos.x-1>=0) && (data_[id-1]==terrain_traversable_)
+		if( ((x-1) >= 0) && (data_[id-1]==terrain_traversable_)
 				&& ( ( id - 1 ) != prev_id ) )
 			neighbour_list_.push(id - 1);
 
-		if( (pos.y+1<height_) && (data_[id+width_]==terrain_traversable_)
+		if( ((y+1) < height_) && (data_[id+width_]==terrain_traversable_)
 				&& ( ( id + width_ ) != prev_id ) )
 			neighbour_list_.push(id+width_);
 
-		if( (pos.y-1>=0) && (data_[id-width_]==terrain_traversable_)
+		if( ((y-1) >= 0) && (data_[id-width_]==terrain_traversable_)
 				&& ( ( id - width_ ) != prev_id ) )
 			neighbour_list_.push(id-width_);
 
@@ -96,48 +93,64 @@ namespace o_graph
 	}
 
 
-
-
-	void Map::set_heuristic(const int &id)
+	/** \brief Sets the reference point for the heuristic
+	 *
+	 *  \detail the reference point is the target of the search
+	 *  done by the pathfinder class
+	 *
+	 *  \param[in] x0 The targets x-coordinate
+	 *  \param[in] y0 The targets y-coordinate
+	 */
+	void Map::set_heuristic(const int &x0, const int &y0)
 	{
-		coordinate vec = GetIJ(id);
-		return set_heuristic(vec.x, vec.y);
-
-	}
-
-	void Map::set_heuristic(const int &i, const int &j)
-	{
-		i0_ = i;
-		j0_ = j;
-		max_manhattan_ = (double) (height_ + width_ - 2);
+		x0_ = x0;
+		y0_ = y0;
 		return;
 	}
 
-	double Map::heuristic(const int &i, const int &j) const
+
+	/** \brief Calculates the heuristic (h-value)
+	 *  \detail The heuristic is calculated in reference to
+	 *  the target node that was early set (set_heuristic(..))
+	 *  \param[in] id The id of the node to calculate the heuristic for
+	 *  \return The value of the heuristic
+	 */
+	double Map::get_heuristic(const unsigned int &id) const
 	{
-		double dx = (double) (i-i0_);
-		double dy = (double) (j-j0_);
-		double manhattan = fabs(dx) + fabs(dy);
-		return manhattan + (manhattan/max_manhattan_);
+		int dx = get_x(id) - x0_;
+		int dy = get_y(id) - y0_;
+		double manhattan = (double) (abs(dx) + abs(dy));
+		return manhattan*(1. + 1./max_manhattan_);
 	}
 
 
-	double Map::heuristic(const unsigned int &id) const
-	{
-		coordinate vec = GetIJ(id);
-		double dx = (double) (vec.x-i0_);
-		double dy = (double) (vec.y-j0_);
-		double manhattan = fabs(dx) + fabs(dy);
-		return manhattan + (manhattan/max_manhattan_);
-	}
-
-
-
-	/** \brief A class to represent the game map
+	/** \brief Loads a map from a data file
 	 *
+	 *  \detail The map data is organized in its header data (width & height),
+	 *  and its bulk data (information about single tiles)
 	 *
+	 *  This is the content of an example data-file :
+	 *  \code
+	 *  MapWidth=4
+	 *  MapHeight=3
+     *  MapData
+     *  ....
+     *  @.@.
+     *  @...
+	 *  \endcode
+	 *  . represents a traversable tile
+	 *  @ represents a blocked tile
 	 *
+	 *  \detail LoadMap(..) is a factory function:
+	 *  memory is allocated for the bulk data.
+	 *  Ownership is transferred to caller and
+	 *  Memory has to be freed by caller.
 	 *
+	 *  \param[in] path Path to the date file containing map data
+	 *  \param[out] width The width of the map
+	 *  \param[out] heigth The height of the map
+	 *  \param[out] data Pointer to the bulk data of the map (allocated by LoadMap(..))
+	 *  \return Error code: 0 on success; 1 otherwise
 	 */
 	int LoadMap(const std::string &path, unsigned int &width, unsigned int &height, unsigned char *&data)
 	{
@@ -194,6 +207,12 @@ namespace o_graph
 	}
 
 
+	/** \brief Delegates map loading to int LoadMap(..)
+	 *
+	 *  \details returns a instance of map instead the errorcode
+	 *  \param[in] path Path to the date file containing map data
+	 *  \return Instance of the map loaded from file
+	 */
 	Map LoadMap(const std::string &path_to_file)
 	{
 		unsigned char *data = 0L;
@@ -204,7 +223,11 @@ namespace o_graph
 	}
 
 
-
+	/** \brief function to print map data to output
+	 *
+	 *  \param[in] The map to be printet
+	 *  \output_stram[in] the output to print data to (default: std::cout)
+	 */
 	void PrintMap(const Map &map, std::ostream &output_stream)
 	{
 		for(unsigned int j=0; j<map.height_; ++j)
@@ -215,5 +238,6 @@ namespace o_graph
 		}
 		return;
 	}
+
 
 } // END NAMESPACE o_graph

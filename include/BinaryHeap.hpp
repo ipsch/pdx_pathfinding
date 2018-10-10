@@ -11,21 +11,21 @@
  *      - BinaryHeap is a template class. It should work with every other class that
  *        provides algebraic relations < , > , ==, >= and <=.
  *
- *  \sa
- * 		- Class BinaryHeap is documented in BinaryHeap.hpp (this file) along with its declaration
- *  	- Class BinaryHeaps methods are documented in BinaryHeap.tpp along with their definitions
+ * \version
+ * 		2018-09-07: 1.0.0 (ipsch)
  *
- * \section section_BinaryHeap_history Development History
- * \version 2018-09-07: 1.0.0 (ipsch)
- *
- * \author ipsch (Ingmar Palle Schnell)
- *
- * contact: i.p.schnell(at)gmail.com
- *
+ *  \author
+ *  	ipsch: Ingmar Schnell
+ *      contact: i.p.schnell(at)gmail.com
  */
+
 #pragma once
 
+#define BINARYHEAP_CAUTIOUS    // unset if STL isn't available
+
+#if defined (BINARYHEAP_CAUTIOUS)
 #include <stdexcept>           // exception handling
+#endif
 #include <cmath>               // std::floor(..)
 #include "oMath.hpp"           // templates for min / max
 #include "BinaryHeapNode.hpp"  // NodeType used in class BinaryHeap
@@ -33,7 +33,7 @@
 namespace o_data_structures
 {
 
-	//#define BINARYHEAP_CAUTIOUS
+
 
 	/** \brief Index arithmetics to get the index of Node-is left child within BinaryHeap::A_
 	 *  \param[in] i Index of node-i
@@ -709,7 +709,6 @@ namespace o_data_structures
 
 		return;
 	}
-
 
 
 	/**

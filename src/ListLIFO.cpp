@@ -2,9 +2,10 @@
  * 		ListLIFO.cpp
  *
  *  \brief
- *  	accompanying .cpp file to ListLIFO.hpp
+ *  	contains template class ListLifo (simple list to store items last in first out)
  *
  *	\details
+ *		Accompanying .cpp file to ListLIFO.hpp.
  *		This file is a stub since ListLIFO is
  *		a template class.
  *

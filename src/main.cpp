@@ -177,7 +177,7 @@ std::vector<std::string> MAPS
 	"./maps/maze512-32-9.map"
 };
 
-Ran RNG(19840827);
+ nr_rngs::Ran RNG(19840827);
 
 const int nBufferSize = 10000; // 1024;
 int * pOutBuffer;
