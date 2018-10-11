@@ -1,4 +1,4 @@
-CXXFLAGS =	-O2 -std=c++11 -g -Wall -fmessage-length=0
+CXXFLAGS =	-O2 -g -Wall -fmessage-length=0
 
 SRC := $(shell find src -type f -name \*.cpp)
 

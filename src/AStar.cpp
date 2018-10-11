@@ -62,7 +62,7 @@ namespace pathfinder
 	 *  \param[in] size_buffer length of the buffer p_buffer
 	 */
 	AStar::AStar(o_graph::Map &map, int *p_buffer, int size_buffer) :
-			map_(map), p_output_buffer_(p_buffer), output_buffer_size_(size_buffer), nodes_expanded_(0)
+			map_(map), p_output_buffer_(p_buffer), output_buffer_size_(size_buffer)
 	{
 		// nothing to do here
 	}
