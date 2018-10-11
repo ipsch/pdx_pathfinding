@@ -108,41 +108,6 @@ void AnalysisRuntime::AddData(const unsigned int &manhattan_distance,
 }
 
 
-/*
-void AnalysisRuntime::Evaluate()
-{
-	oTable<double> table_sum_of_runtime(max_path_length_+1,max_manhattan_distance_+1);
-	oTable<unsigned int> table_number_of_runs(max_path_length_+1,max_manhattan_distance_+1);
-	table_sum_of_runtime.set(.0);
-	table_number_of_runs.set(0);
-
-	// sorting raw data into tables
-	for(myDataType::iterator it = data_.begin(); it != data_.end(); it++)
-	{
-		AnalysisRuntimeData current(*it);
-		int i = current.path_length_;
-		int j = current.manhattan_distance_;
-		table_sum_of_runtime(i,j) += current.time_;
-		table_number_of_runs(i,j) += 1;
-	}
-
-	// doing statistics
-	for(unsigned int j=0; j<=max_manhattan_distance_; ++j)
-		for(unsigned int i=0; i<=max_path_length_; ++i)
-			if(table_number_of_runs(i,j)>0)
-				table_sum_of_runtime(i,j) = table_sum_of_runtime(i,j) / ( (double) table_number_of_runs(i,j));
-
-
-	if(CallbackOutput_==0L)
-		throw("no output defined");
-	else if(stream_to_output_.is_open())
-		CallbackOutput_(table_sum_of_runtime, false, std::cout);
-	else
-		CallbackOutput_(table_sum_of_runtime, false, std::cout);
-
-	return;
-}
-*/
 
 
 

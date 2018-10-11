@@ -60,9 +60,6 @@ namespace pathfinder
 	 *  	- Buffer to write computed path to is owned by caller
 	 *  	- Early return if computed path exceeds buffer size
 	 *
-	 *  \sa
-	 *  	See AStar.cpp for implementation details on AStars methods
-	 *
 	 * 	\references
 	 *  	- P. E. Hart, N. J. Nilsson, B. Raphael:
 	 *  	  A Formal Basis for the Heuristic Determination of Minimum Cost Paths.
@@ -70,6 +67,8 @@ namespace pathfinder
 	 *	    - P. E. Hart, N. J. Nilsson, B. Raphael:
 	 *	      Correction to „A Formal Basis for the Heuristic Determination of Minimum Cost Paths“.
 	 *	      SIGART Newsletter, 37, 1972, S. 28–29.
+	 *	    - https://www.redblobgames.com/pathfinding/a-star/introduction.html (date: 2018-10-04)
+	 *      - https://de.wikipedia.org/wiki/A*-Algorithmus (date: 2018-10-04)
 	 */
 	class AStar
 	{

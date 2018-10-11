@@ -2,29 +2,25 @@
  * 		AStar.cpp
  *
  * 	\brief
- * 		contains definitions to class AStar (pathfinding capabilities)
- * 		declared in accompanying header file AStar.hpp
+ *		Provides pathfinding capabilities (A*-algorithm)
  *
  * 	\details
+ * 		Contains definitions to accompnying header AStar.hpp
  * 		This file is part of project pdx_pathfinding
  *
  *
+ *	\version
+ *		version 2018-10-10 ipsch: 0.9.0 pre-final
  *
  *  \author
  *  	ipsch: Ingmar Schnell
  *      contact: i.p.schnell(at)gmail.com
- *
  */
 
 #include "AStar.hpp"
 
 
-
-
-
-
-
-/** \brief Interface function that delegates the task of finding a path to a class AStar object
+/** \brief Interface function that delegates the task of pathfinding to a class AStar object
  *
  *  \details Interface function to make AStar class compatible to Paradoxs requirements;
  *
@@ -107,10 +103,12 @@ namespace pathfinder
 	}
 
 
-	/** \brief Method to expand the node supplied by AStars main loop (AStar::FindPath(..))
+	/** \brief Node Expansion in A*-Algorithm
 	 *
-	 *  \param[in] Pointer to the node that will be expanded
-	 *  (supplied by AStar::FindPath(int iS, int jS, int iT, int jT))
+	 *  \detail Method to expand the node just visited by AStars main loop (AStar::FindPath(..))
+	 *  and put new nodes on the open list
+	 *
+	 *  \param[in] Pointer to the node that will be expanded (aka was just visited)
 	 */
 	void AStar::ExpandNode(MapNode *predecessor)
 	{
@@ -185,20 +183,8 @@ namespace pathfinder
 
 	/** \brief 'AStar's main-loop: Finds the shortest path between a start- and target-position
 	 *
-	 *  \detail For details on the A-Star algorithm we like to point to standard literature
-	 *  and online sources:
-	 *  - https://www.redblobgames.com/pathfinding/a-star/introduction.html (date: 2018-10-04)
-	 *  - https://de.wikipedia.org/wiki/A*-Algorithmus (date: 2018-10-04)
-	 *  or orignal papers:
-	 *  - P. E. Hart, N. J. Nilsson, B. Raphael:
-	 *    A Formal Basis for the Heuristic Determination of Minimum Cost Paths.
-	 *    IEEE Transactions on Systems Science and Cybernetics SSC4 (2), 1968, S. 100–107.
-     *  - P. E. Hart, N. J. Nilsson, B. Raphael:
-     *    Correction to „A Formal Basis for the Heuristic Determination of Minimum Cost Paths“.
-     *    SIGART Newsletter, 37, 1972, S. 28–29.
-	 *
 	 *  \note Note slight differences to standard literature:
-	 *  - Before entering main loop the heuristics (owned by AStar.map_) need to
+	 *  - Before entering main loop the heuristics (owned by AStar.map_) needs to
 	 *    be setup: input starting point as point of reference
 	 *  - If target position is found we need to break loop (not returning at this point)
 	 *    since memory needs to be free (clear_lists(..)).
@@ -210,6 +196,8 @@ namespace pathfinder
 	 *
 	 *	\return length of the path from starting position to target;
 	 *  -1 if no path exist or path length exceeded length of output buffer
+	 *
+	 *  \sa For references on the A*-Algorithm see documentation of class AStar
 	 */
 	int AStar::FindPath(const int &iS, const int &jS, const int &iT, const int &jT)
 	{

@@ -12,7 +12,7 @@
  *  	(a collection of different data structures)
  *
  *  \version
- *  	2018-10-02 ipsch: 1.0.2 - final + reworked documentation
+ *  	2018-10-11 ipsch: 1.0.0 - final
  *
  *  \author
  *  	ipsch: Ingmar Schnell
@@ -41,16 +41,16 @@ namespace o_data_structures
 	{
 	public :
 		typedef RedBlackNode<KeyType> NodeType;
-		NodeType *left_;
-		NodeType *right_;
-		NodeType *parent_;
-		KeyType key_;
-		bool color_;
-		RedBlackNode(KeyType key) :
-			left_(0L), right_(0L), parent_(0L), key_(key), color_(false)
-		{
-			// Nothing to do here
-		};
+		RedBlackNode(KeyType key);
+		NodeType operator=(const NodeType &rhs);
+		NodeType copy_internals(const NodeType &rhs);
+
+		NodeType *left_;    //< pointer to left child
+		NodeType *right_;   //< pointer to right child
+		NodeType *parent_;  //< pointer to parent node
+		KeyType key_;       //< this nodes search key
+		bool color_;        //< this nodes color
+
 	}; // END CLASS RedBlackNode<KeyType>
 
 
@@ -60,18 +60,106 @@ namespace o_data_structures
 	{
 	public :
 		typedef RedBlackNode<KeyType,DataType> NodeType;
-		NodeType *left_;
-		NodeType *right_;
-		NodeType *parent_;
-		KeyType key_;
-		DataType data_;
-		bool color_;
-		RedBlackNode(KeyType key, DataType data) :
-				left_(0L), right_(0L), parent_(0L), key_(key), data_(data), color_(RED)
-		{
-			// Nothing to do here
-		};
+		RedBlackNode(const KeyType &key, const DataType &data);
+		NodeType operator=(const NodeType &rhs);
+		NodeType copy_internals(const NodeType &rhs);
+
+		NodeType *left_;    //< pointer to left child
+		NodeType *right_;   //< pointer to right child
+		NodeType *parent_;  //< pointer to parent node
+		KeyType key_;       //< this nodes search key
+		DataType data_;     //< field for some data with this node/key
+		bool color_;        //< this nodes color
+
 	}; // END CLASS RedBlackNode<KeyType, DataType>
+
+
+	//! \brief Constructor
+	template <class KeyType>
+	RedBlackNode<KeyType>::RedBlackNode(KeyType key) :
+				left_(0L), right_(0L), parent_(0L), key_(key), color_(false)
+	{
+		// Nothing to do here
+	};
+
+
+	//! \brief Constructor
+	template <class KeyType, class DataType>
+	RedBlackNode<KeyType,DataType>::RedBlackNode(const KeyType &key, const DataType &data) :
+			left_(0L), right_(0L), parent_(0L), key_(key), data_(data), color_(RED)
+	{
+		// Nothing to do here
+	};
+
+
+	/** \brief Copies only "internal" field key
+	 *  \details copy copy_internals(..) is needed for node
+	 *  removal in class RedBlackTree. It copies only internal fields
+	 *  leaving pointer to parent and child nodes untouched.
+	 *  \param[in] rhs The node to copy from
+	 *  \return A partial copy of rhs
+	 */
+	template <class KeyType>
+	RedBlackNode<KeyType>  RedBlackNode<KeyType>::copy_internals(const RedBlackNode<KeyType> &rhs)
+	{
+		this->color_ = rhs.color_;
+		this->key_ = rhs.key_;
+		return *this;
+	}
+
+
+	/** \brief Copies only "internal" fields key and data
+	 *  \details copy copy_internals(..) is needed for node
+	 *  removal in class RedBlackTree. It copies only internal fields
+	 *  leaving pointer to parent and child nodes untouched.
+	 *  \param[in] rhs The node to copy from
+	 *  \return A partial copy of rhs
+	 */
+	template <class KeyType, class DataType>
+	RedBlackNode<KeyType,DataType> RedBlackNode<KeyType,DataType>::copy_internals(const RedBlackNode<KeyType,DataType> &rhs)
+	{
+		this->color_ = rhs.color_;
+		this->data_ = rhs.data_;
+		this->key_ = rhs.key_;
+		return *this;
+	}
+
+
+	/** \brief operator=
+	 *  \details copy all data fields of RedBlackNode
+	 *  copies pointer values, doesn't copy pointer content
+	 *  \param[in] rhs The node to copy from
+	 *  \return a copy of rhs
+	 */
+	template <class KeyType>
+	RedBlackNode<KeyType> RedBlackNode<KeyType>::operator=(const RedBlackNode<KeyType> &rhs)
+	{
+		this->right_ = rhs.right_;
+		this->left_ = rhs.left_;
+		this->parent_ = rhs.parent_;
+		this->color_ = rhs.color_;
+		this->key_ = rhs.key_;
+		return *this;
+	}
+
+
+	/** \brief operator=
+	 *  \details copy all data fields of RedBlackNode
+	 *  copies pointer values, doesn't copy pointer content
+	 *  \param[in] rhs The node to copy from
+	 *  \return a copy of rhs
+	 */
+	template <class KeyType, class DataType>
+	RedBlackNode<KeyType,DataType> RedBlackNode<KeyType,DataType>::operator=(const RedBlackNode<KeyType,DataType> &rhs)
+	{
+		this->right_ = rhs.right_;
+		this->left_ = rhs.left_;
+		this->parent_ = rhs.parent_;
+		this->color_ = rhs.color_;
+		this->data_ = rhs.data_;
+		this->key_ = rhs.key_;
+		return *this;
+	}
 
 
 	/** \brief function to print information about a node to std::cout;
@@ -673,7 +761,7 @@ namespace o_data_structures
 			}
 		} // END WHILE
 
-		CopyContent(*N,*D);
+		(*N) = copy_internals(*D);
 
 		//step 2:
 		// D has been marked for deletion (reminder: D has at most one non-leaf child)
@@ -724,25 +812,26 @@ namespace o_data_structures
 	}
 
 
-	// ToDo: 2018-10-04 ipsch: documentation of fix_removal in RedBlackTree.hpp + changes from renaming
+	/** \brief restores RB-conditions after remove(..)
+	 *
+	 *  \details fix_removal is used if the RB-conditions
+	 *  after a call to remove(..) couldn't be restored by recoloring single nodes.
+	 *  \param[in] node Pointer to node where removal faild to fix RB-conditions
+	 */
 	template <class KeyType, class DataType>
 	void RedBlackTree<KeyType,DataType>::fix_removal(NodeType *N)
 	{
-		//case 1:
+		// case 1: N has become the new root_
 		if (N->parent_ == 0L)
 		{
-			std::cout << "FixRemove (case 1)\n";
 			root_=N;
 			return;
 		}
 
-
-		//delete_case2(n);
-		//return;
-		NodeType *S = GetSibling(N);
+		// case 2:
+		NodeType *S = get_sibling(N);
 		if (S->color_ == RED)
 		{
-			std::cout << "FixRemove (case 2)\n";
 			N->parent_->color_ = RED;
 			S->color_ = BLACK;
 			if (N == N->parent_->left_)
@@ -751,39 +840,36 @@ namespace o_data_structures
 				rotate_right(N->parent_);
 		}
 
-		//delete_case3(n);
+		// case 3:
 		S = get_sibling(N);
 		if ((N->parent_->color_ == BLACK) &&
 				(S->color_ == BLACK) &&
-				(GetColor(S->left_) == BLACK) &&
-				(GetColor(S->right_) == BLACK))
+				(get_color(S->left_) == BLACK) &&
+				(get_color(S->right_) == BLACK))
 		{
-			std::cout << "FixRemove (case 3)\n";
 			S->color_ = RED;
 			fix_removal(N->parent_);
 			return;
 		}
 
 
-		//delete_case4(n);
-		S = GetSibling(N);
+		// case 4:
+		S = get_sibling(N);
 		if ((N->parent_->color_ == RED) &&
 				(S->color_ == BLACK) &&
-				(GetColor(S->left_) == BLACK) &&
-				(GetColor(S->right_) == BLACK))
+				(get_color(S->left_) == BLACK) &&
+				(get_color(S->right_) == BLACK))
 		{
-			std::cout << "FixRemove (case 4)\n";
 			S->color_ = RED;
 			N->parent_->color_ = BLACK;
 			return;
 		}
 
 
-		//delete_case5(n);
-		S = GetSibling(N);
+		// case 5:
+		S = get_sibling(N);
 		if  (S->color_ == BLACK)
 		{
-			std::cout << "FixRemove (case 5)\n";
 			// this if statement is trivial,
 			// due to case 2 (even though case 2 changed the sibling to a sibling's child,
 			// the sibling's child can't be RED, since no RED parent_ can have a RED child).
@@ -791,16 +877,16 @@ namespace o_data_structures
 			// the following statements just force the RED to be on the left_ of the left_ of the parent_,
 			// or right_ of the right_, so case six will rotate correctly.
 			if ((N == N->parent_->left_) &&
-					(GetColor(S->right_) == BLACK) &&
-					(GetColor(S->left_) == RED))
+					(get_color(S->right_) == BLACK) &&
+					(get_color(S->left_) == RED))
 			{ /* this last test is trivial too due to cases 2-4. */
 				S->color_ = RED;
 				S->left_->color_ = BLACK;
 				rotate_right(S);
 			}
 			else if ((N == N->parent_->right_) &&
-					(GetColor(S->left_) == BLACK) &&
-					(GetColor(S->right_) == RED))
+					(get_color(S->left_) == BLACK) &&
+					(get_color(S->right_) == RED))
 			{/* this last test is trivial too due to cases 2-4. */
 				S->color_ = RED;
 				S->right_->color_ = BLACK;
@@ -809,9 +895,8 @@ namespace o_data_structures
 		}
 
 
-		//delete_case6(n);
-		S = GetSibling(N);
-		std::cout << "FixRemove (case 6)\n";
+		// case 6:
+		S = get_sibling(N);
 		S->color_ = N->parent_->color_;
 		N->parent_->color_ = BLACK;
 

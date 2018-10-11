@@ -1,15 +1,22 @@
 /** \file
  * 		main.cpp
- * project: pdx_pathfinding
  *
+ *  \brief
+ * 		contains main() to pdx_pathfinding project + projects documentation main page
  *
+ *  \detail
+ *  	path finding problem from paradox interactive
+ *  	project: pdx_pathfinding
  *
- * \brief contains main() to pdx_pathfinding project + documentation
+ *  \version
+ *  	2018-06-19 ipsch: 0.1.0 (project creation)
  *
- * \version 0.1.0 (project creation)
- * \date 2018-06-19
- * \author ipsch (Ingmar Palle Schnell)
+ *  \author
+ *  	ipsch (Ingmar Schnell)
+ *  	contact: i.p.schnell(at)gmail.com
  *
+ *	\sa References:
+ *		- Paradoxs pathfinding test on kattis https://paradox.kattis.com/problems/paradoxpath
  *
  *
  * \mainpage Project overview
@@ -44,7 +51,7 @@
  *   (nOutBufferSize>=0)
  *
  *
- * \section section_history_main_cpp
+ * \section project_dev_history_
  *          Development History:
  * \version 2018-06-19: 0.0.1 (project creation)
  * \version 2018-06-25: 0.2.0 (research done + literature collection)
@@ -52,27 +59,12 @@
  * \version 2018-08-01: 0.5.0 (first executable code)
  * \version 2018-09-04: 0.8.0 (feature complete documentation missing)
  *
- * \author ipsch (Ingmar Palle Schnell)
  *
- * contact: i.p.schnell(at)gmail.com
- *
+ * Copyright   : CC:by-nc-sa
  *
  */
 
 
-
-
-//============================================================================
-// Project     : pdx_pathfinding
-// Name        : main.cpp
-// Author      : ipsch (Ingmar Palle Schnell)
-// contact     : i.p.schnell(at)gmail.com
-// created      : 2018-06-19
-// Version     : 0.02 pre-working-state (2018-06-20)
-//               0.90 feature complete (2018-09-04)
-// Copyright   : CC:by-nc-sa
-// Description : path finding problem from paradox interactive
-// Reference   : https://paradox.kattis.com/problems/paradoxpath
 //============================================================================
 //
 // nStartX and nStartY are the 0 based coordinates of the start position.
@@ -332,21 +324,7 @@ void IterateMaps(setting s)
 
 
 
-/*
-struct setting
-{
-	setting(int x0, int y0, int x1, int y1, std::string file_name, int runs, int run_opt) :
-			x0(x0), y0(y0), x1(x1), y1(y1), file_name(file_name), runs(runs), run_opt(run_opt) { }
 
-	int x0;
-	int y0;
-	int x1;
-	int y1;
-	std::string file_name;
-	int runs;
-	int run_opt;
-};
-*/
 
 int main(void)
 {
