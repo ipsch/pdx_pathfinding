@@ -52,41 +52,6 @@ int FindPath(const int nStartX, const int nStartY,
 }
 
 
-/** \brief Interface function that delegates the task of finding a path to a class AStar object
- *
- *  \details Version of Interface with additional diagnostic capbilities;
- *  NOT compatible to paradox requirements!!
- *
- *  \param[in] nStartX The zero based x-coordinate of the start position
- *  \param[in] nStartY The zero based y-coordinate of the start position
- *  \param[in] nTargetX The zero based x-coordinate of the target position
- *  \param[in] nTargetY The zero based y-coordinate of the target position
- *  \param[in] pMap A pointer to the grid data (see \ref Map.hpp)
- *  \param[in] nMapWidth the width of the map (its extent in x-direction)
- *  \param[in] nMapHeight the height of the map (its extent in y-direction)
- *  \param[out] pOutBuffer Pointer to a buffer where the indices of visited grid points are
- *  stored (excluding the starting position)
- *  \param[in] nOutBufferSize length of the buffer pOutBuffer
- *
- *  \return Returns the length of the shortest path between Start and
- *  Target, or -1 if no such path exists
- *
- *  \note If the shortest path consists of more visited nodes than
- *  can be stored in pOutBuffer all surplus nodes are discarded.
- */
-int FindPath(const int nStartX, const int nStartY,
-             const int nTargetX, const int nTargetY,
-             const unsigned char* pMap, const int nMapWidth, const int nMapHeight,
-             int* pOutBuffer, const int nOutBufferSize, unsigned int &nodes_expanded)
-{
-	int return_value;
-	o_graph::Map map(nMapWidth,nMapHeight,pMap);
-	pathfinder::AStar Pathfinder(map,pOutBuffer,nOutBufferSize);
-	return_value = Pathfinder.FindPath(nStartX, nStartY, nTargetX, nTargetY);
-	nodes_expanded = Pathfinder.nodes_expanded_;
-	return return_value;
-}
-
 
 namespace pathfinder
 {
@@ -137,8 +102,6 @@ namespace pathfinder
 
 			if (output_buffer_size_ < (int) fvalue)
 				continue;
-
-			++nodes_expanded_;
 
 			if (search_success)
 				open_list_.change_key(search_index, fvalue);

@@ -43,13 +43,6 @@ int FindPath(const int nStartX, const int nStartY,
              int* pOutBuffer, const int nOutBufferSize);
 
 
-// interface function with additional diagnostics documented in AStar.cpp
-int FindPath(const int nStartX, const int nStartY,
-             const int nTargetX, const int nTargetY,
-             const unsigned char* pMap, const int nMapWidth, const int nMapHeight,
-             int* pOutBuffer, const int nOutBufferSize, unsigned int &nodes_expanded);
-
-
 namespace pathfinder
 {
 
@@ -75,8 +68,6 @@ namespace pathfinder
 	public :
 		explicit AStar(o_graph::Map &map, int *p_buffer, int size_buffer);
 		int FindPath(const int &iS, const int &jS, const int &iT, const int &jT);
-
-		unsigned int nodes_expanded_; //< for diagnostics
 
 	protected :
 		typedef o_graph::Map Map;
