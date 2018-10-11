@@ -34,7 +34,7 @@ void PrintAnalysis(const int &xi, const int &yi, const int &xf, const int &yf,
 	std::cout << nodes_expanded << "\t";
 	std::cout << wall_time << "\t";
 	std::cout << cpu_time;
-	if(false)
+	if(true)
 	{
 		std::cout << "\t{";
 		for(int i=0; i<path_length; ++i)
@@ -72,6 +72,7 @@ void PrintAnalysis(const int &xi, const int &yi, const int &xf, const int &yf,
 
 
 
+//! Constructor
 AnalysisRuntime::AnalysisRuntime() :
 	max_manhattan_distance_(0),
 	max_path_length_(0),
@@ -79,16 +80,22 @@ AnalysisRuntime::AnalysisRuntime() :
 { };
 
 
+//! Constructor
 AnalysisRuntime::AnalysisRuntime(const int &nMapWidth, const int &nMapHeight, const std::string &output_file_name) :
 	max_manhattan_distance_(nMapWidth+nMapHeight-2),
 	max_path_length_(0),
 	output_file_name_(output_file_name)
 { };
 
+
+//! Destructor
 AnalysisRuntime::~AnalysisRuntime()
 { }
 
 
+/** \brief Adds data to AnalysisRuntime data buffer
+ *  \param[in] data Data to add
+ */
 void AnalysisRuntime::AddData(const AnalysisRuntimeData &data)
 {
 	data_.push_back(data);
@@ -96,6 +103,10 @@ void AnalysisRuntime::AddData(const AnalysisRuntimeData &data)
 	return;
 }
 
+
+/** \brief Adds data to AnalysisRuntime data buffer
+ *
+ */
 void AnalysisRuntime::AddData(const unsigned int &manhattan_distance,
 		const unsigned int &path_length,
 		const unsigned int &nodes_expanded,
