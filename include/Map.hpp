@@ -23,13 +23,9 @@
 #define MAP_HPP_
 
 
-#include <iostream>      // printing result of LoadMap to screen
-#include <fstream>       // handling files
-#include <sstream>       // translate built-in types to string
 #include <string>        // strings for filenames & output to cout
 #include <cmath>         // fabs(..) & abs(..)
 #include <stdexcept>     // exception handling
-#include "oString.hpp"   // find & replace for std::string
 #include "ListLIFO.hpp"  // simple list to store map nodes temporary
 
 namespace o_graph
@@ -161,11 +157,6 @@ namespace o_graph
 		friend Map LoadMap(const std::string &path_to_file);
 		friend void PrintMap(const Map &map, std::ostream &output_stream);
 	};
-
-
-	void PrintMap(const Map &map, std::ostream &output_stream = std::cout);
-
-	Map LoadMap(const std::string &path_to_file);
 
 } // END OF NAMESPACE o_graph
 
