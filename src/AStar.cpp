@@ -123,6 +123,9 @@ namespace pathfinder
 
 			int path_cost = predecessor->path_cost_ + 1; // 1 = distance(predecessor, successor);
 
+			if(successor_id == 225)
+				std::cout << "hier" << std::endl;
+
 			// search open list if item with successor_id already exists
 			unsigned int search_index;
 			bool search_success = open_list_.find_(
@@ -141,7 +144,10 @@ namespace pathfinder
 			++nodes_expanded_;
 
 			if (search_success)
+			{
+				std::cout << "changing key\n";
 				open_list_.change_key(search_index, fvalue);
+			}
 			else
 			{
 				MapNode *p_successor = new MapNode();

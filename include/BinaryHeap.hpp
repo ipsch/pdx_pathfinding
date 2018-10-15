@@ -434,8 +434,8 @@ namespace o_data_structures
 	template<typename Func>
 	bool BinaryHeap<KeyType,DataType>::find_(unsigned int &iter, Func IsEqual) const
 	{
-		for(unsigned int i=0; i<n_items_; ++i)
-			if(IsEqual(A_[i]))
+		for(iter=0; iter<n_items_; ++iter)
+			if(IsEqual(A_[iter]))
 			{
 				return true;
 			}
