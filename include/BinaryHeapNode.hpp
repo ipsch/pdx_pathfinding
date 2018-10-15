@@ -1,38 +1,36 @@
-//============================================================================
-// Projekt     : oDataStructs
-// Name        : rb_node.cpp
-// Author      : ipsch (Ingmar Palle Schnell)
-// contact     : i.p.schnell(at)gmail.com
-// ceated      : 2018-07-27
-// Version     : 1.1
-// Copyright   : CC:by-nc-sa
-// Description : data structure "red-black node" for usage in a red-black tree
-//               (an implementation of self balancing 2-3-Trees)
-// Reference   : Rudolf Bayer (1972). "Symmetric binary B-Trees:
-//               Data structure and maintenance algorithms".
-//               Acta Informatica. 1 (4): 290–306. doi:10.1007/BF00289509.
-//============================================================================
+/** \file
+ * 		BinaryHeapNode.hpp
+ *
+ *  \brief
+ *  	Provides NodeType to be used with class BinaryHeap.hpp
+ *
+ *  \details
+ *  	Nodes consist of two fields key_ and data_.
+ *  	Operators for order relations are provided
+ *
+ * \version
+ * 		2018-10-11: 1.1.0 (ipsch) modified to work with Paradox Problem A
+ *
+ *  \author
+ *  	ipsch: Ingmar Schnell
+ *      contact: i.p.schnell(at)gmail.com
+ */
 
-// Note : - C++11 standard is needed in order to compile (variadic templates)
-//        - red-black nodes (class: BinaryHeapNodes) come as two different kinds
-//          first as nodes that only hold a key for sorting
-//          and second nodes that can additionally hold some kind of data (or pointer).
-//        - The color of BinaryHeapNode is implemented as a bool
-//          color_=true represents the color BLACK.
-//          color_=false represents red accordingly
-
-#pragma once
+#ifndef BINARYHEAPNODE_HPP_
+#define BINARYHEAPNODE_HPP_
 
 namespace o_data_structures
 {
 
-	/** \brief a Node that provides two fields (first a key and second a reference to an instance of an Object)
+	/** \brief a Node that provides two fields (key and data)
 	 *
 	 *  \details
-	 * This class can be used in a tree structure or search algorithm if the Objects referenced by ReferencingNode
-	 * shouldn't be moved in memory (for example if they are addressed by some pointer or are very big)
+	 * 	Class BinaryHeapNode can be used in a tree structure or search algorithm.
+	 * 	Main idea is to use a pointer as type for data_ if the Object data_ is referring to
+	 * 	shouldn't be move in memory (for example if the object is addressed by another pointer as well
+	 * 	or the object is very big).
 	 *
-	 * the defined operators >,<, >=, <= and == operate on the field key_ and leave reference_ untouched
+	 * 	the defined operators >,<, >=, <= and == operate on the field key_ and leave data_ untouched
 	 */
 	template <typename KeyType, typename DataType>
 	class BinaryHeapNode
@@ -59,7 +57,7 @@ namespace o_data_structures
 
 	template<typename KeyType, typename DataType>
 	BinaryHeapNode<KeyType,DataType>::BinaryHeapNode() :
-			key_(0), data_(0L)
+			key_(), data_()
 	{
 		// Nothing to do here
 	}
@@ -71,17 +69,6 @@ namespace o_data_structures
 	{
 		// Nothing to do here
 	}
-
-
-	// ToDo: 2018-09-25 ipsch: contructor not working in BinaryHeapNode.hpp
-	/** \brief Copy Contructor
-	 */
-	//template<typename KeyType, typename DataType>
-	//BinaryHeapNode<KeyType,DataType>::BinaryHeapNode(const BinaryHeapNode &rhs) :
-	//		key_(rhs.key_), data_(rhs.data_)
-	//{
-	//	// Nothing to do here
-	//}
 
 
 	template<typename KeyType, typename DataType>
@@ -120,8 +107,7 @@ namespace o_data_structures
 
 
 
-	/**
-	 * \brief copies fields of ReferencingNode
+	/** \brief copies fields of ReferencingNode
 	 */
 	template<typename KeyType, typename DataType>
 	inline BinaryHeapNode<KeyType,DataType> &BinaryHeapNode<KeyType,DataType>::operator=(const BinaryHeapNode &rhs)
@@ -134,3 +120,4 @@ namespace o_data_structures
 
 } // END OF NAMESPACE o_data_structures
 
+#endif // END OF BINARYHEAPNODE_HPP_

@@ -9,7 +9,7 @@
  *		a template class.
  *
  *  \version
- *  	2018-09-25 ipsch: 1.0.0
+ *  	2018-10-11 ipsch: 1.0.1
  *
  *  \authors
  *  	ipsch: Ingmar Schnell

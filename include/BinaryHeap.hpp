@@ -12,20 +12,23 @@
  *        provides algebraic relations < , > , ==, >= and <=.
  *
  * \version
- * 		2018-09-07: 1.0.0 (ipsch)
+ * 		2018-10-11: 1.1.0 (ipsch) modified to work with Paradox Problem A
  *
  *  \author
  *  	ipsch: Ingmar Schnell
  *      contact: i.p.schnell(at)gmail.com
  */
 
-#pragma once
+#ifndef BINARYHEAP_HPP_
+#define BINARYHEAP_HPP_
 
 //#define BINARYHEAP_CAUTIOUS    // unset if STL isn't available
 
 #if defined (BINARYHEAP_CAUTIOUS)
 #include <stdexcept>           // exception handling
 #endif
+
+#include <iostream>
 #include <cmath>               // std::floor(..)
 #include "oMath.hpp"           // templates for min / max
 #include "BinaryHeapNode.hpp"  // NodeType used in class BinaryHeap
@@ -34,7 +37,7 @@ namespace o_data_structures
 {
 
 	////////////////////////////////////////////////////////////
-	/// HELPFER FUNCTION ///////////////////////////////////////
+	/// HELPFER FUNCTIONS //////////////////////////////////////
 	////////////////////////////////////////////////////////////
 
 	/** \brief Index arithmetics to get the index of Node-is left child within BinaryHeap::A_
@@ -67,10 +70,9 @@ namespace o_data_structures
 
 
 	////////////////////////////////////////////////////////////
-	/// CLASS DECLARATIONS /////////////////////////////////////
+	/// CLASS DECLARATION //////////////////////////////////////
 	////////////////////////////////////////////////////////////
 
-	template <class ... Args> class BinaryHeap;
 
 	/** \brief BinaryHeap is an implementation of a complete binary minimum search tree
 	 *
@@ -133,21 +135,26 @@ namespace o_data_structures
 	 *  Peek     |	O(1)	|	O(1)
 	 *
 	 */
-	template <typename KeyType>
-	class BinaryHeap<KeyType>
+
+	template <typename KeyType, typename DataType>
+	class BinaryHeap
 	{
 	public :
-		BinaryHeap(const unsigned int &nDegree=0);
+		typedef BinaryHeapNode<KeyType,DataType> NodeType;
+		//BinaryHeap(const unsigned int &nDegree=0);
+		BinaryHeap();
+		BinaryHeap(const unsigned int &nDegree);
 		~BinaryHeap();
 
-		void insert(const KeyType &newkey);
+		void insert(const KeyType &newkey, const DataType &data);
 		void remove(const unsigned int &i);
-		KeyType pop(const unsigned int &i);
+		DataType pop(const unsigned int &i);
 
-		void increase_key(int i, KeyType new_key);
-		void decrease_key(int i, KeyType new_key);
-		void change_key(unsigned int &i, const KeyType &new_key);
+		void increase_key(const unsigned int &i, KeyType new_key);
+		void decrease_key(const unsigned int &i, KeyType new_key);
+		void change_key(const unsigned int &i, const KeyType &new_key);
 		void build();
+
 
 		bool is_empty(void) const {return n_items_==0;}
 
@@ -160,12 +167,11 @@ namespace o_data_structures
 		bool find(const KeyType &key) const;
 
 
-		// ToDo : 2019-09-11 ipsch: BinaryHeap member should be private
-		// but there are a few accesses that rely on public rights
-		KeyType *A_;                       ///< Array where heap elements get stored in (literally "The Tree")
-		unsigned int max_items_;           ///< Current size of the heap (maximum number of storable elements)
-		unsigned int rank_;                ///< Current number of layers/levels associated with max_items_
-		unsigned int n_items_;             ///< Number of data nodes currently stored in BinarayHeap::A_
+		NodeType *A_;             //< Array where heap elements get stored in (literally "The Tree")
+		unsigned int max_items_;  //< Current size of the heap (maximum number of storable elements)
+		unsigned int rank_;       //< Current number of layers/levels associated with max_items_
+		unsigned int n_items_;    //< Number of data nodes currently stored in BinarayHeap::A_
+		unsigned int min_items_;  //< Minimum number of items that should be storable in A_;
 
 	protected :
 		// helper functions
@@ -174,20 +180,8 @@ namespace o_data_structures
 		void resize(const unsigned int &new_max_items);
 		void sift_down(int i); // aka heapify
 		void sift_up(unsigned int i);
-	}; // END OF CLASS BinaryHeap<KeyType>
-
-
-	// ToDO: 2018-10-09 ipsch: test runtime if BinaryHeap isn't variadic
-	// overload of NoteType might slow accessing down
-	template <typename KeyType, typename DataType>
-	class BinaryHeap<KeyType,DataType> : public BinaryHeap<BinaryHeapNode<KeyType,DataType>>
-	{
-	public :
-		void insert(const KeyType &newkey, const DataType &data);
-		void increase_key(int i, KeyType new_key);
-		void decrease_key(unsigned int &i, KeyType new_key);
-		void change_key(unsigned int &i, const KeyType &newKey);
 	}; // END OF CLASS BinaryHeap<KeyType,DataType>
+
 
 
 
@@ -195,51 +189,38 @@ namespace o_data_structures
 	/// METHOD DEFINITIONS//////////// /////////////////////////
 	////////////////////////////////////////////////////////////
 
+
+	template <typename KeyType, typename DataType>
+	BinaryHeap<KeyType,DataType>::BinaryHeap() : rank_(0), n_items_(0), min_items_(2)
+	{
+		unsigned int tmp = o_math::oPow2(rank_+1);
+		max_items_ = tmp - 1;
+		A_ = new NodeType[tmp];
+	}
+
+
 	/** \brief Constructor
 	 *  \details since the allocation of memory for heap size is usually dynamically
 	 *  it can be desirable to define a lower bound on levels which are always
 	 *  available without dynamic allocation. This can be achieved by using nDegree (default = 0).
 	 * 	\param[in] nDegree number of layers pre-constructed at initialization
 	 */
-	template <typename KeyType>
-	BinaryHeap<KeyType>::BinaryHeap(const unsigned int &nDegree) : rank_(nDegree), n_items_(0)
+	template <typename KeyType, typename DataType>
+	BinaryHeap<KeyType,DataType>::BinaryHeap(const unsigned int &nDegree) : rank_(nDegree), n_items_(0)
 	{
-		max_items_ = o_math::oPow2(rank_+1)-1;
-		A_ = new KeyType[o_math::oPow2(rank_+1)];
+		unsigned int tmp = o_math::oPow2(rank_+1);
+		max_items_ = min_items_ = tmp - 1;
+		A_ = new NodeType[tmp];
 	}
 
 
 	//! \brief Destructor
-	template <typename KeyType>
-	BinaryHeap<KeyType>::~BinaryHeap()
+	template <typename KeyType, typename DataType>
+	BinaryHeap<KeyType,DataType>::~BinaryHeap()
 	{
 		delete[] A_;
 	}
 
-
-	/** \brief Adds an item to the heap
-	 *
-	 *  \details insert() automatically handles reallocation of the heaps memory if
-	 *  necessary and restores minimum heap condition
-	 *  insert Item after the last one in array- A_
-	 *  sift Item up until equilibrium is reached
-	 *
-	 *  \param[in] item The item to be added to the heap
-	 *  \return Error-code: Return 0 on success and -1 otherwise
-	 */
-	template <typename KeyType>
-	void BinaryHeap<KeyType>::insert(const KeyType &item)
-	{
-       #if defined(BINARYHEAP_CAUTIOUS)
-		if (!is_minHeap())
-			throw std::runtime_error("insert: Heap Condition not met\n");
-       #endif
-		resize(n_items_+1);
-		A_[n_items_] = item;
-		sift_up(n_items_);
-		++n_items_;
-	  return;
-	}
 
 
 	/** \brief Adds an item to the heap
@@ -254,8 +235,11 @@ namespace o_data_structures
 	template <typename KeyType, typename DataType>
 	void BinaryHeap<KeyType,DataType>::insert(const KeyType &newkey, const DataType &data)
 	{
-		BinaryHeapNode<KeyType, DataType> node(newkey, data);
-		BinaryHeap<BinaryHeapNode<KeyType, DataType>>::insert(node);
+		NodeType item(newkey, data);
+		resize(n_items_+1);
+		A_[n_items_] = item;
+		sift_up(n_items_);
+		++n_items_;
 	}
 
 
@@ -266,14 +250,14 @@ namespace o_data_structures
 	 *  \param[in] item Index of the item to be removed from the heap
 	 *  \return Copy of removed item
 	 */
-	template <typename KeyType>
-	KeyType BinaryHeap<KeyType>::pop(const unsigned int &i)
+	template <typename KeyType, typename DataType>
+	DataType BinaryHeap<KeyType,DataType>::pop(const unsigned int &i)
 	{
        #if defined(BINARYHEAP_CAUTIOUS)
 		if (i>=n_items_)
 			throw std::runtime_error("pop: index i out of bound\n");
        #endif
-		KeyType removedItem = A_[i];
+		DataType removedItem = A_[i].data_;
 		remove(i);
 		return removedItem;
 	}
@@ -286,16 +270,16 @@ namespace o_data_structures
 	 *  \param[in] item Index of the item to be removed from the heap
 	 *  \return Copy of removed item
 	 */
-	template <typename KeyType>
-	void BinaryHeap<KeyType>::remove(const unsigned int &i)
+	template <typename KeyType, typename DataType>
+	void BinaryHeap<KeyType,DataType>::remove(const unsigned int &i)
 	{
        #if defined(BINARYHEAP_CAUTIOUS)
 		if (i>=n_items_)
 			throw std::runtime_error("remove: index i out of bound\n");
        #endif
 
-		KeyType removedItem = A_[i];
-		int lastIdx = n_items_-1;
+		DataType removedItem = A_[i].data_;
+		unsigned int lastIdx = n_items_-1;
 		swap(i,lastIdx);
 		--n_items_;
 		resize(lastIdx);
@@ -314,31 +298,7 @@ namespace o_data_structures
 	}
 
 
-	/** \brief decreases the key of the node at index i to newKey
-	 *
-	 *  \details
-	 *  Note: If using some class for KeyType Change key will use operator= offer
-	 *  the class to overwirte item at index with newKey
-	 *
-	 *  \param[in] i Index of the item that will be change
-	 *  \param[in] newKey The new key or item to replace item at i
-	 *  \return Error-code 0 on success; -1 otherwise
-	 */
-	template <typename KeyType>
-	void BinaryHeap<KeyType>::increase_key(int i, KeyType new_key)
-	{
-       #if defined(BINARYHEAP_CAUTIOUS)
-		if (!is_minHeap())
-			throw std::runtime_error("increase_key: Heap Condition not met\n");
-		if (i>=n_items_)
-			throw std::runtime_error("pop: index i out of bound\n");
-		if (new_key <= A_[i])
-			throw runtime_error("increase_key: new_key too small\n");
-       #endif
-		A_[i] = new_key;
-		sift_down(i);
-		return;
-	}
+
 
 
 	/** \brief Increases the key of the node at index i to newKey
@@ -352,7 +312,7 @@ namespace o_data_structures
 	 * \return Error-code 0 on success; -1 otherwise
 	 */
 	template <typename KeyType, typename DataType>
-	void BinaryHeap<KeyType,DataType>::increase_key(int i, KeyType new_key)
+	void BinaryHeap<KeyType,DataType>::increase_key(const unsigned int &i, KeyType new_key)
 	{
        #if defined(BINARYHEAP_CAUTIOUS)
 		if (!is_minHeap())
@@ -368,62 +328,10 @@ namespace o_data_structures
 	}
 
 
-	/** \brief decreases the key of the node at index i to newKey
-	 *
-	 *  \details
-	 *  Note: If using some class for KeyType Change key will use operator= offer
-	 *  the class to overwirte item at index with newKey
-	 *
-	 *  \param[in] i Index of the item that will be change
-	 *  \param[in] newKey The new key or item to replace item at i
-	 *  \return Error-code 0 on success; -1 otherwise
-	 */
-	template <typename KeyType>
-	void BinaryHeap<KeyType>::decrease_key(int i, KeyType new_key)
-	{
-       #if defined(BINARYHEAP_CAUTIOUS)
-		if (!is_minHeap())
-			throw std::runtime_error("decrease_key: Heap Condition not met\n");
-		if (i>=n_items_)
-			throw std::runtime_error("decrease_key: index i out of bound\n");
-		if (new_key >= A_[i])
-			throw runtime_error("decrease_key: new_key too big\n");
-       #endif
-		A_[i] = new_key;
-		sift_up(i);
-		return;
-	}
 
 
-	/** \brief Changes the key of an item
-	 *
-	 *  \details
-	 *  - change_key(..) is also responsible for
-	 *    repositioning the item within the heap
-	 *
-	 *  \param[in] i Index/position of the item
-	 *  \param[in] newKey New value key
-	 */
-	template <typename KeyType>
-	void BinaryHeap<KeyType>::change_key(unsigned int &i, const KeyType &newKey)
-	{
-       #if defined(BINARYHEAP_CAUTIOUS)
-		if ( !is_minHeap() )
-			throw std::runtime_error("change_key: Heap Condition not met\n");
-       #endif
 
-		if (newKey > A_[i])
-		{
- 			A_[i] = newKey;
-			sift_down(i);
-		}
-		else if (newKey < A_[i])
-		{
-			A_[i] = newKey;
-			sift_up(i);
-		}
-		return;
-	}
+
 
 
 	/** \brief decreases the key of the node at index i to newKey
@@ -437,7 +345,7 @@ namespace o_data_structures
 	 *  \return Error-code 0 on success; -1 otherwise
 	 */
 	template <typename KeyType, typename DataType>
-	void BinaryHeap<KeyType, DataType>::decrease_key(unsigned int &i, KeyType new_key)
+	void BinaryHeap<KeyType, DataType>::decrease_key(const unsigned int &i, KeyType new_key)
 	{
        #if defined(BINARYHEAP_CAUTIOUS)
 		if (!is_minHeap())
@@ -462,7 +370,7 @@ namespace o_data_structures
 	 *  \param[in] newKey New value key
 	 */
 	template <typename KeyType, typename DataType>
-	void BinaryHeap<KeyType,DataType>::change_key(unsigned int &i, const KeyType &newKey)
+	void BinaryHeap<KeyType,DataType>::change_key(const unsigned int &i, const KeyType &newKey)
 	{
        #if defined(BINARYHEAP_CAUTIOUS)
 		if ( !is_minHeap() )
@@ -487,8 +395,8 @@ namespace o_data_structures
 	 *  \details Applies SiftDown for all elements in BinaryHeap::A_
 	 *  beginning with the last element
 	 */
-	template <typename KeyType>
-	void BinaryHeap<KeyType>::build()
+	template <typename KeyType, typename DataType>
+	void BinaryHeap<KeyType,DataType>::build()
 	{
 		if (n_items_==1)
 			return;
@@ -514,17 +422,17 @@ namespace o_data_structures
 	 *
 	 *  \sa
 	 *  - if the position of item within BinaryHeap is needed to read, remove or modify item the
-	 *    method bool BinaryHeap<KeyType>::find(const KeyType key, unsigned int &iter, Func IsEqual) const
+	 *    method bool BinaryHeap<KeyType,DataType>::find(const KeyType key, unsigned int &iter, Func IsEqual) const
 	 *    should be used.
 	 *  - if item is a class or object with more than one field and operator== isn't defined for this
 	 *    class or the search should be applied to an other field than operator== is designed for
 	 *    the one of the following two methods should be used
-	 *    - bool BinaryHeap<KeyType>::find(Func IsEqual) const
-	 *    - bool BinaryHeap<KeyType>::find(unsigned int &iter, Func IsEqual) const
+	 *    - bool BinaryHeap<KeyType,DataType>::find(Func IsEqual) const
+	 *    - bool BinaryHeap<KeyType,DataType>::find(unsigned int &iter, Func IsEqual) const
 	 */
-	template<typename KeyType>
+	template<typename KeyType, typename DataType>
 	template<typename Func>
-	bool BinaryHeap<KeyType>::find_(unsigned int &iter, Func IsEqual) const
+	bool BinaryHeap<KeyType,DataType>::find_(unsigned int &iter, Func IsEqual) const
 	{
 		for(unsigned int i=0; i<n_items_; ++i)
 			if(IsEqual(A_[i]))
@@ -554,16 +462,16 @@ namespace o_data_structures
 	 *
 	 * \sa
 	 * - if the position of item on the heap isn't the
-	 *   method bool BinaryHeap<KeyType>::find(const KeyType item, Func IsEqual) const
+	 *   method bool BinaryHeap<KeyType,DataType>::find(const KeyType item, Func IsEqual) const
 	 *   should be used.
 	 * - if item is a class or object with more than one field and operator== isn't defined for this
 	 *   class or the search should be applied to an other field than operator== is designed for
 	 *   the one of the following two methods should be used
-	 *   - bool BinaryHeap<KeyType>::find(Func IsEqual) const
-	 *   - bool BinaryHeap<KeyType>::find(unsigned int &iter, Func IsEqual) const
+	 *   - bool BinaryHeap<KeyType,DataType>::find(Func IsEqual) const
+	 *   - bool BinaryHeap<KeyType,DataType>::find(unsigned int &iter, Func IsEqual) const
 	 */
-	template<typename KeyType>
-	bool BinaryHeap<KeyType>::find(unsigned int &iter, const KeyType &key) const
+	template<typename KeyType, typename DataType>
+	bool BinaryHeap<KeyType,DataType>::find(unsigned int &iter, const KeyType &key) const
 	{
 		return find_(iter, [&key] (const KeyType &X) {return X==key;});
 	}
@@ -577,7 +485,7 @@ namespace o_data_structures
 	 * doesn't compare fields you actually want to compare
 	 *
 	 * This function is basically the same as
-	 * bool BinaryHeap<KeyType>::find(const KeyType item, Func IsEqual) const
+	 * bool BinaryHeap<KeyType,DataType>::find(const KeyType item, Func IsEqual) const
 	 * but it gets rid of the item parameter, since it's assumed that
 	 * a valid closure for comparison is supplied via Func.
 	 * Func has no default value and must be supplied.
@@ -605,15 +513,15 @@ namespace o_data_structures
 	 *
 	 * \sa
 	 * - Use one of the alternative search functions
-	 *   - bool BinaryHeap<KeyType>::find(const KeyType item, unsigned int &iter, Func IsEqual) const
-	 *   - bool BinaryHeap<KeyType>::find(const KeyType item, Func IsEqual) const
+	 *   - bool BinaryHeap<KeyType,DataType>::find(const KeyType item, unsigned int &iter, Func IsEqual) const
+	 *   - bool BinaryHeap<KeyType,DataType>::find(const KeyType item, Func IsEqual) const
 	 *   if item is literal or float
 	 *
 	 * - If items position on the heap is of interest, but apart from that prerequisite are the same use:
-	 * bool BinaryHeap<KeyType>::find(unsigned int &iter, Func IsEqual) const
+	 * bool BinaryHeap<KeyType,DataType>::find(unsigned int &iter, Func IsEqual) const
 	 */
-	template<typename KeyType>
-	bool BinaryHeap<KeyType>::find(const KeyType &key) const
+	template<typename KeyType, typename DataType>
+	bool BinaryHeap<KeyType,DataType>::find(const KeyType &key) const
 	{
 		unsigned int iter;
 		return find_(iter, [&key] (const KeyType &X) {return X==key;});
@@ -629,8 +537,8 @@ namespace o_data_structures
 	 *  \param[in] i Index of the Node which will be root of the subtree to be examined
 	 *  \return Returns true if the subtree beginning at node i fulfills the MinHeap condition (false otherwise)
 	 */
-	template <typename KeyType>
-	bool BinaryHeap<KeyType>::is_minHeap(const unsigned int &i)
+	template <typename KeyType, typename DataType>
+	bool BinaryHeap<KeyType,DataType>::is_minHeap(const unsigned int &i)
 	{
 		if(left(i)>=n_items_) // no left child => no children at all => we are done
 			return true;
@@ -650,8 +558,8 @@ namespace o_data_structures
 	 *  \param[in] a First element to swap
 	 *  \param[in] b Second element to swap
 	 */
-	template <typename KeyType>
-	void BinaryHeap<KeyType>::swap (const unsigned int &a, const unsigned int &b)
+	template <typename KeyType, typename DataType>
+	void BinaryHeap<KeyType,DataType>::swap (const unsigned int &a, const unsigned int &b)
 	{
 		A_[max_items_] = A_[a];
 		A_[a] = A_[b];
@@ -667,15 +575,15 @@ namespace o_data_structures
 	 *  \param[i] new_max_items Number (aka Index) of items
 	 *  \return error-code 0 if reallocation was successful; -1 otherwise
 	 */
-	template <typename KeyType>
-	void BinaryHeap<KeyType>::resize(const unsigned int &new_max_items)
+	template <typename KeyType, typename DataType>
+	void BinaryHeap<KeyType,DataType>::resize(const unsigned int &new_max_items)
 	{
 		// increase allocated memory
 		if ( new_max_items > max_items_ )
 		{
 			++rank_;
 			max_items_ = o_math::oPow2(rank_+1)-1;
-			KeyType *tmp = new KeyType[o_math::oPow2(rank_+1)];
+			NodeType *tmp = new NodeType[o_math::oPow2(rank_+1)];
 			for(unsigned int j=0; j<n_items_; ++j)
 			{
 				tmp[j] = A_[j];
@@ -687,7 +595,7 @@ namespace o_data_structures
 
 		// do not decrease if already under certain threshold
 		// (try avoid reallocating too often)
-		if ( new_max_items <=2 )
+		if ( new_max_items <= min_items_ )
 			return;
 
 		// decrease allocated memory if at least two levels are empty
@@ -695,7 +603,7 @@ namespace o_data_structures
 		{
 			--rank_;
 			max_items_ = o_math::oPow2(rank_+1)-1;
-			KeyType *tmp = new KeyType[o_math::oPow2(rank_+1)];
+			NodeType *tmp = new NodeType[o_math::oPow2(rank_+1)];
 			for(unsigned int j=0; j<n_items_; ++j)
 				tmp[j] = A_[j];
 			delete[] A_;
@@ -712,8 +620,8 @@ namespace o_data_structures
 	 *  \param[in] index Index of the node to be relocated
 	 *  \return Error-code: 0 on success; -1 otherwise (note used at he moment)
 	 */
-	template <typename KeyType>
-	void BinaryHeap<KeyType>::sift_down(int i)
+	template <typename KeyType, typename DataType>
+	void BinaryHeap<KeyType,DataType>::sift_down(int i)
 	{
 		int min = i;
 		if ( (left(i) < n_items_) && (A_[left(i)] < A_[min]) )
@@ -733,8 +641,8 @@ namespace o_data_structures
 	 *
 	 *  \param[in] index Index of the node to be relocated
 	 */
-	template <typename KeyType>
-	void BinaryHeap<KeyType>::sift_up(unsigned int index)
+	template <typename KeyType, typename DataType>
+	void BinaryHeap<KeyType,DataType>::sift_up(unsigned int index)
 	{
 		while ( (index > 0) && (A_[index] < A_[parent(index)]) )
 		{
@@ -746,3 +654,5 @@ namespace o_data_structures
 
 
 } // END OF NAMESPACE o_data_structures
+
+#endif // END OF BINARYHEAP_HPP_
