@@ -102,11 +102,6 @@ namespace pathfinder
 
 			if (output_buffer_size_ < (int) fvalue)
 				continue;
-<<<<<<< HEAD
-=======
-
-			++nodes_expanded_;
->>>>>>> refs/heads/master
 
 			if (search_success)
 			{
