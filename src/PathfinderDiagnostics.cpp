@@ -34,7 +34,7 @@ void PrintAnalysis(const int &xi, const int &yi, const int &xf, const int &yf,
 	std::cout << nodes_expanded << "\t";
 	std::cout << wall_time << "\t";
 	std::cout << cpu_time;
-	if(false)
+	if(AnalysisRuntime::printable_buffer)
 	{
 		std::cout << "\t{";
 		for(int i=0; i<path_length; ++i)
@@ -71,6 +71,8 @@ void PrintAnalysis(const int &xi, const int &yi, const int &xf, const int &yf,
 }
 
 
+bool AnalysisRuntime::printable_buffer = false;
+bool AnalysisRuntime::disabled_analysis = false;
 
 AnalysisRuntime::AnalysisRuntime() :
 	max_manhattan_distance_(0),
@@ -169,6 +171,13 @@ void AnalysisRuntime::CalcMean()
 
 void AnalysisRuntime::Evaluate()
 {
+	if(data_.empty() || (max_path_length_ == -1) || (disabled_analysis))
+	{
+		std::cout << "AnalysisRuntime: There was no data to evaluate" << std::endl;
+		return;
+	}
+
+
 	int n_bins_path = 20; // number_of_bins_for_path_length = 100;
 	int n_bins_dist = 20; // number_of_bins_for_manhattan_distance_length = 100;
 

@@ -171,8 +171,7 @@ std::vector<std::string> MAPS
 
  nr_rngs::Ran RNG(19840827);
 
-const int nBufferSize = 10000; // 1024;
-int * pOutBuffer;
+
 
 //    unsigned char pMap[] = {1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1};
 //    int pOutBuffer[12];
@@ -242,7 +241,7 @@ o_graph::Map OpenMap(std::string file_name)
 
 
 AnalysisRuntimeData Core(int nStartX, int nStartY, int nTargetX, int nTargetY,
-		const o_graph::Map &map, std::string map_name)
+		const o_graph::Map &map, std::string map_name, const int &nBufferSize, int * pOutBuffer )
 {
 	int path_length;
 	unsigned int nodes_expanded;
@@ -273,7 +272,7 @@ AnalysisRuntimeData Core(int nStartX, int nStartY, int nTargetX, int nTargetY,
 }
 
 
-void IterateRuns(setting &s, o_graph::Map &map)
+void IterateRuns(setting &s, o_graph::Map &map, const int &nBufferSize, int * pOutBuffer)
 {
 
 	std::string file_analysis;
@@ -291,7 +290,7 @@ void IterateRuns(setting &s, o_graph::Map &map)
 
 		std::cout << i << ":\t";
 		AnalysisRuntimeData result = Core(s.x0, s.y0, s.x1, s.y1,
-				map, s.file_name);
+				map, s.file_name, nBufferSize, pOutBuffer);
 
 	    analysis.AddData(result);
 	}
@@ -301,21 +300,21 @@ void IterateRuns(setting &s, o_graph::Map &map)
 }
 
 
-void IterateMaps(setting s)
+void IterateMaps(setting s, const int &nBufferSize, int * pOutBuffer)
 {
 	if (s.iterate_maps)
 	{
 		for(auto iter_map=MAPS.begin(); iter_map!=MAPS.end(); ++iter_map)
 		{
 			o_graph::Map map = OpenMap(*iter_map);
-			IterateRuns(s, map);
+			IterateRuns(s, map, nBufferSize, pOutBuffer);
 			delete[] map.data_;
 		}
 	}
 	else
 	{
 		o_graph::Map map = OpenMap(s.file_name);
-		IterateRuns(s, map);
+		IterateRuns(s, map, nBufferSize, pOutBuffer);
 		delete[] map.data_;
 	}
 	return;
@@ -328,16 +327,24 @@ void IterateMaps(setting s)
 
 int main(void)
 {
+	AnalysisRuntime::printable_buffer = true;
+	AnalysisRuntime::disabled_analysis = true;
+	const int nBufferSize = 31; // 1024;
+	int * pOutBuffer;
 	pOutBuffer = new int[nBufferSize];
 
 	//setting setting(391,5,418,23, "./maps/maze512-1-0.map", 10000, 2,true, true);
 
-	setting setting(475,123,455,189, "./maps/maze512-1-0.map", 10000, 2,false, false);
+	//setting setting(475,123,455,189, "./maps/maze512-1-0.map", 10000, 2,false, false);
 
 	//setting setting(0,0,1,2, "./maps/pdx_example.map", 1, 0, false, false);
 
+
+	setting setting(1,0,15,15, "./maps/empty_16x16.map", 1, 0, false, false);
+
+
     try{
-    	IterateMaps(setting);
+    	IterateMaps(setting, nBufferSize, pOutBuffer);
 	}
     catch(const std::exception& e)
     {

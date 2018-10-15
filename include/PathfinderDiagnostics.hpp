@@ -119,6 +119,8 @@ public :
 			const double &cpu_time);
 	void Evaluate();
 	void CalcMean();
+	static bool printable_buffer;
+	static bool disabled_analysis;
 private :
 	AnalysisRuntime();
 	typedef std::vector<AnalysisRuntimeData> myDataType;

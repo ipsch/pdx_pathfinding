@@ -128,7 +128,7 @@ namespace o_graph
 
 		int x0_;                                          //< Reference x-coordinate fot the heuristic (== targets x-value)
 		int y0_;                                          //< Reference y-coordinate for the heuristic (== targets y-value)
-		const double max_manhattan_;                      //< supremum of the manhattan norm on this map
+		const float max_manhattan_;                      //< supremum of the manhattan norm on this map
 		static const unsigned char terrain_traversable_;  //< symbol to indicate a traversable map node
 		static const unsigned char terrain_blocked_;      //< symbol to indicate a blocked map node
 
