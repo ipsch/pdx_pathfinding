@@ -110,8 +110,6 @@ void exa_1()
 	int pOutBuffer[12];
     int result = FindPath(0, 0, 1, 2, pMap, 4, 3, pOutBuffer, 12);
 
-    std::cout << "result=\t" << result << std::endl;
-
     std::cout << "buffer=\t";
     for(int i=0; i<12; ++i)
     {
@@ -143,21 +141,16 @@ void exa_1()
  }
 
 
- //    unsigned char pMap[] = {1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1};
- //    int pOutBuffer[12];
- //    FindPath(0, 0, 1, 2, pMap, 4, 3, pOutBuffer, 12);
 
-
- //unsigned char pMap[] = {0, 0, 1, 0, 1, 1, 1, 0, 1};
- //int pOutBuffer[7];
- //FindPath(2, 0, 0, 2, pMap, 3, 3, pOutBuffer, 7);
 
 
 
 int main(void)
 {
+
 	exa_1();
 	exa_2();
+
 	return 0;
 }
 

@@ -119,8 +119,8 @@ namespace o_graph
 	{
 		int dx = get_x(id) - x0_;
 		int dy = get_y(id) - y0_;
-		double manhattan = (double) (abs(dx) + abs(dy));
-		return manhattan*(1. + 1./max_manhattan_);
+		float manhattan = (float) (abs(dx) + abs(dy));
+		return manhattan*(1. + 1./(max_manhattan_+1.));
 	}
 
 
