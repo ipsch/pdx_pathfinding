@@ -135,6 +135,9 @@ namespace pathfinder
 
 			float fvalue = map_.get_heuristic(successor_id) + (double) path_cost;
 
+			if (output_buffer_size_ < (int) fvalue)
+				continue;
+
 			++nodes_expanded_;
 
 			if (search_success)
