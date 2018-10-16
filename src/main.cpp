@@ -107,6 +107,7 @@
 
 std::vector<std::string> MAPS
 {
+	/*
 	"./maps/maze512-1-0.map",
 	"./maps/maze512-1-1.map",
 	"./maps/maze512-1-2.map",
@@ -118,6 +119,7 @@ std::vector<std::string> MAPS
 	"./maps/maze512-1-8.map",
 	"./maps/maze512-1-9.map",
 	"./maps/maze512-2-0.map",
+	*/
 	"./maps/maze512-2-1.map",
 	"./maps/maze512-2-2.map",
 	"./maps/maze512-2-3.map",
@@ -307,6 +309,7 @@ void IterateMaps(setting s, const int &nBufferSize, int * pOutBuffer)
 		for(auto iter_map=MAPS.begin(); iter_map!=MAPS.end(); ++iter_map)
 		{
 			o_graph::Map map = OpenMap(*iter_map);
+			s.file_name = *iter_map;
 			IterateRuns(s, map, nBufferSize, pOutBuffer);
 			delete[] map.data_;
 		}
@@ -327,20 +330,23 @@ void IterateMaps(setting s, const int &nBufferSize, int * pOutBuffer)
 
 int main(void)
 {
-	AnalysisRuntime::printable_buffer = true;
-	AnalysisRuntime::disabled_analysis = true;
-	const int nBufferSize = 31; // 1024;
+	AnalysisRuntime::printable_buffer = false;
+	AnalysisRuntime::disabled_analysis = false;
+	const int nBufferSize = 10000; // 1024;
 	int * pOutBuffer;
 	pOutBuffer = new int[nBufferSize];
 
-	//setting setting(391,5,418,23, "./maps/maze512-1-0.map", 10000, 2,true, true);
+	setting setting(391,5,418,23, "./maps/maze512-1-0.map", 10000, 2,true, true);
 
 	//setting setting(475,123,455,189, "./maps/maze512-1-0.map", 10000, 2,false, false);
 
 	//setting setting(0,0,1,2, "./maps/pdx_example.map", 1, 0, false, false);
 
 
-	setting setting(1,0,15,15, "./maps/empty_16x16.map", 1, 0, false, false);
+	//setting setting(1,0,15,15, "./maps/empty_16x16.map", 1, 0, false, false);
+
+	//setting setting(118, 47, 97, 505, "./maps/maze512-1-1.map", 4, 0, false, false);
+
 
 
     try{

@@ -512,10 +512,12 @@ namespace o_data_structures
 		// reconnect P
 		R->parent_=N->parent_;
 		if (N->parent_ != 0L)
+		{
 			if (N->parent_->right_==N)
 				N->parent_->right_=R;
 			else
 				N->parent_->left_=R;
+		}
 		// reconnect M
 		N->right_=R->left_;
 		if (R->left_ != 0L)
@@ -550,10 +552,12 @@ namespace o_data_structures
 		// reconnect P
 		L->parent_ = N->parent_;
 		if(N->parent_ != 0L)
+		{
 			if (N->parent_->left_ == N)
 				N->parent_->left_ = L;
 			else
 				N->parent_->right_ = L;
+		}
 		// reconnect M
 		N->left_ = L->right_;
 		if (L->right_ != 0L)
@@ -686,7 +690,7 @@ namespace o_data_structures
 		//        P   U       P   U       U   P       U   P
 		//       /             \             /             \
 		//      N               N           N               N
-		// n is RED, has RED parent and BLACK uncle (grandparent may have any color)
+		// n is RED, has RED parent and BLACK uncle and BLACK Grandparent (since parent is RED)
 		// => if dealing with (b) or (c): translate (b) to (a) and (c) to (d)
 		//    note: order relation must be preserved (n's position mustn't be swapped, instead
 		//    graph is rotated around p and nodes "renamed" accordingly)
@@ -694,6 +698,11 @@ namespace o_data_structures
 
 		NodeType *p = n->parent_;
 		NodeType *g = get_grandparent(n);
+
+
+		if(g==0L)
+			return;
+
 
 		if (is_LeftInnerGrandChild(n,g))
 		{
@@ -708,12 +717,17 @@ namespace o_data_structures
 			p = n->parent_;
 		}
 
+
 		if (n == p->left_)
 			rotate_right(g);
 		else
 			rotate_left(g);
+
 		p->color_ = BLACK;
 		g->color_ = RED;
+
+		if(root_==g)
+			root_ = p;
 
 		return;
 	}
