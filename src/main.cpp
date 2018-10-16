@@ -102,10 +102,13 @@
 
 void exa_1()
 {
+	 std::cout << "exa_2():\n";
 
 	unsigned char pMap[] = {1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1};
 	int pOutBuffer[12];
     int result = FindPath(0, 0, 1, 2, pMap, 4, 3, pOutBuffer, 12);
+
+    std::cout << "result=\t" << result << std::endl;
 
     std::cout << "buffer=\t";
     for(int i=0; i<12; ++i)
@@ -113,6 +116,7 @@ void exa_1()
     	std::cout << pOutBuffer[i] << "\t";
     }
 
+    std::cout << std::endl;
     return;
 }
 
@@ -120,7 +124,7 @@ void exa_1()
  void exa_2()
  {
 	 //For this input FindPath must return -1
-	 std::cout << "exa_2()\n";
+	 std::cout << "exa_2():\n";
 
 	 unsigned char pMap[] = {0, 0, 1, 0, 1, 1, 1, 0, 1};
 	 int pOutBuffer[7];
@@ -134,6 +138,9 @@ void exa_1()
      	std::cout << pOutBuffer[i] << "\t";
      }
 
+     std::cout << std::endl;
+     return;
+ }
 
 
 
