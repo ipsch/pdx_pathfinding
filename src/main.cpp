@@ -107,7 +107,6 @@
 
 std::vector<std::string> MAPS
 {
-	/*
 	"./maps/maze512-1-0.map",
 	"./maps/maze512-1-1.map",
 	"./maps/maze512-1-2.map",
@@ -119,7 +118,6 @@ std::vector<std::string> MAPS
 	"./maps/maze512-1-8.map",
 	"./maps/maze512-1-9.map",
 	"./maps/maze512-2-0.map",
-	*/
 	"./maps/maze512-2-1.map",
 	"./maps/maze512-2-2.map",
 	"./maps/maze512-2-3.map",

@@ -4,7 +4,7 @@ SRC := $(shell find src -type f -name \*.cpp)
 
 OBJS := $(patsubst src/%,build/%,$(SRC:.cpp=.o))
 
-LIBS =
+LIBS = -lm
 
 #TARGET = pdx_pathfinding.exe
 

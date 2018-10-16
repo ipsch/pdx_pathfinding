@@ -28,6 +28,7 @@
 #include <stdexcept>           // exception handling
 #endif
 
+#include <cmath>
 #include <iostream>
 #include <cmath>               // std::floor(..)
 #include "oMath.hpp"           // templates for min / max
@@ -189,6 +190,14 @@ namespace o_data_structures
 	/// METHOD DEFINITIONS//////////// /////////////////////////
 	////////////////////////////////////////////////////////////
 
+	inline int get_R(const int &n)
+	{
+		int r = log(n+1)/log(2) - 1;
+		//std::cout << "n= " << n << "\t" << "r= " << r << "\n";
+		//std::cout << "n'= " << o_math::oPow2(r+1)-1 << std::endl;
+		return r;
+	}
+
 
 	template <typename KeyType, typename DataType>
 	BinaryHeap<KeyType,DataType>::BinaryHeap() : rank_(0), n_items_(0), min_items_(2)
@@ -208,6 +217,7 @@ namespace o_data_structures
 	template <typename KeyType, typename DataType>
 	BinaryHeap<KeyType,DataType>::BinaryHeap(const unsigned int &nDegree) : rank_(nDegree), n_items_(0)
 	{
+		rank_ = get_R(nDegree);
 		unsigned int tmp = o_math::oPow2(rank_+1);
 		max_items_ = min_items_ = tmp - 1;
 		A_ = new NodeType[tmp];
