@@ -104,10 +104,7 @@ namespace pathfinder
 				continue;
 
 			if (search_success)
-			{
-				std::cout << "changing key\n";
 				open_list_.change_key(search_index, fvalue);
-			}
 			else
 			{
 				MapNode *p_successor = new MapNode();
@@ -218,7 +215,9 @@ namespace pathfinder
 				[](ClosedListItem *item) { delete item->data_; },
 				closed_list_.root_);
 		for(unsigned int i=0; i< open_list_.n_items_; ++i)
+		{
 			delete open_list_.A_[i].data_;
+		}
 		return;
 	}
 

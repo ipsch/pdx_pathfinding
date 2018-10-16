@@ -102,9 +102,6 @@
 
 void exa_1()
 {
-	 //    For this input FindPath must return 3
-	 // and the first three positions of pOutBuffer must be populated with {1, 5, 9}.
-	std::cout << "exa_1()\n";
 
 	unsigned char pMap[] = {1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1};
 	int pOutBuffer[12];
@@ -137,8 +134,7 @@ void exa_1()
      	std::cout << pOutBuffer[i] << "\t";
      }
 
-     return;
- }
+
 
 
 
