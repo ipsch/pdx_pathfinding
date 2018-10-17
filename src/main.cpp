@@ -102,7 +102,6 @@
 #include "time_measure.hpp"           // functions to measure wall- / cpu-time
 #include "Map.hpp"                    // representation of game map
 #include "AStar.hpp"                  // Path finding algorithm
-//#include "UniformCostSearch.hpp"
 #include "NRRan.hpp"                  // Numerical Recipes random number generator
 #include "PathfinderDiagnostics.hpp"  // Tool to evaluate pathfinder performance
 
