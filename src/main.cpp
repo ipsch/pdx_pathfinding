@@ -92,6 +92,7 @@
 
 
 
+
 #include <iostream>					  // output to std::cout
 #include <string>                     // used for filenames
 #include <stdexcept>                  // used for exception handling
@@ -101,6 +102,7 @@
 #include "time_measure.hpp"           // functions to measure wall- / cpu-time
 #include "Map.hpp"                    // representation of game map
 #include "AStar.hpp"                  // Path finding algorithm
+//#include "UniformCostSearch.hpp"
 #include "NRRan.hpp"                  // Numerical Recipes random number generator
 #include "PathfinderDiagnostics.hpp"  // Tool to evaluate pathfinder performance
 
@@ -251,8 +253,7 @@ AnalysisRuntimeData Core(int nStartX, int nStartY, int nTargetX, int nTargetY,
 	double cpu0  = get_cpu_time();
 	path_length = FindPath(nStartX, nStartY, nTargetX, nTargetY, map.data_,
 			map.width_, map.height_,
-			pOutBuffer, nBufferSize,
-			nodes_expanded);
+			pOutBuffer, nBufferSize);
 	double wall1 = get_wall_time();
 	double cpu1  = get_cpu_time();
 	// END Measurement section
