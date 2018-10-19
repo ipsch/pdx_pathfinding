@@ -101,14 +101,21 @@
 #include "oString.hpp"                // helper functions for string handling
 #include "time_measure.hpp"           // functions to measure wall- / cpu-time
 #include "Map.hpp"                    // representation of game map
-#include "AStar.hpp"                  // Path finding algorithm
-//#include "UniformCostSearch.hpp"
+
+
+//
 #include "NRRan.hpp"                  // Numerical Recipes random number generator
 #include "PathfinderDiagnostics.hpp"  // Tool to evaluate pathfinder performance
 
 
+#include "AStar.hpp"                  // Path finding algorithm
+#include "Dijskra.hpp"
+#include "UniformCostSearch.hpp"
+
+
 std::vector<std::string> MAPS
 {
+	/*
 	"./maps/maze512-1-0.map",
 	"./maps/maze512-1-1.map",
 	"./maps/maze512-1-2.map",
@@ -154,6 +161,7 @@ std::vector<std::string> MAPS
 	"./maps/maze512-16-2.map",
 	"./maps/maze512-16-3.map",
 	"./maps/maze512-16-4.map",
+	*/
 	"./maps/maze512-16-5.map",
 	"./maps/maze512-16-6.map",
 	"./maps/maze512-16-7.map",
@@ -242,16 +250,73 @@ o_graph::Map OpenMap(std::string file_name)
 }
 
 
-AnalysisRuntimeData Core(int nStartX, int nStartY, int nTargetX, int nTargetY,
-		const o_graph::Map &map, std::string map_name, const int &nBufferSize, int * pOutBuffer )
+
+void EvaluatePath(const int BufferSize, int *pBuffer, setting s, int path_length)
+{
+	if (path_length == -1)
+		return;
+
+	o_graph::Map map = OpenMap(s.file_name);
+
+
+	std::ofstream stream_map("./benchmark/map.dat", std::ios::out);
+	//o_math::oTablePrint(map2gnuplot, stream_map);
+
+
+	//o_math::oTable<int> map2gnuplot(map.width_, map.height_);
+	for(unsigned int j=0; j < map.height_; ++j)
+	{
+		for(unsigned int i=0; i < map.width_; ++i)
+		{
+
+			stream_map << (i+.5) << "\t";
+			stream_map << (j+.5) << "\t";
+			if ((s.x0 == i) && (s.y0 == j))
+			{
+				stream_map << 2 << "\n";
+			}
+			else if (map(i,j) == 0)
+			{
+
+				stream_map << 0 << "\n";
+			}
+			else if (map(i,j) == 1)
+			{
+				stream_map << 1 << "\n";
+			}
+
+		}
+		stream_map << std::endl;
+	}
+
+
+	std::ofstream stream_path("./benchmark/path.dat", std::ios::out);
+	stream_path << (s.x0+.5) << "\t";
+	stream_path << (s.y0+.5) << "\t";
+	stream_path << 0 << "\n";
+	for (unsigned int i=0; i < path_length; ++i)
+	{
+		stream_path << map.get_x(pBuffer[i])+.5 << "\t";
+		stream_path << map.get_y(pBuffer[i])+.5 << "\t";
+		stream_path << 0 << "\n";
+	}
+
+	return;
+}
+
+
+
+AnalysisRuntimeData Core(const setting &s,
+		const o_graph::Map &map, const int &nBufferSize, int * pOutBuffer )
 {
 	int path_length;
-	unsigned int nodes_expanded;
+
+	unsigned int nodes_expanded=0;
 
 	// Measurement section
 	double wall0 = get_wall_time();
 	double cpu0  = get_cpu_time();
-	path_length = FindPath(nStartX, nStartY, nTargetX, nTargetY, map.data_,
+	path_length = astar::FindPath(s.x0, s.y0, s.x1, s.y1, map.data_,
 			map.width_, map.height_,
 			pOutBuffer, nBufferSize);
 	double wall1 = get_wall_time();
@@ -260,14 +325,17 @@ AnalysisRuntimeData Core(int nStartX, int nStartY, int nTargetX, int nTargetY,
 
 
 	AnalysisRuntimeData result(
-			abs(nTargetX-nStartX) + abs(nTargetY-nStartY),  // manhattan-distance
+			abs(s.x1-s.x0) + abs(s.y1-s.y0),  // manhattan-distance
 			path_length,                                    // path length
 			nodes_expanded,                                 // nodes expanded
 			wall1 - wall0,                                  // wall time
 			cpu1 - cpu0);                                   // cpu time
 
-	PrintAnalysis(nStartX, nStartY, nTargetX, nTargetY,
+	PrintAnalysis(s.x0, s.y0, s.x1, s.y1,
 			result, pOutBuffer);
+
+    if(AnalysisRuntime::disabled_analysis)
+    	EvaluatePath( nBufferSize, pOutBuffer, s, path_length);
 
 	return result;
 }
@@ -290,13 +358,14 @@ void IterateRuns(setting &s, o_graph::Map &map, const int &nBufferSize, int * pO
 		}
 
 		std::cout << i << ":\t";
-		AnalysisRuntimeData result = Core(s.x0, s.y0, s.x1, s.y1,
-				map, s.file_name, nBufferSize, pOutBuffer);
+		AnalysisRuntimeData result = Core(s, map, nBufferSize, pOutBuffer);
 
 	    analysis.AddData(result);
 	}
 	analysis.CalcMean();
 	analysis.Evaluate();
+
+
 	return;
 }
 
@@ -329,13 +398,13 @@ void IterateMaps(setting s, const int &nBufferSize, int * pOutBuffer)
 
 int main(void)
 {
-	AnalysisRuntime::printable_buffer = false;
-	AnalysisRuntime::disabled_analysis = false;
+	AnalysisRuntime::printable_buffer = true;
+	AnalysisRuntime::disabled_analysis = true;
 	const int nBufferSize = 10000; // 1024;
 	int * pOutBuffer;
 	pOutBuffer = new int[nBufferSize];
 
-	setting setting(391,5,418,23, "./maps/maze512-1-0.map", 10000, 2,true, true);
+	//setting setting(391,5,418,23, "./maps/maze512-1-0.map", 10000, 2,true, true);
 
 	//setting setting(475,123,455,189, "./maps/maze512-1-0.map", 10000, 2,false, false);
 
@@ -344,9 +413,9 @@ int main(void)
 
 	//setting setting(1,0,15,15, "./maps/empty_16x16.map", 1, 0, false, false);
 
-	//setting setting(118, 47, 97, 505, "./maps/maze512-1-1.map", 4, 0, false, false);
+	setting setting(475, 246, 1, 1023, "./maps/maze512x1024-8-9.map", 1, 0, false, false);
 
-
+	//setting setting(5, 4, 1, 3, "./maps/empty_16x16.map", 1, 0, false, false);
 
     try{
     	IterateMaps(setting, nBufferSize, pOutBuffer);
@@ -355,6 +424,7 @@ int main(void)
     {
 		std::cout << e.what() << '\n';
 	}
+
 
 
     delete[] pOutBuffer;

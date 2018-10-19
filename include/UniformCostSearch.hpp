@@ -1,6 +1,8 @@
 
 #include <queue>
 #include <vector>
+#include <thread>
+#include <mutex>
 
 #ifndef UNIFORMCOSTSEARCH_HPP_
 #define UNIFORMCOSTSEARCH_HPP_

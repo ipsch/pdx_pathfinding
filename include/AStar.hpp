@@ -35,23 +35,24 @@
 #include "BinaryHeap.hpp"	 // Priority queue used for the open_list_
 #include "RedBlackTree.hpp"  // Binary self balancing tree class used for the closed_list_
 
-
-// interface function documented in AStar.cpp
-int FindPath(const int nStartX, const int nStartY,
-             const int nTargetX, const int nTargetY,
-             const unsigned char* pMap, const int nMapWidth, const int nMapHeight,
-             int* pOutBuffer, const int nOutBufferSize);
-
-
-// interface function with additional diagnostics documented in AStar.cpp
-int FindPath(const int nStartX, const int nStartY,
-             const int nTargetX, const int nTargetY,
-             const unsigned char* pMap, const int nMapWidth, const int nMapHeight,
-             int* pOutBuffer, const int nOutBufferSize, unsigned int &nodes_expanded);
-
-
-namespace pathfinder
+namespace astar
 {
+
+	// interface function documented in AStar.cpp
+	int FindPath(const int nStartX, const int nStartY,
+				 const int nTargetX, const int nTargetY,
+				 const unsigned char* pMap, const int nMapWidth, const int nMapHeight,
+				 int* pOutBuffer, const int nOutBufferSize);
+
+
+	// interface function with additional diagnostics documented in AStar.cpp
+	int FindPath(const int nStartX, const int nStartY,
+				 const int nTargetX, const int nTargetY,
+				 const unsigned char* pMap, const int nMapWidth, const int nMapHeight,
+				 int* pOutBuffer, const int nOutBufferSize, unsigned int &nodes_expanded);
+
+
+
 
 
 	/** \brief provides pathfinding capabilities (implements A*-algorithm)
@@ -99,7 +100,7 @@ namespace pathfinder
 
 	}; // END OF CLASS AStar
 
-} // END OF NAMESPACE pathfinder
+} // END OF NAMESPACE astar
 
 #endif // END OF ASTAR_HPP_
 

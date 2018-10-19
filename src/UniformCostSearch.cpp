@@ -27,6 +27,10 @@
 
 
 
+//std::mutex ucs_mutex;
+
+
+
 //! \brief Note Type for open list
 typedef struct Node
 {
@@ -198,7 +202,7 @@ int FindPath(const int nStartX, const int nStartY,
 			 const unsigned char* pMap, const int nMapWidth, const int nMapHeight,
 			 int* pOutBuffer, const int nOutBufferSize)
 {
-
+	//std::lock_guard<std::mutex> ucs_guard(ucs_mutex);
 	std::priority_queue<Node, std::vector<Node>, std::greater<Node>> qOpenList;
 	bool * pClosedList = new bool[nMapWidth*nMapHeight]();
 
@@ -230,7 +234,7 @@ int FindPath(const int nStartX, const int nStartY,
 		for (int i=0; i<nNeighbours; ++i)
 			if (!pClosedList[neighbour_list[i]] && (nodeCurrent.cost < nOutBufferSize))
 			{
-				qOpenList.push(Node(neighbour_list[i],nodeCurrent.cost + 1));
+				qOpenList.push(Node(neighbour_list[i], nodeCurrent.cost + 1));
 				pClosedList[neighbour_list[i]] = true;
 				pPredecessorIds[neighbour_list[i]] = nodeCurrent.id;
 			}
