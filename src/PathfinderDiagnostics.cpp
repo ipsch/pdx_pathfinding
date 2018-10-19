@@ -5,7 +5,7 @@
 
 void PrintAnalysis(const int &xi, const int &yi, const int &xf, const int &yf,
 		const int &path_length, const unsigned int &nodes_expanded,
-		const double &wall_time, const double &cpu_time, const int *pOutBuffer)
+		const double &wall_time, const double &cpu_time, const int &BufferSize, const int *pOutBuffer)
 {
 	bool print_header = false;
 	if(print_header)
@@ -37,7 +37,7 @@ void PrintAnalysis(const int &xi, const int &yi, const int &xf, const int &yf,
 	if(AnalysisRuntime::printable_buffer)
 	{
 		std::cout << "\t{";
-		for(int i=0; i<path_length; ++i)
+		for(int i=0; i< o_math::min(path_length,BufferSize); ++i)
 			std::cout << pOutBuffer[i] << "\t";
 		std::cout << "}";
 	}
@@ -61,12 +61,12 @@ void PrintAnalysis(const int &xi, const int &yi, const int &xf, const int &yf,
 }
 
 void PrintAnalysis(const int &xi, const int &yi, const int &xf, const int &yf,
-		const AnalysisRuntimeData &ana, const int *pOutBuffer)
+		const AnalysisRuntimeData &ana, const int &BufferSize, const int *pOutBuffer)
 {
 
 	PrintAnalysis(xi, yi, xf, yf,
 			ana.path_length_, ana.nodes_expanded_,
-			ana.wall_time_, ana.wall_time_, pOutBuffer);
+			ana.wall_time_, ana.wall_time_, BufferSize, pOutBuffer);
 	return;
 }
 

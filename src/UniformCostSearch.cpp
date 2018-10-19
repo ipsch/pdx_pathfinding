@@ -8,7 +8,7 @@
  *		Uniform Cost Search is a variation of Dijkstra-algorithm
  *
  *  \version
- *  	version 2018-10-17 ipsch: 1.0.0 final
+ *  	version 2018-10-19 ipsch: 1.0.1 moved to own heap structure
  *
  *  \author
  * 		ipsch: Ingmar Schnell
@@ -24,8 +24,10 @@
 
 
 #include "UniformCostSearch.hpp"
+#include "BinaryHeap.hpp"
 
-
+typedef o_data_structures::BinaryHeap<unsigned int, unsigned int> OpenList;
+typedef o_data_structures::BinaryHeapNode<unsigned int, unsigned int> OpenListItem;
 
 //std::mutex ucs_mutex;
 
@@ -51,7 +53,7 @@ typedef struct Node
 	}
 
 	unsigned int id;  //< unique id to identify the node
-	int cost;         //< path cost to reach this node
+	unsigned int cost;         //< path cost to reach this node
 } Node;
 
 
@@ -170,15 +172,14 @@ int FillNeighbourList(const unsigned int id,
  *  \param[in] pPredecessorIds Data to reconstruct path from index resembles a node ode
  *             field value resembles predecessors id of index
  */
-void ReconstructPath(Node goal, int* pOutBuffer, unsigned int *pPredecessorIds)
+void ReconstructPath(unsigned int id, unsigned int cost,
+		int* pOutBuffer, unsigned int *pPredecessorIds)
 {
-	int buffer_pos = goal.cost;
-	unsigned int current_id = goal.id;
-	while(current_id != pPredecessorIds[current_id]) // start node is its own predecessor
+	while(id != pPredecessorIds[id]) // start node is its own predecessor
 	{
-		pOutBuffer[buffer_pos-1] = current_id;
-		current_id = pPredecessorIds[current_id];
-		--buffer_pos;
+		pOutBuffer[cost-1] = id;
+		id = pPredecessorIds[id];
+		--cost;
 	}
 	return;
 }
@@ -203,8 +204,10 @@ int FindPath(const int nStartX, const int nStartY,
 			 int* pOutBuffer, const int nOutBufferSize)
 {
 	//std::lock_guard<std::mutex> ucs_guard(ucs_mutex);
-	std::priority_queue<Node, std::vector<Node>, std::greater<Node>> qOpenList;
+	//std::priority_queue<Node, std::vector<Node>, std::greater<Node>> qOpenList;
 	bool * pClosedList = new bool[nMapWidth*nMapHeight]();
+
+	o_data_structures::BinaryHeap<unsigned int, unsigned int> qOpenList;
 
 	unsigned int neighbour_list[4];
 
@@ -213,30 +216,33 @@ int FindPath(const int nStartX, const int nStartY,
 	unsigned int nTargetId = GetId(nTargetX, nTargetY, nMapWidth);
 	int nPathLength = -1;
 
-	Node nodeCurrent(nStartId, 0);
+	OpenListItem nodeCurrent(0, nStartId);
 	pPredecessorIds[nStartId] = nStartId;
 	pClosedList[nStartId] = true;
-	qOpenList.push(nodeCurrent);
+	qOpenList.insert(0, nStartId);
 
-	while(!qOpenList.empty())
+	while(qOpenList.n_items_ > 0)
 	{
-		nodeCurrent = qOpenList.top();
-		qOpenList.pop();
+		unsigned int nCurrentCost = qOpenList.A_[0].key_;
+		unsigned int nCurrentId = qOpenList.A_[0].data_;
+		qOpenList.remove(0);
 
-		if (nodeCurrent.id == nTargetId)
+
+		if (nCurrentId == nTargetId)
 		{
-			nPathLength = nodeCurrent.cost;
-			ReconstructPath(nodeCurrent, pOutBuffer, pPredecessorIds);
+			nPathLength = nCurrentCost;
+			if(nCurrentCost <= nOutBufferSize)
+				ReconstructPath(nCurrentId, nCurrentCost, pOutBuffer, pPredecessorIds);
 			break;
 		}
 
-		int nNeighbours = FillNeighbourList(nodeCurrent.id, nMapWidth, nMapHeight, neighbour_list, pMap);
+		int nNeighbours = FillNeighbourList(nCurrentId, nMapWidth, nMapHeight, neighbour_list, pMap);
 		for (int i=0; i<nNeighbours; ++i)
-			if (!pClosedList[neighbour_list[i]] && (nodeCurrent.cost < nOutBufferSize))
+			if (!pClosedList[neighbour_list[i]])
 			{
-				qOpenList.push(Node(neighbour_list[i], nodeCurrent.cost + 1));
+				qOpenList.insert(nCurrentCost + 1, neighbour_list[i] );
 				pClosedList[neighbour_list[i]] = true;
-				pPredecessorIds[neighbour_list[i]] = nodeCurrent.id;
+				pPredecessorIds[neighbour_list[i]] = nCurrentId;
 			}
 	}
 

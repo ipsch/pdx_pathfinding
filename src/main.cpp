@@ -310,18 +310,26 @@ AnalysisRuntimeData Core(const setting &s,
 		const o_graph::Map &map, const int &nBufferSize, int * pOutBuffer )
 {
 	int path_length;
+	int path_length2;
 
 	unsigned int nodes_expanded=0;
 
 	// Measurement section
 	double wall0 = get_wall_time();
 	double cpu0  = get_cpu_time();
-	path_length = astar::FindPath(s.x0, s.y0, s.x1, s.y1, map.data_,
+	path_length = FindPath(s.x0, s.y0, s.x1, s.y1, map.data_,
 			map.width_, map.height_,
 			pOutBuffer, nBufferSize);
 	double wall1 = get_wall_time();
 	double cpu1  = get_cpu_time();
 	// END Measurement section
+
+	path_length2 = astar::FindPath(s.x0, s.y0, s.x1, s.y1, map.data_,
+			map.width_, map.height_,
+			pOutBuffer, nBufferSize);
+
+	if (path_length != path_length2)
+		throw ("wrong answer");
 
 
 	AnalysisRuntimeData result(
@@ -332,7 +340,7 @@ AnalysisRuntimeData Core(const setting &s,
 			cpu1 - cpu0);                                   // cpu time
 
 	PrintAnalysis(s.x0, s.y0, s.x1, s.y1,
-			result, pOutBuffer);
+			result, nBufferSize, pOutBuffer);
 
     if(AnalysisRuntime::disabled_analysis)
     	EvaluatePath( nBufferSize, pOutBuffer, s, path_length);
@@ -398,9 +406,9 @@ void IterateMaps(setting s, const int &nBufferSize, int * pOutBuffer)
 
 int main(void)
 {
-	AnalysisRuntime::printable_buffer = true;
+	AnalysisRuntime::printable_buffer = false;
 	AnalysisRuntime::disabled_analysis = true;
-	const int nBufferSize = 10000; // 1024;
+	const int nBufferSize = 2; // 1024;
 	int * pOutBuffer;
 	pOutBuffer = new int[nBufferSize];
 
@@ -408,12 +416,12 @@ int main(void)
 
 	//setting setting(475,123,455,189, "./maps/maze512-1-0.map", 10000, 2,false, false);
 
-	//setting setting(0,0,1,2, "./maps/pdx_example.map", 1, 0, false, false);
+	setting setting(0,0,1,2, "./maps/pdx_example.map", 1, 0, false, false);
 
 
 	//setting setting(1,0,15,15, "./maps/empty_16x16.map", 1, 0, false, false);
 
-	setting setting(475, 246, 1, 1023, "./maps/maze512x1024-8-9.map", 1, 0, false, false);
+	//setting setting(475, 246, 1, 1023, "./maps/maze512x1024-8-9.map", 1, 0, false, false);
 
 	//setting setting(5, 4, 1, 3, "./maps/empty_16x16.map", 1, 0, false, false);
 

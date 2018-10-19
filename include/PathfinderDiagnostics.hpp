@@ -39,11 +39,11 @@
 struct AnalysisRuntimeData;
 
 void PrintAnalysis(const int &xi, const int &yi, const int &xf, const int &yf,
-		const AnalysisRuntimeData &ana, const int *pOutBuffer);
+		const AnalysisRuntimeData &ana, const int &BufferSize, const int *pOutBuffer);
 
 void PrintAnalysis(const int &xi, const int &yi, const int &xf, const int &yf,
 		const int &path_length, const unsigned int &nodes_expanded,
-		const double &wall_time, const double &cpu_time, const int *pOutBuffer);
+		const double &wall_time, const double &cpu_time, const int &BufferSize, const int *pOutBuffer);
 
 
 /** \brief Data class for measured quantities

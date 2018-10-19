@@ -3,6 +3,7 @@
 #include <vector>
 #include <thread>
 #include <mutex>
+#include "BinaryHeap.hpp"
 
 #ifndef UNIFORMCOSTSEARCH_HPP_
 #define UNIFORMCOSTSEARCH_HPP_
